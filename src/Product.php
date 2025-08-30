@@ -34,7 +34,6 @@ class Product
             'price'    => $data['price'],
             'quantity' => $data['quantity'],
             'image'     => $data['image'],
-            'category_id'  => $data['category_id'],
             'status'  => $data['status'],
         ]);
         
@@ -126,20 +125,6 @@ class Product
     }
 
 
-    private function createQualities($data){
-        $req = $this->bd->prepare("INSERT INTO product_qualities (product_id, image, element_1, element_2, element_3, element_4, element_5, is_active) VALUES (:product_id, :image, :element_1, :element_2, :element_3, :element_4, :element_5, :is_active)");
-        $req->execute([
-            'product_id' => $data['id'],
-            'image' => $data['image'],
-            'element_1' => $data['element_1'],
-            'element_2' => $data['element_2'],
-            'element_3' => $data['element_3'],
-            'element_4' => $data['element_4'],
-            'element_5' => $data['element_5'],
-            'is_active' => $data['is_active'],
-        ]);
-    }
-
 
     private function createRecommandation($data){
         $req = $this->bd->prepare("INSERT INTO product_recommandation (product_id, image, conseil_texte, is_active) VALUES (:product_id, :image, :conseil_texte, :is_active)");
@@ -211,12 +196,6 @@ class Product
                 }
             }
             
-            if(isset($data['qualities']) && is_array($data['qualities'])){
-                foreach($data['qualities'] as $quality){
-                    $quality['id'] = $productId;
-                    $this->createQualities($quality);
-                }
-            }
             
             if(isset($data['recommandation']) && is_array($data['recommandation'])){
                 foreach($data['recommandation'] as $recommandation){
