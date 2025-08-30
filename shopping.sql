@@ -27,7 +27,7 @@ SET time_zone = "+00:00";
 -- Structure de la table `orders`
 --
 
-CREATE TABLE `orders` (
+CREATE TABLE `orders` IF NOT EXISTS (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
   `pack_id` int NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE `orders` (
 -- Structure de la table `products`
 --
 
-CREATE TABLE `products` (
+CREATE TABLE `products` IF NOT EXISTS (
   `id` int NOT NULL,
   `name` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
   `price` int NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE `products` (
 -- Structure de la table `product_additional_descriptions`
 --
 
-CREATE TABLE `product_additional_descriptions` (
+CREATE TABLE `product_additional_descriptions` IF NOT EXISTS (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
   `titre` varchar(255) DEFAULT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE `product_additional_descriptions` (
 -- Structure de la table `product_caracteristics`
 --
 
-CREATE TABLE `product_caracteristics` (
+CREATE TABLE `product_caracteristics` IF NOT EXISTS  (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
   `titre` varchar(100) NOT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE `product_caracteristics` (
 -- Structure de la table `product_carousel`
 --
 
-CREATE TABLE `product_carousel` (
+CREATE TABLE `product_carousel` IF NOT EXISTS (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
   `image_url` varchar(500) NOT NULL,
@@ -107,7 +107,7 @@ CREATE TABLE `product_carousel` (
 -- Structure de la table `product_descriptive_images`
 --
 
-CREATE TABLE `product_descriptive_images` (
+CREATE TABLE `product_descriptive_images` IF NOT EXISTS (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
   `image_url` varchar(500) DEFAULT NULL
@@ -119,7 +119,7 @@ CREATE TABLE `product_descriptive_images` (
 -- Structure de la table `product_functionalities`
 --
 
-CREATE TABLE `product_functionalities` (
+CREATE TABLE `product_functionalities` IF NOT EXISTS (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
   `image` varchar(500) DEFAULT NULL,
@@ -138,7 +138,7 @@ CREATE TABLE `product_functionalities` (
 -- Structure de la table `product_mentions`
 --
 
-CREATE TABLE `product_mentions` (
+CREATE TABLE `product_mentions` IF NOT EXISTS (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
   `video_url` varchar(500) DEFAULT NULL,
@@ -152,7 +152,7 @@ CREATE TABLE `product_mentions` (
 -- Structure de la table `product_packs`
 --
 
-CREATE TABLE `product_packs` (
+CREATE TABLE `product_packs` IF NOT EXISTS (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
   `pack_order` int NOT NULL,
@@ -171,7 +171,7 @@ CREATE TABLE `product_packs` (
 -- Structure de la table `product_recommandation`
 --
 
-CREATE TABLE `product_recommandation` (
+CREATE TABLE `product_recommandation` IF NOT EXISTS (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
   `image` varchar(500) DEFAULT NULL,
@@ -185,7 +185,7 @@ CREATE TABLE `product_recommandation` (
 -- Structure de la table `users`
 --
 
-CREATE TABLE `users` (
+CREATE TABLE `users` IF NOT EXISTS (
   `id` int NOT NULL,
   `email` varchar(45) COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
