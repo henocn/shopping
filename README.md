@@ -1,5 +1,8 @@
-1 Creation du produit ()
+## Creation du produit
 
-2 Creation du carousel
+## Creation du carousel
 
-3 
+## creation de caracteristiques
+
+## Ajout évantuelle de product vidéos
+
