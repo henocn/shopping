@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : ven. 29 août 2025 à 11:06
+-- Généré le : sam. 30 août 2025 à 10:46
 -- Version du serveur : 8.0.43-0ubuntu0.22.04.1
 -- Version de PHP : 8.1.2-1ubuntu2.22
 
@@ -56,23 +56,15 @@ CREATE TABLE `products` (
   `price` int NOT NULL,
   `quantity` int NOT NULL,
   `image` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
-  `category_id` int NOT NULL,
+  `carousel1` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
+  `carousel2` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
+  `carousel3` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
+  `carousel4` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
+  `carousel5` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` text NULL,
   `status` int NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
---
--- Structure de la table `product_additional_descriptions`
---
-
-CREATE TABLE `product_additional_descriptions` (
-  `id` int NOT NULL,
-  `product_id` int NOT NULL,
-  `titre` varchar(255) DEFAULT NULL,
-  `texte` text,
-  `is_active` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -83,53 +75,9 @@ CREATE TABLE `product_additional_descriptions` (
 CREATE TABLE `product_caracteristics` (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
-  `titre` varchar(100) NOT NULL,
+  `title` varchar(100) NOT NULL,
   `image` varchar(500) DEFAULT NULL,
   `description` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `product_carousel`
---
-
-CREATE TABLE `product_carousel` (
-  `id` int NOT NULL,
-  `product_id` int NOT NULL,
-  `image_url` varchar(500) NOT NULL,
-  `is_active` int NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `product_descriptive_images`
---
-
-CREATE TABLE `product_descriptive_images` (
-  `id` int NOT NULL,
-  `product_id` int NOT NULL,
-  `image_url` varchar(500) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `product_functionalities`
---
-
-CREATE TABLE `product_functionalities` (
-  `id` int NOT NULL,
-  `product_id` int NOT NULL,
-  `image` varchar(500) DEFAULT NULL,
-  `titre` varchar(255) DEFAULT NULL,
-  `elements_1` varchar(255) DEFAULT NULL,
-  `elements_2` varchar(255) DEFAULT NULL,
-  `elements_3` varchar(255) DEFAULT NULL,
-  `elements_4` varchar(255) DEFAULT NULL,
-  `functionality_order` int NOT NULL,
-  `is_active` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -138,12 +86,11 @@ CREATE TABLE `product_functionalities` (
 -- Structure de la table `product_mentions`
 --
 
-CREATE TABLE `product_mentions` (
+CREATE TABLE `product_video` (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
   `video_url` varchar(500) DEFAULT NULL,
   `texte` text,
-  `is_active` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -155,28 +102,11 @@ CREATE TABLE `product_mentions` (
 CREATE TABLE `product_packs` (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
-  `pack_order` int NOT NULL,
   `titre` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `quantite` int DEFAULT NULL,
-  `image` varchar(500) DEFAULT NULL,
+  `quantity` int DEFAULT NULL,
   `price_reduction` int DEFAULT NULL,
   `price_normal` int DEFAULT NULL,
-  `is_active` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `product_recommandation`
---
-
-CREATE TABLE `product_recommandation` (
-  `id` int NOT NULL,
-  `product_id` int NOT NULL,
-  `image` varchar(500) DEFAULT NULL,
-  `conseil_texte` text,
-  `is_active` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -190,15 +120,16 @@ CREATE TABLE `users` (
   `email` varchar(45) COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
   `role` int NOT NULL DEFAULT '0',
-  `pays` int NOT NULL DEFAULT '228'
+  `country` int NOT NULL DEFAULT '228'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `users`
 --
 
-INSERT INTO `users` (`id`, `email`, `password`, `role`, `pays`) VALUES
+INSERT INTO `users` (`id`, `email`, `password`, `role`, `country`) VALUES
 (1, 'tchamie@gmail.com', '$2y$12$tOzGoyI3IHho9Xqiyi908OjXxFXCl9v9/Kpb.hI0dGSC07OMpq2Bu', 1, 228);
+(1, 'henoc@gmail.com', '$2y$12$tOzGoyI3IHho9Xqiyi908OjXxFXCl9v9/Kpb.hI0dGSC07OMpq2Bu', 1, 228);
 
 --
 -- Index pour les tables déchargées
@@ -214,15 +145,7 @@ ALTER TABLE `orders`
 -- Index pour la table `products`
 --
 ALTER TABLE `products`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `category_id` (`category_id`);
-
---
--- Index pour la table `product_additional_descriptions`
---
-ALTER TABLE `product_additional_descriptions`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `product_id` (`product_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Index pour la table `product_caracteristics`
@@ -232,30 +155,9 @@ ALTER TABLE `product_caracteristics`
   ADD KEY `product_id` (`product_id`);
 
 --
--- Index pour la table `product_carousel`
---
-ALTER TABLE `product_carousel`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `product_id` (`product_id`);
-
---
--- Index pour la table `product_descriptive_images`
---
-ALTER TABLE `product_descriptive_images`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `product_id` (`product_id`);
-
---
--- Index pour la table `product_functionalities`
---
-ALTER TABLE `product_functionalities`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `product_id` (`product_id`);
-
---
 -- Index pour la table `product_mentions`
 --
-ALTER TABLE `product_mentions`
+ALTER TABLE `product_video`
   ADD PRIMARY KEY (`id`),
   ADD KEY `product_id` (`product_id`);
 
@@ -266,22 +168,12 @@ ALTER TABLE `product_packs`
   ADD PRIMARY KEY (`id`),
   ADD KEY `product_id` (`product_id`);
 
---
--- Index pour la table `product_recommandation`
---
-ALTER TABLE `product_recommandation`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `product_id` (`product_id`);
 
 --
 -- Index pour la table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT pour les tables déchargées
---
 
 --
 -- AUTO_INCREMENT pour la table `orders`
@@ -296,33 +188,15 @@ ALTER TABLE `products`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `product_additional_descriptions`
---
-ALTER TABLE `product_additional_descriptions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT pour la table `product_carousel`
---
-ALTER TABLE `product_carousel`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT pour la table `product_descriptive_images`
---
-ALTER TABLE `product_descriptive_images`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT pour la table `product_functionalities`
 --
 ALTER TABLE `product_functionalities`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `product_mentions`
+-- AUTO_INCREMENT pour la table `product_video`
 --
-ALTER TABLE `product_mentions`
+ALTER TABLE `product_video`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
@@ -332,26 +206,14 @@ ALTER TABLE `product_packs`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `product_recommandation`
---
-ALTER TABLE `product_recommandation`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Contraintes pour les tables déchargées
 --
-
---
--- Contraintes pour la table `product_additional_descriptions`
---
-ALTER TABLE `product_additional_descriptions`
-  ADD CONSTRAINT `product_additional_descriptions_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `product_caracteristics`
@@ -360,27 +222,9 @@ ALTER TABLE `product_caracteristics`
   ADD CONSTRAINT `product_caracteristics_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Contraintes pour la table `product_carousel`
---
-ALTER TABLE `product_carousel`
-  ADD CONSTRAINT `product_carousel_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Contraintes pour la table `product_descriptive_images`
---
-ALTER TABLE `product_descriptive_images`
-  ADD CONSTRAINT `product_descriptive_images_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Contraintes pour la table `product_functionalities`
---
-ALTER TABLE `product_functionalities`
-  ADD CONSTRAINT `product_functionalities_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Contraintes pour la table `product_mentions`
 --
-ALTER TABLE `product_mentions`
+ALTER TABLE `product_videos`
   ADD CONSTRAINT `product_mentions_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -389,12 +233,6 @@ ALTER TABLE `product_mentions`
 ALTER TABLE `product_packs`
   ADD CONSTRAINT `product_packs_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Contraintes pour la table `product_recommandation`
---
-ALTER TABLE `product_recommandation`
-  ADD CONSTRAINT `product_recommandation_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
