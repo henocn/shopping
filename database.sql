@@ -32,6 +32,7 @@ CREATE TABLE `orders` (
   `product_id` int NOT NULL,
   `pack_id` int NOT NULL,
   `quantity` int NOT NULL,
+  `total_price` int NOT NULL,
   `client_name` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
   `client_country` int NOT NULL,
   `client_adress` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
