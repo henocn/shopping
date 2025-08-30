@@ -36,13 +36,13 @@ CREATE TABLE `orders` (
   `client_name` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
   `client_country` int NOT NULL,
   `client_adress` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
-  `client_note` int NOT NULL,
+  `client_note` varchar(128) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `manager_id` int NOT NULL,
-  `manager_note` int NOT NULL,
+  `manager_note` varchar(128) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` enum('processing','validated','rejected','canceled','') COLLATE utf8mb4_general_ci NOT NULL,
-  `action` enum('remind','call','unreachable','') COLLATE utf8mb4_general_ci NOT NULL
+  `status` enum('processing','validated','rejected','canceled') COLLATE utf8mb4_general_ci NOT NULL,
+  `action` enum('remind','call','unreachable') COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -91,7 +91,7 @@ CREATE TABLE `product_video` (
   `id` int NOT NULL,
   `product_id` int NOT NULL,
   `video_url` varchar(500) DEFAULT NULL,
-  `texte` text,
+  `texte` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -107,7 +107,7 @@ CREATE TABLE `product_packs` (
   `description` varchar(255) DEFAULT NULL,
   `quantity` int DEFAULT NULL,
   `price_reduction` int DEFAULT NULL,
-  `price_normal` int DEFAULT NULL,
+  `price_normal` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -130,7 +130,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `email`, `password`, `role`, `country`) VALUES
 (1, 'tchamie@gmail.com', '$2y$12$tOzGoyI3IHho9Xqiyi908OjXxFXCl9v9/Kpb.hI0dGSC07OMpq2Bu', 1, 228);
-(1, 'henoc@gmail.com', '$2y$12$tOzGoyI3IHho9Xqiyi908OjXxFXCl9v9/Kpb.hI0dGSC07OMpq2Bu', 1, 228);
+(2, 'henoc@gmail.com', '$2y$12$tOzGoyI3IHho9Xqiyi908OjXxFXCl9v9/Kpb.hI0dGSC07OMpq2Bu', 1, 228);
 
 --
 -- Index pour les tables déchargées
@@ -191,8 +191,7 @@ ALTER TABLE `products`
 --
 -- AUTO_INCREMENT pour la table `product_functionalities`
 --
-ALTER TABLE `product_functionalities`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
 
 --
 -- AUTO_INCREMENT pour la table `product_video`
@@ -225,7 +224,7 @@ ALTER TABLE `product_caracteristics`
 --
 -- Contraintes pour la table `product_mentions`
 --
-ALTER TABLE `product_videos`
+ALTER TABLE `product_video`
   ADD CONSTRAINT `product_mentions_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
