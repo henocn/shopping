@@ -79,7 +79,7 @@ CREATE TABLE `product_caracteristics` (
   `title` varchar(100) NOT NULL,
   `image` varchar(500) DEFAULT NULL,
   `description` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -92,7 +92,7 @@ CREATE TABLE `product_video` (
   `product_id` int NOT NULL,
   `video_url` varchar(500) DEFAULT NULL,
   `texte` text,
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -108,7 +108,7 @@ CREATE TABLE `product_packs` (
   `quantity` int DEFAULT NULL,
   `price_reduction` int DEFAULT NULL,
   `price_normal` int DEFAULT NULL,
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
