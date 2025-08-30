@@ -19,22 +19,22 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav gap-2 mx-4">
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>" href="index.php">
+                    <a class="nav-link d-flex align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>" href="/shopping/management/dashboard.php">
                         <i class='bx bx-home'></i> Home
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo (strpos($_SERVER['PHP_SELF'], 'products') !== false) ? 'active' : ''; ?>" href="products/">
+                    <a class="nav-link <?php echo (strpos($_SERVER['PHP_SELF'], 'products') !== false) ? 'active' : ''; ?>" href="/shopping/management/products/index.php">
                         <i class='bx bx-box'></i> Products
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo (strpos($_SERVER['PHP_SELF'], 'orders') !== false) ? 'active' : ''; ?>" href="orders/">
+                    <a class="nav-link <?php echo (strpos($_SERVER['PHP_SELF'], 'orders') !== false) ? 'active' : ''; ?>" href="/shopping/management/orders/index.php">
                         <i class='bx bx-cart'></i> Orders
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo (strpos($_SERVER['PHP_SELF'], 'users') !== false) ? 'active' : ''; ?>" href="users/">
+                    <a class="nav-link <?php echo (strpos($_SERVER['PHP_SELF'], 'users') !== false) ? 'active' : ''; ?>" href="/shopping/management/users/index.php">
                         <i class='bx bx-user'></i> Users
                     </a>
                 </li>
