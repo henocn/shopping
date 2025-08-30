@@ -130,8 +130,6 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `email`, `password`, `role`, `country`) VALUES
 (1, 'tchamie@gmail.com', '$2y$12$tOzGoyI3IHho9Xqiyi908OjXxFXCl9v9/Kpb.hI0dGSC07OMpq2Bu', 1, 228);
-(2, 'henoc@gmail.com', '$2y$12$tOzGoyI3IHho9Xqiyi908OjXxFXCl9v9/Kpb.hI0dGSC07OMpq2Bu', 1, 228);
-
 --
 -- Index pour les tables déchargées
 --
