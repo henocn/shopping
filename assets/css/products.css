@@ -18,20 +18,20 @@
 }
 
 .table-container .table tr.status-active td {
-    background: rgba(220, 197, 245, 0.2);
+    background: rgba(159, 216, 176, 0.192);
 }
 
 .table-container .table tr.status-inactive td {
-    background: rgba(255, 154, 154, 0.15);
+    background: rgba(255, 154, 154, 0.185);
 }
 
 .table-container .table tr.status-active:hover td {
-    background: rgba(220, 197, 245, 0.3);
+    background: rgba(159, 216, 176, 0.301);
     cursor: pointer;
 }
 
 .table-container .table tr.status-inactive:hover td {
-    background: rgba(255, 154, 154, 0.25);
+    background: rgba(255, 154, 154, 0.24);
     cursor: pointer;
 }
 
