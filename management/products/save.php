@@ -13,13 +13,19 @@ if (isset($_POST['valider'])) {
     $connect = strtolower(htmlspecialchars($_POST['valider']));
     $manager = new Product($cnx);
 
+    var_dump($connect);
+
     switch ($connect) {
 
         case 'upload':
             if (
                 isset(
-                    $_FILES['image'], $_POST['name'], $_POST['price'], $_POST['quantity'],
-                    $_POST['description'], $_POST['status']
+                    $_FILES['image'],
+                    $_POST['name'],
+                    $_POST['price'],
+                    $_POST['quantity'],
+                    $_POST['description'],
+                    $_POST['status']
                 ) &&
                 $_FILES['image']['error'] === UPLOAD_ERR_OK &&
                 is_numeric($_POST['price']) &&
@@ -33,7 +39,7 @@ if (isset($_POST['valider'])) {
                     'description' => htmlspecialchars($_POST['description']),
                     'status' => (int)$_POST['status'],
                 ];
-    
+
                 $uploadDir = __DIR__ . '/../../uploads/main/';
                 $carouselDir = __DIR__ . '/../../uploads/carousel/';
 
@@ -93,9 +99,48 @@ if (isset($_POST['valider'])) {
                 echo "Erreur: Données manquantes ou invalides";
             }
             break;
-        case 'update':
+        case 'video':
+            if (isset($_POST['product_id']) && is_numeric($_POST['product_id'])) {
+                $productId = intval($_POST['product_id']);
+                $videoDir = __DIR__ . '/../../uploads/videos/';
+                
+                
+                if ($productId > 0) {
+                    /*if (!is_dir($videoDir)) {
+                        mkdir($videoDir, 0775, true);
+                    }*/
 
+                    for ($i = 1; $i <= 3; $i++) {
+                        if (isset($_FILES["video$i"]) && $_FILES["video$i"]['error'] === UPLOAD_ERR_OK) {
+                            $fileTmp  = $_FILES["video$i"]['tmp_name'];
+                            $fileName = basename($_FILES["video$i"]['name']);
+                            $videoPath = $videoDir . $fileName;
+
+                            $description = trim($_POST["video{$i}_description"]);
+
+                            if (move_uploaded_file($fileTmp, $videoPath)) {
+                                $videoData = [
+                                    'product_id' => $productId,
+                                    'video_url'  => $fileName,
+                                    'texte'      => $description
+                                ];
+                                var_dump($videoData);
+                                $manager->createVideos($videoData);
+                            } else {
+                                echo "Erreur lors du téléchargement de la vidéo $i<br>";
+                            }
+                        }
+                    }
+
+                    $message = "Vidéos ajoutées avec succès !";
+                    header('Location:index.php?message=' . urlencode($message));
+                    exit;
+                } else {
+                    echo "ID produit invalide<br>";
+                }
+            }
             break;
+
         default:
             echo "On est pas bon";
     }
