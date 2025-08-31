@@ -36,7 +36,11 @@
             </div>
         </div>
 
-        <form id="productForm">
+        <form id="productForm" enctype="multipart/form-data" class="form-container">
+            <!-- Champs cachés pour les images -->
+            <input type="file" id="mainImageInput" name="mainImage" style="display: none;" accept="image/*">
+            <input type="file" id="carouselImagesInput" name="carouselImages[]" style="display: none;" accept="image/*" multiple>
+            
             <!-- Étape 1: Informations de base -->
             <div class="step-content active" id="step1">
                 <div class="mb-3">

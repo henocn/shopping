@@ -76,10 +76,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         element.addEventListener('click', () => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.multiple = id === 'carouselImageUpload';
-            input.accept = 'image/*';
+            const inputId = id === 'mainImageUpload' ? 'mainImageInput' : 'carouselImagesInput';
+            const input = document.getElementById(inputId);
             input.onchange = e => handleFiles(e.target.files, id);
             input.click();
         });
