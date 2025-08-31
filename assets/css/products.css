@@ -17,12 +17,22 @@
     border-radius: 8px;
 }
 
-.status-active {
-    background-color: rgba(154, 255, 154, 0.2);
+.table-container .table tr.status-active td {
+    background: rgba(159, 216, 176, 0.192);
 }
 
-.status-inactive {
-    background-color: rgba(255, 154, 154, 0.2);
+.table-container .table tr.status-inactive td {
+    background: rgba(255, 154, 154, 0.185);
+}
+
+.table-container .table tr.status-active:hover td {
+    background: rgba(159, 216, 176, 0.301);
+    cursor: pointer;
+}
+
+.table-container .table tr.status-inactive:hover td {
+    background: rgba(255, 154, 154, 0.24);
+    cursor: pointer;
 }
 
 .action-btn {

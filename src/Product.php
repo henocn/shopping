@@ -17,18 +17,17 @@ class Product
     /**
      *Methodes get en private pour l'instant
      */
-    
-    private function getProdiuts($id){
 
-    }
-    
+    private function getProdiuts($id) {}
+
     /**
      * Fonctions de creation des differents éléments liée au produit
      */
 
 
-    public function createProduct($data){
-        $req = $this->bd->prepare("INSERT INTO products (name, price, quantity, image,description, status) VALUES (:name, :price, :quantity, :image, :description, :status)");
+    public function createProduct($data)
+    {
+        $req = $this->bd->prepare("INSERT INTO products (name, price, quantity, image,description, status, carousel1, carousel2, carousel3, carousel4, carousel5) VALUES (:name, :price, :quantity, :image, :description, :status, :carousel1, :carousel2, :carousel3, :carousel4, :carousel5)");
         $req->execute([
             'name'   => $data['name'],
             'price'    => $data['price'],
@@ -36,37 +35,31 @@ class Product
             'image'     => $data['image'],
             'description' => $data['description'],
             'status'  => $data['status'],
-        ]);
-    }
-
-
-    public function createCarousel($data){
-        $req = $this->bd->prepare("UPDATE products SET carousel1 = :carousel1, carousel2 = :carousel2, carousel3 = :carousel3, carousel4 = :carousel4, carousel5 = :carousel5 WHERE product_id = :id
-        ");
-
-        $req->execute([
             'carousel1' => $data['carousel1'],
             'carousel2' => $data['carousel2'],
             'carousel3' => $data['carousel3'],
             'carousel4' => $data['carousel4'],
             'carousel5' => $data['carousel5'],
-            'id'        => $data['id'],
-        ]);
-    }
-
-    public function createVideos($data){
-        $req = $this->bd->prepare("INSERT INTO product_mentions (product_id, video_url, texte) VALUES (:product_id, :video_url, :texte)");
-        $req->execute([ 
-            'product_id' => $data['id'],
-            'video_url' => $data['video_url'],
-            'texte' => $data['texte'],
         ]);
     }
 
 
+    public function createVideos($data)
+    {
+        $req = $this->bd->prepare("
+        INSERT INTO product_video (product_id, video_url, texte) 
+        VALUES (:product_id, :video_url, :texte)
+    ");
+        $req->execute([
+            'product_id' => $data['product_id'],
+            'video_url'  => $data['video_url'],
+            'texte'      => $data['texte'],
+        ]);
+    }
 
-    
-    public function createPacks($data){
+
+    public function createPacks($data)
+    {
         $req = $this->bd->prepare("INSERT INTO product_packs (product_id, pack_order, titre, description, quantite, image, price_reduction, price_normal, is_active) VALUES (:product_id, :pack_order, :titre, :description, :quantite, :image, :price_reduction, :price_normal, :is_active)");
         $req->execute([
             'product_id' => $data['id'],
@@ -78,25 +71,14 @@ class Product
         ]);
     }
 
-
-    public function createCaracteristics($data){
+    public function createCaracteristics($data)
+    {
         $req = $this->bd->prepare("INSERT INTO product_caracteristics (product_id, title,image ,description) VALUES (:product_id, :title,:image , :description)");
         $req->execute([
-            'product_id' => $data['id'],
+            'product_id' => $data['product_id'],
             'title' => $data['title'],
             'image' => $data['image'],
             'description' => $data['description'],
         ]);
     }
-
-
-    
-
-
-    
-
-    
-
-    
-
-}    
+}
