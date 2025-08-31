@@ -24,8 +24,8 @@
         </div>
 
         <div class="table-container">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
+            <table class="table align-middle mb-0">
+                <thead class="table-light">
                     <tr>
                         <th>Image</th>
                         <th>Name</th>
@@ -69,9 +69,8 @@
                     ];
 
                     foreach ($products as $product):
-                        $rowClass = $product['status'] == 1 ? 'status-active' : 'status-inactive';
                     ?>
-                        <tr class="<?php echo $rowClass; ?>">
+                        <tr class="<?php echo $product['status'] == 1 ? 'status-active' : 'status-inactive'; ?>">
                             <td>
                                 <img src="../../../assets/images/products/<?php echo $product['image']; ?>"
                                     alt="<?php echo $product['name']; ?>"
@@ -120,21 +119,17 @@
             }
         }
 
-        // Menu contextuel WhatsApp style
         document.querySelectorAll('.context-menu-btn').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                // Fermer tous les autres menus
                 document.querySelectorAll('.context-menu').forEach(function(menu) {
                     menu.style.display = 'none';
                 });
-                // Ouvrir le menu du bouton cliqué
                 var menu = document.getElementById('contextMenu' + btn.getAttribute('data-id'));
                 menu.style.display = 'block';
             });
         });
 
-        // Fermer le menu si on clique ailleurs
         document.addEventListener('click', function() {
             document.querySelectorAll('.context-menu').forEach(function(menu) {
                 menu.style.display = 'none';
