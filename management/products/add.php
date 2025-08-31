@@ -10,6 +10,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="../../assets/css/navbar.css" rel="stylesheet">
     <link href="../../assets/css/add-product.css" rel="stylesheet">
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 <body>
     <?php include '../../includes/navbar.php'; ?>
@@ -75,7 +76,7 @@
                     <label class="form-label">
                         <i class='bx bx-text'></i> Description
                     </label>
-                    <textarea class="form-control" name="description" rows="4"></textarea>
+                    <textarea id="description" class="form-control" name="description" rows="4"></textarea>
                 </div>
                 <div class="nav-buttons">
                     <div></div>
@@ -147,7 +148,7 @@
 
     <?php include '../../includes/footer.php'; ?>
 
-    <script src="../../../assets/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../assets/js/add-product.js"></script>
+    <script src="../../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/add-product.js"></script>
 </body>
 </html>

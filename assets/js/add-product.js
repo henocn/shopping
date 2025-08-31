@@ -1,4 +1,28 @@
+function validateStep(step) {
+    const currentStepElement = document.querySelector(`#step${step}`);
+    const requiredFields = currentStepElement.querySelectorAll('[required]');
+    let isValid = true;
+    let errorMessage = '';
+
+    requiredFields.forEach(field => {
+        if (!field.value) {
+            isValid = false;
+            errorMessage += `Le champ "${field.previousElementSibling.textContent.trim()}" est requis.\n`;
+        }
+    });
+
+    if (!isValid) {
+        alert(errorMessage);
+    }
+    
+    return isValid;
+}
+
 function nextStep(currentStep) {
+    if (!validateStep(currentStep)) {
+        return;
+    }
+    
     document.querySelector(`#step${currentStep}`).classList.remove('active');
     document.querySelector(`#step${currentStep + 1}`).classList.add('active');
     
@@ -56,8 +80,19 @@ function addVideo() {
 
 // Gestion du drag & drop des images
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialisation de TinyMCE
+    tinymce.init({
+        selector: '#description',
+        plugins: 'lists link image table code help wordcount',
+        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | indent outdent | bullist numlist | code',
+        height: 300
+    });
+
+    // Gestion des zones de dépôt d'images
     ['mainImageUpload', 'carouselImageUpload'].forEach(id => {
         const element = document.getElementById(id);
+        const inputId = id === 'mainImageUpload' ? 'mainImageInput' : 'carouselImagesInput';
+        const fileInput = document.getElementById(inputId);
         
         element.addEventListener('dragover', e => {
             e.preventDefault();
@@ -76,19 +111,45 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         element.addEventListener('click', () => {
-            const inputId = id === 'mainImageUpload' ? 'mainImageInput' : 'carouselImagesInput';
-            const input = document.getElementById(inputId);
-            input.onchange = e => handleFiles(e.target.files, id);
-            input.click();
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files, id);
         });
     });
 
     document.getElementById('productForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        // Ajoutez ici la logique pour envoyer les données au serveur
-        console.log('Formulaire soumis');
+        if (validateForm()) {
+            // Ajoutez ici la logique pour envoyer les données au serveur
+            console.log('Formulaire soumis');
+        }
     });
 });
+
+function validateForm() {
+    let isValid = true;
+    let errorMessages = [];
+
+    // Validation des champs requis de l'étape actuelle
+    const activeStep = document.querySelector('.step-content.active');
+    const requiredFields = activeStep.querySelectorAll('[required]');
+    
+    requiredFields.forEach(field => {
+        if (!field.value) {
+            isValid = false;
+            const labelText = field.previousElementSibling.textContent.trim();
+            errorMessages.push(`Le champ "${labelText}" est requis.`);
+        }
+    });
+
+    if (!isValid) {
+        alert(errorMessages.join('\n'));
+    }
+
+    return isValid;
+}
 
 function handleFiles(files, uploaderId) {
     const previewerId = uploaderId === 'mainImageUpload' ? 'mainImagePreview' : 'carouselPreview';
@@ -108,6 +169,7 @@ function handleFiles(files, uploaderId) {
             reader.readAsDataURL(file);
         }
     } else {
+        preview.innerHTML = ''; // Réinitialiser la prévisualisation
         Array.from(files).slice(0, 5).forEach(file => {
             const img = document.createElement('img');
             img.className = 'preview-image';
