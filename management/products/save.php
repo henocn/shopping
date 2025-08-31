@@ -103,12 +103,10 @@ if (isset($_POST['valider'])) {
             if (isset($_POST['product_id']) && is_numeric($_POST['product_id'])) {
                 $productId = intval($_POST['product_id']);
                 $videoDir = __DIR__ . '/../../uploads/videos/';
-                
-                
+
+
                 if ($productId > 0) {
-                    /*if (!is_dir($videoDir)) {
-                        mkdir($videoDir, 0775, true);
-                    }*/
+                   
 
                     for ($i = 1; $i <= 3; $i++) {
                         if (isset($_FILES["video$i"]) && $_FILES["video$i"]['error'] === UPLOAD_ERR_OK) {
@@ -124,7 +122,7 @@ if (isset($_POST['valider'])) {
                                     'video_url'  => $fileName,
                                     'texte'      => $description
                                 ];
-                                var_dump($videoData);
+
                                 $manager->createVideos($videoData);
                             } else {
                                 echo "Erreur lors du téléchargement de la vidéo $i<br>";
@@ -133,6 +131,94 @@ if (isset($_POST['valider'])) {
                     }
 
                     $message = "Vidéos ajoutées avec succès !";
+                    header('Location:index.php?message=' . urlencode($message));
+                    exit;
+                } else {
+                    echo "ID produit invalide<br>";
+                }
+            }
+            break;
+        case 'packs':
+            if (isset($_POST['product_id']) && is_numeric($_POST['product_id'])) {
+                $productId = intval($_POST['product_id']);
+
+                if ($productId > 0) {
+
+                    for ($i = 1; $i <= 6; $i++) {
+                        $packKey = "pack$i";
+
+                        if (!empty(trim($_POST["{$packKey}_titre"]))) {
+                            $titre = trim($_POST["{$packKey}_titre"]);
+                            $description = trim($_POST["{$packKey}_description"] ?? '');
+                            $quantity = intval($_POST["{$packKey}_quantity"] ?? 1);
+                            $priceReduction = floatval($_POST["{$packKey}_price_reduction"] ?? 0);
+                            $priceNormal = floatval($_POST["{$packKey}_price_normal"] ?? 0);
+
+                            
+                            if (empty($titre)) {
+                                echo "Le titre du pack $i ne peut pas être vide<br>";
+                                continue;
+                            }
+
+                            if ($priceNormal <= 0) {
+                                echo "Le prix normal du pack $i doit être supérieur à 0<br>";
+                                continue;
+                            }
+
+                            
+                            $packData = [
+                                'product_id' => $productId,
+                                'titre' => $titre,
+                                'description' => $description,
+                                'quantity' => $quantity,
+                                'price_reduction' => $priceReduction,
+                                'price_normal' => $priceNormal
+                            ];
+
+                            $manager->createPacks($packData);
+                        }
+                    }
+
+                    $message = "Packs ajoutés avec succès !";
+                    header('Location: index.php?message=' . urlencode($message));
+                    exit;
+                } else {
+                    echo "ID produit invalide<br>";
+                }
+            }
+            break;
+        case 'caracteristics':
+            if (isset($_POST['product_id']) && is_numeric($_POST['product_id'])) {
+                $productId = intval($_POST['product_id']);
+                $imageDir = __DIR__ . '/../../uploads/caracteristics/';
+
+                if ($productId > 0) {
+
+                    for ($i = 1; $i <= 6; $i++) {
+                        if (isset($_FILES["image$i"]) && $_FILES["image$i"]['error'] === UPLOAD_ERR_OK) {
+                            $fileTmp  = $_FILES["image$i"]['tmp_name'];
+                            $fileName = basename($_FILES["image$i"]['name']);
+                            $imagePath = $imageDir . $fileName;
+
+                            $titre       = trim($_POST["image{$i}_titre"]);
+                            $description = trim($_POST["image{$i}_description"]);
+
+                            if (move_uploaded_file($fileTmp, $imagePath)) {
+                                $imageData = [
+                                    'product_id'  => $productId,
+                                    'title'       => $titre,
+                                    'image'       => $fileName,
+                                    'description' => $description
+                                ];
+
+                                $manager->createCaracteristics($imageData);
+                            } else {
+                                echo "Erreur lors du téléchargement de l'image $i<br>";
+                            }
+                        }
+                    }
+
+                    $message = "Caractéristiques ajoutées avec succès !";
                     header('Location:index.php?message=' . urlencode($message));
                     exit;
                 } else {
