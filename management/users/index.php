@@ -18,9 +18,75 @@
     <main class="container my-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="mb-0">Liste des utilisateurs</h2>
-            <a href="add.php" class="btn btn-primary" style="background-color: var(--purple); border: none;">
+            <button class="btn" style="background-color: var(--purple); color: white; border: none;" data-bs-toggle="modal" data-bs-target="#addUserModal">
                 <i class='bx bx-plus'></i> Ajouter
-            </a>
+            </button>
+        </div>
+
+        <!-- Modal Ajout Utilisateur -->
+        <div class="modal fade" id="addUserModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background: var(--magenta); border-radius: 15px;">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class='bx bx-user-plus'></i> Nouvel Utilisateur
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addUserForm">
+                            <div class="mb-3 position-relative">
+                                <label class="form-label" style="color: var(--purple);">
+                                    <i class='bx bx-envelope'></i> Email
+                                </label>
+                                <input type="email" class="form-control" required 
+                                       style="border-color: var(--purple); border-radius: 10px; padding-left: 35px;">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" style="color: var(--purple);">
+                                    <i class='bx bx-flag'></i> Pays
+                                </label>
+                                <select class="form-select" required style="border-color: var(--purple); border-radius: 10px;">
+                                    <!-- plutot les emogie des drapeau puisque dans le front je ne vois pas le rendu des drapeaux -->
+                                    <option value="BJ">🇧🇯 Bénin</option>
+                                    <option value="BF">🇧🇫 Burkina Faso</option>
+                                    <option value="CV">🇨🇻 Cap-Vert</option>
+                                    <option value="CI">🇨🇮 Côte d'Ivoire</option>
+                                    <option value="GM">🇬🇲 Gambie</option>
+                                    <option value="GH">🇬🇭 Ghana</option>
+                                    <option value="GN">🇬🇳 Guinée</option>
+                                    <option value="GW">🇬🇼 Guinée-Bissau</option>
+                                    <option value="LR">🇱🇷 Libéria</option>
+                                    <option value="ML">🇲🇱 Mali</option>
+                                    <option value="NE">🇳🇪 Niger</option>
+                                    <option value="NG">🇳🇬 Nigeria</option>
+                                    <option value="SN">🇸🇳 Sénégal</option>
+                                    <option value="SL">🇸🇱 Sierra Leone</option>
+                                    <option value="TG" selected>🇹🇬 Togo</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" style="color: var(--purple);">
+                                    <i class='bx bx-user-check'></i> Rôle
+                                </label>
+                                <select class="form-select" required style="border-color: var(--purple); border-radius: 10px;">
+                                    <option value="admin">Admin</option>
+                                    <option value="manager">Manager</option>
+                                </select>
+                            </div>
+
+                            <div class="modal-footer border-0">
+                                <button type="button" class="btn" data-bs-dismiss="modal" 
+                                        style="background: var(--paper); color: var(--purple);">Annuler</button>
+                                <button type="submit" class="btn" 
+                                        style="background: var(--purple); color: var(--paper);">Enregistrer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="table-container">
@@ -109,6 +175,7 @@
     <?php include '../../includes/footer.php'; ?>
 
     <script src="../../../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/users.js"></script>
 </body>
 
 </html>
