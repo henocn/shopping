@@ -13,7 +13,6 @@ if (isset($_POST['valider'])) {
     $connect = strtolower(htmlspecialchars($_POST['valider']));
     $manager = new Product($cnx);
 
-    var_dump($connect);
 
     switch ($connect) {
 
