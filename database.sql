@@ -121,7 +121,8 @@ CREATE TABLE `users` (
   `email` varchar(45) COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
   `role` int NOT NULL DEFAULT '0',
-  `country` int NOT NULL DEFAULT '228'
+  `country` int NOT NULL DEFAULT '228',
+  `is_active` int NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
