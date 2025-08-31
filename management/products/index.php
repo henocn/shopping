@@ -83,38 +83,23 @@
                             <td>
                                 <?php echo mb_strimwidth($product['description'], 0, 50, "..."); ?>
                             </td>
-                            <td>
-                                <button type="button" class="action-btn" data-bs-toggle="modal" data-bs-target="#actionModal<?php echo $product['id']; ?>">
+                            <td style="position:relative;">
+                                <button type="button" class="action-btn context-menu-btn" data-id="<?php echo $product['id']; ?>">
                                     <i class='bx bx-dots-vertical-rounded'></i>
                                 </button>
+                                <div class="context-menu" id="contextMenu<?php echo $product['id']; ?>" style="display:none; position:absolute; right:0; top:40px; z-index:10; min-width:180px; background:var(--paper); border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.12);">
+                                    <a href="update.php?id=<?php echo $product['id']; ?>" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:var(--purple); text-decoration:none;">
+                                        <i class='bx bx-edit'></i> Update Product
+                                    </a>
+                                    <button class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:#ff9800; background:none; border:none; width:100%; text-align:left;" onclick="toggleStatus(<?php echo $product['id']; ?>)">
+                                        <i class='bx bx-power-off'></i> <?php echo $product['status'] == 1 ? 'Disable' : 'Enable'; ?> Product
+                                    </button>
+                                    <button class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:#dc3545; background:none; border:none; width:100%; text-align:left;" onclick="deleteProduct(<?php echo $product['id']; ?>)">
+                                        <i class='bx bx-trash'></i> Delete Product
+                                    </button>
+                                </div>
                             </td>
                         </tr>
-
-                        <!-- Modal pour chaque produit -->
-                        <div class="modal fade" id="actionModal<?php echo $product['id']; ?>" tabindex="-1">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Actions for <?php echo $product['name']; ?></h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <a href="update.php?id=<?php echo $product['id']; ?>" class="modal-action-btn btn-update">
-                                            <i class='bx bx-edit'></i>
-                                            Update Product
-                                        </a>
-                                        <button class="modal-action-btn btn-disable" onclick="toggleStatus(<?php echo $product['id']; ?>)">
-                                            <i class='bx bx-power-off'></i>
-                                            <?php echo $product['status'] == 1 ? 'Disable' : 'Enable'; ?> Product
-                                        </button>
-                                        <button class="modal-action-btn btn-delete" onclick="deleteProduct(<?php echo $product['id']; ?>)">
-                                            <i class='bx bx-trash'></i>
-                                            Delete Product
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -134,6 +119,27 @@
                 console.log('Delete product:', productId);
             }
         }
+
+        // Menu contextuel WhatsApp style
+        document.querySelectorAll('.context-menu-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Fermer tous les autres menus
+                document.querySelectorAll('.context-menu').forEach(function(menu) {
+                    menu.style.display = 'none';
+                });
+                // Ouvrir le menu du bouton cliqué
+                var menu = document.getElementById('contextMenu' + btn.getAttribute('data-id'));
+                menu.style.display = 'block';
+            });
+        });
+
+        // Fermer le menu si on clique ailleurs
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.context-menu').forEach(function(menu) {
+                menu.style.display = 'none';
+            });
+        });
     </script>
 </body>
 
