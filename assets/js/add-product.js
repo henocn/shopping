@@ -1,39 +1,47 @@
-function validateStep(step) {
-    const currentStepElement = document.querySelector(`#step${step}`);
-    const requiredFields = currentStepElement.querySelectorAll('[required]');
+function validateForm() {
+    const requiredFields = document.querySelectorAll('[required]');
     let isValid = true;
-    let errorMessage = '';
+    let errorMessages = [];
 
     requiredFields.forEach(field => {
-        if (!field.value) {
+        if (!field.value.trim()) {
             isValid = false;
-            errorMessage += `Le champ "${field.previousElementSibling.textContent.trim()}" est requis.\n`;
+            const label = field.closest('.mb-3').querySelector('.form-label').textContent.trim();
+            errorMessages.push(`Le champ "${label}" est obligatoire`);
         }
     });
 
     if (!isValid) {
-        alert(errorMessage);
+        alert(errorMessages.join('\n'));
     }
-    
+
     return isValid;
 }
 
-function nextStep(currentStep) {
-    if (!validateStep(currentStep)) {
-        return;
+function toggleSection(section) {
+    const sectionElement = document.getElementById(`${section}Section`);
+    const isHidden = getComputedStyle(sectionElement).display === 'none';
+    
+    // Cache toutes les sections d'abord
+    ['carousel', 'characteristics', 'videos'].forEach(s => {
+        const el = document.getElementById(`${s}Section`);
+        if (el) el.style.display = 'none';
+    });
+    
+    // Affiche la section sélectionnée si elle était cachée
+    if (isHidden) {
+        sectionElement.style.display = 'block';
     }
     
-    document.querySelector(`#step${currentStep}`).classList.remove('active');
-    document.querySelector(`#step${currentStep + 1}`).classList.add('active');
+    // Mise à jour visuelle des boutons
+    document.querySelectorAll('.btn-group .btn').forEach(btn => {
+        btn.style.opacity = '0.7';
+    });
     
-    document.querySelectorAll('.step')[currentStep].classList.add('active');
-}
-
-function prevStep(currentStep) {
-    document.querySelector(`#step${currentStep}`).classList.remove('active');
-    document.querySelector(`#step${currentStep - 1}`).classList.add('active');
-    
-    document.querySelectorAll('.step')[currentStep - 1].classList.remove('active');
+    if (isHidden) {
+        const button = document.querySelector(`[onclick="toggleSection('${section}')"]`);
+        if (button) button.style.opacity = '1';
+    }
 }
 
 function addCharacteristic() {
@@ -83,8 +91,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialisation de TinyMCE
     tinymce.init({
         selector: '#description',
-        plugins: 'lists link image table code help wordcount',
-        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | indent outdent | bullist numlist | code',
+        plugins: [
+            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+            'insertdatetime', 'media', 'table', 'help', 'wordcount'
+        ],
+        toolbar: 'undo redo | formatselect | ' +
+            'bold italic backcolor | alignleft aligncenter alignright alignjustify | ' +
+            'bullist numlist outdent indent | removeformat | help',
         height: 300
     });
 
@@ -119,6 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Gestion du formulaire
     document.getElementById('productForm').addEventListener('submit', function(e) {
         e.preventDefault();
         if (validateForm()) {

@@ -108,3 +108,28 @@
 .custom-file-input:hover {
     background: var(--magenta);
 }
+
+.btn-group .btn {
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+}
+
+.btn-group .btn:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+.btn-group .btn i {
+    font-size: 1.5rem;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
