@@ -40,11 +40,17 @@ class Order
 
     public function GetCommandes()
     {
-        // Implémentation de la fonction pour récupérer les commandes
+        $req = $this->bd->prepare('SELECT * FROM orders ORDER BY id DESC');
+        $req->execute();
+        return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function GetCommandeByCountry($country)
     {
-        // Implémentation de la fonction pour récupérer une commande par son ID
+        $req = $this->bd->prepare('SELECT * FROM orders WHERE client_country = :country');
+        $req->execute(['country' => $country]);
+        return $req->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    
 }
