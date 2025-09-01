@@ -76,6 +76,26 @@
     margin: 10px;
 }
 
+.ck-editor__editable {
+    min-height: 300px;
+    border-radius: 0 0 8px 8px !important;
+}
+
+.ck-editor__editable:focus {
+    box-shadow: none !important;
+    border-color: var(--primary) !important;
+}
+
+.ck.ck-toolbar {
+    border-radius: 8px 8px 0 0 !important;
+    background: var(--paper) !important;
+}
+
+.ck.ck-button.ck-on {
+    background: var(--primary) !important;
+    color: white !important;
+}
+
 .carousel-preview {
     display: flex;
     flex-wrap: wrap;

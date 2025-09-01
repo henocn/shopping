@@ -78,19 +78,25 @@ function addVideo() {
 
 // Gestion du drag & drop des images
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialisation de TinyMCE
-    tinymce.init({
-        selector: '#description',
-        plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'help', 'wordcount'
-        ],
-        toolbar: 'undo redo | formatselect | ' +
-            'bold italic backcolor | alignleft aligncenter alignright alignjustify | ' +
-            'bullist numlist outdent indent | removeformat | help',
-        height: 300
-    });
+    // Initialisation de CKEditor
+    ClassicEditor
+        .create(document.querySelector('#description'), {
+            toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 'blockQuote', 'insertTable', 'undo', 'redo'],
+            heading: {
+                options: [
+                    { model: 'paragraph', title: 'Paragraphe', class: 'ck-heading_paragraph' },
+                    { model: 'heading1', view: 'h1', title: 'Titre 1', class: 'ck-heading_heading1' },
+                    { model: 'heading2', view: 'h2', title: 'Titre 2', class: 'ck-heading_heading2' }
+                ]
+            },
+            language: 'fr'
+        })
+        .then(editor => {
+            window.editor = editor;
+        })
+        .catch(error => {
+            console.error(error);
+        });
 
     // Gestion des zones de dépôt d'images
     ['mainImageUpload', 'carouselImageUpload'].forEach(id => {
