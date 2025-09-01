@@ -15,7 +15,7 @@ class Order
     }
 
 
-    public function CreateCommande($data)
+    public function CreateOrderde($data)
     {
         $req = $this->bd->prepare("
         INSERT INTO orders 
@@ -38,7 +38,7 @@ class Order
     }
 
 
-    public function GetCommandes()
+    public function GetOrders()
     {
         $sql = "
         SELECT 
@@ -59,7 +59,7 @@ class Order
     }
 
 
-    public function GetCommandeByCountry($country)
+    public function GetOrderByCountry($country)
     {
         $sql = "
         SELECT 
@@ -79,4 +79,29 @@ class Order
         $req->execute(['country' => $country]);
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
+    public function updateOrderStatus($orderId, $status)
+    {
+        $sql = "UPDATE orders SET status = :status WHERE id = :order_id";
+        $req = $this->bd->prepare($sql);
+        $req->execute([
+            'status'   => $status,
+            'id' => $orderId,
+        ]);
+    }
+    
+
+    public function updateOrderAction($orderId, $action)
+    {
+        $sql = "UPDATE orders SET action = :action WHERE id = :order_id";
+        $req = $this->bd->prepare($sql);
+        $req->execute([
+            'action'   => $action,
+            'order_id' => $orderId,
+        ]);
+    }
+
+    
+
 }
