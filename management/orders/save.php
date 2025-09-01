@@ -17,7 +17,7 @@ if (isset($_POST['valider'])) {
 
     switch ($connect) {
 
-        case 'commander':
+        case 'order':
             if(
                   isset($_POST['product_id']) &&
                   isset($_POST['pack_id']) &&
@@ -41,10 +41,8 @@ if (isset($_POST['valider'])) {
                         'client_note' => htmlspecialchars($_POST['client_note']),
                         'status' => 'processing'
                   ];
-                  $order->CreateCommande($data);
+                  $order->CreateOrder($data);
                   
-            } else {
-                  echo "Veuillez remplir tous les champs obligatoires";
             }
             break;
 

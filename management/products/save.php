@@ -92,10 +92,9 @@ if (isset($_POST['valider'])) {
                     header('Location:index.php?message=' . urlencode($message));
                     exit;
                 } else {
-                    echo "Erreur lors du téléchargement de l'image principale. Vérifiez les permissions du répertoire.";
+                    $message = "Operation invalide !";
+                    header('Location: index.php?message=' . urlencode($message));
                 }
-            } else {
-                echo "Erreur: Données manquantes ou invalides";
             }
             break;
         case 'video':
@@ -133,7 +132,8 @@ if (isset($_POST['valider'])) {
                     header('Location:index.php?message=' . urlencode($message));
                     exit;
                 } else {
-                    echo "ID produit invalide<br>";
+                    $message = "Operation invalide !";
+                    header('Location: index.php?message=' . urlencode($message));
                 }
             }
             break;
@@ -182,7 +182,8 @@ if (isset($_POST['valider'])) {
                     header('Location: index.php?message=' . urlencode($message));
                     exit;
                 } else {
-                    echo "ID produit invalide<br>";
+                    $message = "Operation invalide !";
+                    header('Location: index.php?message=' . urlencode($message));
                 }
             }
             break;
@@ -220,8 +221,9 @@ if (isset($_POST['valider'])) {
                     $message = "Caractéristiques ajoutées avec succès !";
                     header('Location:index.php?message=' . urlencode($message));
                     exit;
-                } else {
-                    echo "ID produit invalide<br>";
+                } else { 
+                    $message = "produit ou operation invalide";
+                    header('Location:index.php?message=' . urlencode($message));
                 }
             }
             break;
@@ -236,10 +238,9 @@ if (isset($_POST['valider'])) {
                     header('Location:index.php?message=' . urlencode($message));
                     exit;
                 } else {
-                    echo "ID produit ou nouveau statut invalide<br>";
+                    $message = "Opération invalide";
+                    header('Location:index.php?message=' . urlencode($message));
                 }
-            } else {
-                echo "Données manquantes pour la mise à jour du statut<br>";
             }
             break;
 

@@ -15,7 +15,7 @@ class Order
     }
 
 
-    public function CreateOrderde($data)
+    public function CreateOrder($data)
     {
         $req = $this->bd->prepare("
         INSERT INTO orders 
