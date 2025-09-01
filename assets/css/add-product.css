@@ -109,19 +109,44 @@
     background: var(--magenta);
 }
 
-.btn-group .btn {
-    padding: 0.75rem 1rem;
-    transition: all 0.3s ease;
-    opacity: 0.7;
+.floating-actions {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
 }
 
-.btn-group .btn:hover {
-    opacity: 1;
-    transform: translateY(-2px);
+.floating-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: var(--secondary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-.btn-group .btn i {
+.floating-btn:hover {
+    transform: scale(1.1);
+    background: var(--primary);
+}
+
+.floating-btn i {
     font-size: 1.5rem;
+}
+
+.floating-btn.active {
+    background: var(--primary);
+    box-shadow: 0 0 0 3px var(--secondary);
 }
 
 .card {

@@ -23,18 +23,16 @@
             <input type="file" id="mainImageInput" name="mainImage" style="display: none;" accept="image/*">
             <input type="file" id="carouselImagesInput" name="carouselImages[]" style="display: none;" accept="image/*" multiple>
 
-            <div class="mb-4">
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn" onclick="toggleSection('carousel')" style="background: var(--secondary); color: white;" title="Ajouter des images">
-                        <i class='bx bx-images'></i>
-                    </button>
-                    <button type="button" class="btn" onclick="toggleSection('characteristics')" style="background: var(--secondary); color: white;" title="Ajouter des caractéristiques">
-                        <i class='bx bx-list-plus'></i>
-                    </button>
-                    <button type="button" class="btn" onclick="toggleSection('videos')" style="background: var(--secondary); color: white;" title="Ajouter des vidéos">
-                        <i class='bx bx-video-plus'></i>
-                    </button>
-                </div>
+            <div class="floating-actions">
+                <button type="button" class="floating-btn" onclick="toggleSection('carousel')" title="Ajouter des images">
+                    <i class='bx bx-images'></i>
+                </button>
+                <button type="button" class="floating-btn" onclick="toggleSection('characteristics')" title="Ajouter des caractéristiques">
+                    <i class='bx bx-list-plus'></i>
+                </button>
+                <button type="button" class="floating-btn" onclick="toggleSection('videos')" title="Ajouter des vidéos">
+                    <i class='bx bx-video-plus'></i>
+                </button>
             </div>
             
             <!-- Informations de base -->

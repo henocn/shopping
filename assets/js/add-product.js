@@ -20,27 +20,17 @@ function validateForm() {
 
 function toggleSection(section) {
     const sectionElement = document.getElementById(`${section}Section`);
-    const isHidden = getComputedStyle(sectionElement).display === 'none';
+    const button = document.querySelector(`[onclick="toggleSection('${section}')"]`);
+    const isHidden = window.getComputedStyle(sectionElement).display === 'none';
     
-    // Cache toutes les sections d'abord
-    ['carousel', 'characteristics', 'videos'].forEach(s => {
-        const el = document.getElementById(`${s}Section`);
-        if (el) el.style.display = 'none';
-    });
-    
-    // Affiche la section sélectionnée si elle était cachée
     if (isHidden) {
+        document.querySelectorAll('[id$="Section"]').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.floating-btn').forEach(btn => btn.classList.remove('active'));
         sectionElement.style.display = 'block';
-    }
-    
-    // Mise à jour visuelle des boutons
-    document.querySelectorAll('.btn-group .btn').forEach(btn => {
-        btn.style.opacity = '0.7';
-    });
-    
-    if (isHidden) {
-        const button = document.querySelector(`[onclick="toggleSection('${section}')"]`);
-        if (button) button.style.opacity = '1';
+        button.classList.add('active');
+    } else {
+        sectionElement.style.display = 'none';
+        button.classList.remove('active');
     }
 }
 
