@@ -129,14 +129,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Gestion du formulaire
-    document.getElementById('productForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (validateForm()) {
-            // Ajoutez ici la logique pour envoyer les données au serveur
-            console.log('Formulaire soumis');
-        }
-    });
 });
 
 function validateForm() {
