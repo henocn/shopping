@@ -10,9 +10,7 @@ $cnx = Connectbd::getConnection();
 $product = new Product($cnx);
 
 $products = $product->getAllProducts();
-
 //var_dump($products);
-
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -77,9 +75,14 @@ $products = $product->getAllProducts();
                                     <a href="update.php?id=<?php echo $product['id']; ?>" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:var(--purple); text-decoration:none;">
                                         <i class='bx bx-edit'></i> Update Product
                                     </a>
-                                    <button class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:#ff9800; background:none; border:none; width:100%; text-align:left;" onclick="toggleStatus(<?php echo $product['id']; ?>)">
-                                        <i class='bx bx-power-off'></i> <?php echo $product['status'] == 1 ? 'Disable' : 'Enable'; ?> Product
-                                    </button>
+                                    <form action="save.php" method="post">
+                                        <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
+                                        <input type="hidden" name="new_status" value="<?php echo $product['status'] == 1 ? 0 : 1; ?>">
+                                        <input type="hidden" name="valider" value="upstatus">
+                                        <button type="submit" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:#ff9800; background:none; border:none; width:100%; text-align:left;">
+                                            <i class='bx bx-power-off'></i> <?php echo $product['status'] == 1 ? 'Disable' : 'Enable'; ?> Product
+                                        </button>
+                                    </form>
                                     <button class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:#dc3545; background:none; border:none; width:100%; text-align:left;" onclick="deleteProduct(<?php echo $product['id']; ?>)">
                                         <i class='bx bx-trash'></i> Delete Product
                                     </button>

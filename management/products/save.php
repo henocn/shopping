@@ -225,6 +225,23 @@ if (isset($_POST['valider'])) {
                 }
             }
             break;
+        case 'upstatus':
+            if (isset($_POST['product_id'], $_POST['new_status']) && is_numeric($_POST['product_id']) && is_numeric($_POST['new_status'])) {
+                $productId = intval($_POST['product_id']);
+                $newStatus = intval($_POST['new_status']);
+
+                if ($productId > 0 && in_array($newStatus, [0, 1], true)) {
+                    $manager->updateProductStatus($productId, $newStatus);
+                    $message = "Statut du produit mis à jour avec succès !";
+                    header('Location:index.php?message=' . urlencode($message));
+                    exit;
+                } else {
+                    echo "ID produit ou nouveau statut invalide<br>";
+                }
+            } else {
+                echo "Données manquantes pour la mise à jour du statut<br>";
+            }
+            break;
 
         default:
             echo "On est pas bon";
