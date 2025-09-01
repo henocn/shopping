@@ -1,3 +1,19 @@
+<?php
+
+require '../../vendor/autoload.php';
+
+use src\Connectbd;
+use src\Product;
+
+$cnx = Connectbd::getConnection();
+
+$product = new Product($cnx);
+
+$products = $product->getAllProducts();
+
+//var_dump($products);
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -38,41 +54,12 @@
                 <tbody>
                     <?php
                     // Simulation des données de la base de données
-                    $products = [
-                        [
-                            'id' => 1,
-                            'name' => 'Smartphone Pro Max',
-                            'price' => 999,
-                            'quantity' => 50,
-                            'image' => 'phone.jpg',
-                            'description' => 'Latest flagship smartphone with amazing features',
-                            'status' => 1
-                        ],
-                        [
-                            'id' => 2,
-                            'name' => 'Wireless Earbuds',
-                            'price' => 199,
-                            'quantity' => 100,
-                            'image' => 'earbuds.jpg',
-                            'description' => 'High-quality wireless earbuds with noise cancellation',
-                            'status' => 0
-                        ],
-                        [
-                            'id' => 3,
-                            'name' => 'Smart Watch Series 5',
-                            'price' => 299,
-                            'quantity' => 75,
-                            'image' => 'watch.jpg',
-                            'description' => 'Advanced smartwatch with health monitoring',
-                            'status' => 1
-                        ]
-                    ];
-
+                    
                     foreach ($products as $product):
                     ?>
                         <tr class="<?php echo $product['status'] == 1 ? 'status-active' : 'status-inactive'; ?>">
                             <td>
-                                <img src="../../../assets/images/products/<?php echo $product['image']; ?>"
+                                <img src="../../uploads/main/<?php echo $product['image']; ?>"
                                     alt="<?php echo $product['name']; ?>"
                                     class="product-image">
                             </td>

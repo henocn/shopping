@@ -96,4 +96,13 @@ class Product
             'description' => $data['description'],
         ]);
     }
+
+
+    public function getAllProducts()
+    {
+        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`price`, `products`.`quantity`, `products`.`image`, `products`.`description`, `products`.`status`
+FROM `products` ORDER BY id DESC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

@@ -13,22 +13,22 @@ class User{
     }
 
 
-    private function getOne($username)
+    private function getOne($email)
     {
-        $sql = $this->bd->prepare('SELECT * FROM users WHERE username = :username');
+        $sql = $this->bd->prepare('SELECT * FROM users WHERE email = :email');
         $sql->execute([
-            'username' => $username
+            'email' => $email
         ]);
 
         $user = $sql->fetch(PDO::FETCH_ASSOC);
         return $user;
     }
 
-    private function username_exists($username): bool
+    private function email_exists($email): bool
     {
-        $sql = $this->bd->prepare('SELECT COUNT(*) FROM users WHERE username = :username');
+        $sql = $this->bd->prepare('SELECT COUNT(*) FROM users WHERE email = :email');
         $sql->execute([
-            'username' => $username
+            'email' => $email
         ]);
 
         return $sql->fetchColumn() > 0;
@@ -37,16 +37,17 @@ class User{
 
     public function verify($data)
     {
-        $user = $this->getOne($data['username']);
+        $user = $this->getOne($data['email']);
         if ($user) {
             if (hash_equals($user['password'], crypt($data['password'], $user['password']))) {
-                $message = "Username et mot de passe correct";
+                $message = "Email et mot de passe correct";
                 $result = [
                     "success" => true,
                     "message" => $message,
                     "role" => $user['role'],
-                    "username" => $user['username'],
-                    "country" => $user['country']
+                    "email" => $user['email'],
+                    "country" => $user['country'],
+                    "is_active" => $user['is_active']
                 ];
             } else {
                 $message = "error1";
@@ -70,7 +71,7 @@ class User{
     // Ajout d'assistante.
     public function create(array $data)
     {
-        if (!$this->username_exists($data['username'])) {
+        if (!$this->email_exists($data['email'])) {
             $options = [
                 'cost' => 12,
             ];
@@ -102,7 +103,8 @@ class User{
 
     public function getAllAssistantes(): array
     {
-        $sql = $this->bd->prepare('SELECT * FROM users WHERE role = "assistante"');
+        $sql = $this->bd->prepare('SELECT `users`.`email`, `users`.`role`, `users`.`country`, `users`.`is_active`
+            FROM `users` WHERE role = "assistante"');
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_ASSOC);
     }

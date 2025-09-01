@@ -27,28 +27,29 @@ if (isset($_POST['validate'])) {
 
     switch ($connect) {
 
-        case 'connexion':
+        case 'login':
                 if (
-                    isset($_POST['username']) && !empty($_POST['username']) &&
+                    isset($_POST['email']) && !empty($_POST['email']) &&
                     isset($_POST['password']) && !empty($_POST['password'])
                 ) {
-                    $username = htmlspecialchars($_POST['username']);
+                    $email = htmlspecialchars($_POST['email']);
                     $password = htmlspecialchars($_POST['password']);
     
                     $data = [
-                        'username'  => $username,
+                        'email'  => $email,
                         'password'  => $password
                     ];
     
                     $result = $manager->verify($data);
     
                     if ($result["success"]) {
-                        $_SESSION['username'] = $data['username'];
+                        $_SESSION['email'] = $data['email'];
                         $_SESSION['role'] = $result['role'];
                         $_SESSION['country'] = $result['country'];
+                        $_SESSION['is_active'] = $result['is_active'];
 
-                        header('location:config.php');
-                    } else { 
+                        header('location:../dashboard.php?message='. $message);
+                    } else {
                         $message = $result['message'];
                         header('location:login.php?message=' . $message);
                     }
