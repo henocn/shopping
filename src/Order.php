@@ -28,7 +28,7 @@ class Order
             'product_id'   => $data['product_id'],
             'pack_id'      => $data['pack_id'],
             'quantity'     => $data['quantity'],
-            'total_price'  => $data['total_price'],  
+            'total_price'  => $data['total_price'],
             'client_name'  => $data['client_name'],
             'client_country' => $data['client_country'],
             'client_adress' => $data['client_adress'],
@@ -40,17 +40,43 @@ class Order
 
     public function GetCommandes()
     {
-        $req = $this->bd->prepare('SELECT * FROM orders ORDER BY id DESC');
+        $sql = "
+        SELECT 
+            orders.id AS order_id,
+            orders.*,
+            products.name,
+            products.price AS prix_unitaire,
+            product_packs.titre
+        FROM orders
+        INNER JOIN products ON products.id = orders.product_id
+        LEFT JOIN product_packs ON product_packs.id = orders.pack_id
+        ORDER BY orders.id DESC
+    ";
+
+        $req = $this->bd->prepare($sql);
         $req->execute();
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 
+
     public function GetCommandeByCountry($country)
     {
-        $req = $this->bd->prepare('SELECT * FROM orders WHERE client_country = :country');
+        $sql = "
+        SELECT 
+            orders.id AS order_id,
+            orders.*,
+            products.name,
+            products.price AS prix_unitaire,
+            product_packs.titre
+        FROM orders
+        INNER JOIN products ON products.id = orders.product_id
+        LEFT JOIN product_packs ON product_packs.id = orders.pack_id
+        WHERE orders.client_country = :country
+        ORDER BY orders.id DESC
+    ";
+
+        $req = $this->bd->prepare($sql);
         $req->execute(['country' => $country]);
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    
 }

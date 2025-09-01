@@ -18,7 +18,22 @@ class Product
      *Methodes get en private pour l'instant
      */
 
-    private function getProdiuts($id) {}
+    public function GetLastProductId()
+    {
+        $sql = "SELECT MAX(id) AS product_id FROM products";
+        $req = $this->bd->prepare($sql);
+        $req->execute();
+        $result = $req->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['product_id'] : null;
+    }
+
+
+    public function getProducts($id)
+    {
+        $stmt = $this->bd->prepare("SELECT * FROM products WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     /**
      * Fonctions de creation des differents éléments liée au produit
@@ -57,7 +72,7 @@ class Product
         ]);
     }
 
-		
+
     public function createPacks($data)
     {
         $req = $this->bd->prepare("INSERT INTO product_packs (product_id, titre, description, quantite, price_reduction, price_normal) VALUES (:product_id, :titre, :description, :quantite, :price_reduction, :price_normal)");
