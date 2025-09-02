@@ -128,9 +128,7 @@
             </div>
 
             <div class="d-grid">
-                <button type="submit" class="btn" style="background: var(--primary); color: white;">
-                    <i class='bx bx-check'></i> Enregistrer le produit
-                </button>
+                <input type="submit" value="Enregistrer le produit" name="valider" class="btn" style="background: var(--primary); color: white;">
             </div>
         </form>
     </main>
