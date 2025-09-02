@@ -159,7 +159,16 @@ class Product
         }
     }
 
-<<<<<<< HEAD
+
+    public function getAllProducts()
+    {
+        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`price`, `products`.`quantity`, `products`.`image`, `products`.`description`, `products`.`status`
+        FROM `products` ORDER BY id DESC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
     public function getProductCharacteristics($productId) {
         $stmt = $this->bd->prepare("
             SELECT * FROM product_caracteristics 
@@ -178,9 +187,10 @@ class Product
         ");
         $stmt->execute(['id' => $productId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-=======
+    }
 
-    /**
+
+     /**
      * Fonctions de Mise à jour des differents éléments liée au produit
      */
 
@@ -234,26 +244,6 @@ class Product
         ]);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public function updateProductStatus($productId, $newStatus)
     {
         $req = $this->bd->prepare("UPDATE products SET status = :status WHERE id = :id");
@@ -263,71 +253,6 @@ class Product
         ]);
     }
 
-
-
-
-    /**
-     * Fonctions de recuperation des differents éléments liée au produit
-     */
-
-    public function getAllProducts()
-    {
-        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`price`, `products`.`quantity`, `products`.`image`, `products`.`description`, `products`.`status`
-        FROM `products` ORDER BY id DESC");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function getCaracteristicById($id)
-    {
-        $stmt = $this->bd->prepare("SELECT * FROM product_caracteristics WHERE id = :id");
-        $stmt->execute(['id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function getVideoById($id)
-    {
-        $stmt = $this->bd->prepare("SELECT * FROM product_video WHERE id = :id");
-        $stmt->execute(['id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
 
     public function deleteCaracteristic($id)
     {
@@ -339,6 +264,6 @@ class Product
     {
         $stmt = $this->bd->prepare("DELETE FROM product_video WHERE id = :id");
         return $stmt->execute(['id' => $id]);
->>>>>>> 11369ca (Ajout du update des produits bug a fixer par @ats)
     }
+
 }

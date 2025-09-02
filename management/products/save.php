@@ -291,7 +291,7 @@ switch ($action) {
                         // Vérifier si la caractéristique doit être supprimée
                         if (isset($_POST['delete_characteristic']) && in_array($charId, $_POST['delete_characteristic'])) {
                             // Récupérer l'image associée pour la supprimer
-                            $existingChar = $manager->getCaracteristicById($charId);
+                            $existingChar = $manager->getProductCharacteristics($charId);
                             if (!empty($existingChar['image'])) {
                                 $filePath = $uploadDirs['characteristics'] . $existingChar['image'];
                                 if (file_exists($filePath)) {
@@ -377,7 +377,7 @@ switch ($action) {
                         // Vérifier si la vidéo doit être supprimée
                         if (isset($_POST['delete_video']) && in_array($videoId, $_POST['delete_video'])) {
                             // Récupérer le fichier vidéo associé pour le supprimer
-                            $existingVideo = $manager->getVideoById($videoId);
+                            $existingVideo = $manager->getProductVideos($videoId);
                             if (!empty($existingVideo['video_url']) && !filter_var($existingVideo['video_url'], FILTER_VALIDATE_URL)) {
                                 $filePath = $uploadDirs['videos'] . $existingVideo['video_url'];
                                 if (file_exists($filePath)) {
