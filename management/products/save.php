@@ -49,7 +49,7 @@ switch($action) {
         }
         break;
         
-    case 'add':
+    case 'Enregistrer le produit':
         // Création des dossiers d'upload si nécessaire
         $uploadDirs = [
             'main' => __DIR__ . '/../../uploads/main/',
