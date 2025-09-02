@@ -51,92 +51,111 @@ $videos = $productManager->getProductVideos($productId);
             <a class="navbar-brand" href="#">
                 <img src="assets/images/logo.png" alt="Logo">
             </a>
-            <button class="order-btn" onclick="openOrderForm()">
-                Commander maintenant
-            </button>
         </div>
     </nav>
 
     <main>
-        <div class="product-hero">
+        <section class="product-hero">
             <div class="container">
-                <div class="row g-4">
-                    <div class="col-lg-6">
-                        <div class="product-gallery">
-                            <div class="swiper mainSwiper">
-                                <div class="swiper-wrapper">
-                                    <div class="swiper-slide">
-                                        <img src="uploads/main/<?php echo $product['image']; ?>" 
-                                             alt="<?php echo htmlspecialchars($product['name']); ?>" 
-                                             class="main-image">
-                                    </div>
-                                    <?php
-                                    for ($i = 1; $i <= 5; $i++) {
-                                        $carouselImage = $product['carousel'.$i];
-                                        if (!empty($carouselImage)) {
-                                            echo '<div class="swiper-slide">';
-                                            echo '<img src="uploads/carousel/' . $carouselImage . '" alt="Vue ' . $i . '">';
-                                            echo '</div>';
-                                        }
-                                    }
-                                    ?>
-                                </div>
-                                <div class="swiper-pagination"></div>
-                            </div>
-                            <div class="swiper thumbSwiper mt-3">
-                                <div class="swiper-wrapper">
-                                    <div class="swiper-slide">
-                                        <img src="uploads/main/<?php echo $product['image']; ?>" 
-                                             alt="Miniature">
-                                    </div>
-                                    <?php
-                                    for ($i = 1; $i <= 5; $i++) {
-                                        $carouselImage = $product['carousel'.$i];
-                                        if (!empty($carouselImage)) {
-                                            echo '<div class="swiper-slide">';
-                                            echo '<img src="uploads/carousel/' . $carouselImage . '" alt="Miniature ' . $i . '">';
-                                            echo '</div>';
-                                        }
-                                    }
-                                    ?>
-                                </div>
-                            </div>
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <img src="uploads/main/<?php echo $product['image']; ?>" 
+                             alt="<?php echo htmlspecialchars($product['name']); ?>" 
+                             class="hero-image">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="hero-content">
+                            <h1><?php echo htmlspecialchars($product['name']); ?></h1>
+                            <div class="hero-price"><?php echo number_format($product['price'], 2); ?> €</div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="product-info">
-                            <h1 class="product-title"><?php echo htmlspecialchars($product['name']); ?></h1>
-                            <div class="product-price"><?php echo number_format($product['price'], 2); ?> €</div>
-                            <div class="product-stock">
-                                <?php echo $product['quantity'] > 0 ? 'En stock' : 'Rupture de stock'; ?>
-                            </div>
-                            
-                            <div class="product-description mt-4">
-                                <?php echo $product['description']; ?>
-                            </div>
+                </div>
+            </div>
+        </section>
 
-                            <div class="product-actions mt-4">
-                                <button class="order-btn w-100" onclick="openOrderForm()">
-                                    Commander maintenant
-                                </button>
+        <section class="carousel-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <!-- Main Swiper -->
+                        <div class="swiper mainSwiper">
+                            <div class="swiper-wrapper">
+                                <?php if (!empty($product['image'])): ?>
+                                    <div class="swiper-slide">
+                                        <img src="uploads/main/<?php echo $product['image']; ?>" 
+                                             alt="<?php echo htmlspecialchars($product['name']); ?>">
+                                    </div>
+                                <?php endif; ?>
+                                <?php
+                                for ($i = 1; $i <= 5; $i++) {
+                                    $carouselImage = $product['carousel'.$i];
+                                    if (!empty($carouselImage)) {
+                                        echo '<div class="swiper-slide">';
+                                        echo '<img src="uploads/carousel/' . $carouselImage . '" 
+                                              alt="Vue ' . $i . '">';
+                                        echo '</div>';
+                                    }
+                                }
+                                ?>
                             </div>
-
-                            <div class="share-buttons mt-4">
-                                <button class="btn-share" onclick="shareProduct('facebook')">
-                                    <i class='bx bxl-facebook'></i>
-                                </button>
-                                <button class="btn-share" onclick="shareProduct('twitter')">
-                                    <i class='bx bxl-twitter'></i>
-                                </button>
-                                <button class="btn-share" onclick="copyLink()">
-                                    <i class='bx bx-link'></i>
-                                </button>
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                        </div>
+                        
+                        <!-- Thumbnail Swiper -->
+                        <div class="swiper thumbSwiper">
+                            <div class="swiper-wrapper">
+                                <?php if (!empty($product['image'])): ?>
+                                    <div class="swiper-slide">
+                                        <img src="uploads/main/<?php echo $product['image']; ?>" 
+                                             alt="<?php echo htmlspecialchars($product['name']); ?>">
+                                    </div>
+                                <?php endif; ?>
+                                <?php
+                                for ($i = 1; $i <= 5; $i++) {
+                                    $carouselImage = $product['carousel'.$i];
+                                    if (!empty($carouselImage)) {
+                                        echo '<div class="swiper-slide">';
+                                        echo '<img src="uploads/carousel/' . $carouselImage . '" 
+                                              alt="Vue ' . $i . '">';
+                                        echo '</div>';
+                                    }
+                                }
+                                ?>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
+                    <div class="col-lg-6">
+            <section class="product-info">
+            <div class="container">
+                <div class="stock-status <?php echo $product['quantity'] > 0 ? 'in-stock' : 'out-stock'; ?>">
+                    <?php echo $product['quantity'] > 0 ? 'En stock' : 'Rupture de stock'; ?>
+                </div>
+
+                <div class="product-description">
+                    <?php echo $product['description']; ?>
+                </div>
+
+                <div class="share-buttons">
+                    <button class="btn-share facebook" onclick="shareProduct('facebook', window.location.href, '<?php echo htmlspecialchars($product['name']); ?>')">
+                        <i class='bx bxl-facebook'></i>
+                    </button>
+                    <button class="btn-share twitter" onclick="shareProduct('twitter', window.location.href, '<?php echo htmlspecialchars($product['name']); ?>')">
+                        <i class='bx bxl-twitter'></i>
+                    </button>
+                    <button class="btn-share whatsapp" onclick="shareProduct('whatsapp', window.location.href, '<?php echo htmlspecialchars($product['name']); ?>')">
+                        <i class='bx bxl-whatsapp'></i>
+                    </button>
+                    <button class="btn-share copy" onclick="copyLink()">
+                        <i class='bx bx-link'></i>
+                        <span class="copy-tooltip" id="copyTooltip">Lien copié !</span>
+                    </button>
+                </div>
+            </div>
+        </section>
 
         <?php if (!empty($characteristics)): ?>
         <section class="product-features">
@@ -147,10 +166,13 @@ $videos = $productManager->getProductVideos($productId);
                     <div class="feature-card">
                         <?php if (!empty($characteristic['image'])): ?>
                         <img src="uploads/characteristics/<?php echo $characteristic['image']; ?>" 
-                             alt="<?php echo htmlspecialchars($characteristic['title']); ?>">
+                             alt="<?php echo htmlspecialchars($characteristic['title']); ?>"
+                             class="feature-image">
                         <?php endif; ?>
-                        <h3><?php echo htmlspecialchars($characteristic['title']); ?></h3>
-                        <p><?php echo htmlspecialchars($characteristic['description']); ?></p>
+                        <div class="feature-content">
+                            <h3><?php echo htmlspecialchars($characteristic['title']); ?></h3>
+                            <p><?php echo htmlspecialchars($characteristic['description']); ?></p>
+                        </div>
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -311,13 +333,25 @@ $videos = $productManager->getProductVideos($productId);
         }
 
         // Configuration Swiper
-        var thumbSwiper = new Swiper(".thumbSwiper", {
+        const thumbSwiper = new Swiper(".thumbSwiper", {
             spaceBetween: 10,
             slidesPerView: 4,
+            freeMode: true,
             watchSlidesProgress: true,
+            breakpoints: {
+                320: {
+                    slidesPerView: 3,
+                },
+                480: {
+                    slidesPerView: 4,
+                },
+                768: {
+                    slidesPerView: 5,
+                }
+            }
         });
 
-        var mainSwiper = new Swiper(".mainSwiper", {
+        const mainSwiper = new Swiper(".mainSwiper", {
             spaceBetween: 10,
             navigation: {
                 nextEl: ".swiper-button-next",
@@ -326,10 +360,7 @@ $videos = $productManager->getProductVideos($productId);
             thumbs: {
                 swiper: thumbSwiper,
             },
-            pagination: {
-                el: ".swiper-pagination",
-                clickable: true,
-            },
+            effect: "fade",
         });
 
         // Fonctions de partage
