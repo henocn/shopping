@@ -62,8 +62,8 @@ function addVideo() {
     videoDiv.className = 'characteristic-item';
     videoDiv.innerHTML = `
         <div class="mb-3">
-            <label class="form-label">URL de la vidéo</label>
-            <input type="url" class="form-control" name="video_url[]" required>
+            <label class="form-label">Vidéo</label>
+            <input type="file" class="form-control" name="video[]" accept="video/*" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Texte</label>
@@ -78,7 +78,6 @@ function addVideo() {
 
 // Gestion du drag & drop des images
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialisation de CKEditor
     ClassicEditor
         .create(document.querySelector('#description'), {
             toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 'blockQuote', 'insertTable', 'undo', 'redo'],
