@@ -1,9 +1,25 @@
 :root {
     --primary: #6366F1;
+    --primary-light: #818CF8;
+    --primary-dark: #4F46E5;
     --surface: #F8FAFC;
+    --surface-alt: #F1F5F9;
     --text: #0F172A;
+    --text-light: #475569;
     --paper: #FFFFFF;
     --border: #E2E8F0;
+}
+
+/* Mode sombre */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --surface: #1E293B;
+        --surface-alt: #0F172A;
+        --text: #F8FAFC;
+        --text-light: #CBD5E1;
+        --paper: #334155;
+        --border: #475569;
+    }
 }
 
 /* Navigation */

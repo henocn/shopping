@@ -43,6 +43,8 @@ $videos = $productManager->getProductVideos($productId);
     <link href="assets/css/product.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+    <style id="dynamicStyles"></style>
 <body>
         <nav class="navbar">
         <div class="container d-flex justify-content-between align-items-center">
@@ -215,9 +217,99 @@ $videos = $productManager->getProductVideos($productId);
         </div>
     </div>
 
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="./assets/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script>
+        // Gestionnaire de thème dynamique
+        const colorThief = new ColorThief();
+        const mainImage = document.querySelector('.main-image');
+
+        function getLuminance(r, g, b) {
+            const a = [r, g, b].map(v => {
+                v /= 255;
+                return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+            });
+            return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+        }
+
+        function getContrastRatio(l1, l2) {
+            const lightest = Math.max(l1, l2);
+            const darkest = Math.min(l1, l2);
+            return (lightest + 0.05) / (darkest + 0.05);
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+
+            return [h * 360, s * 100, l * 100];
+        }
+
+        function adjustColor(color, lightness) {
+            const [h, s, l] = rgbToHsl(...color);
+            return `hsl(${h}, ${s}%, ${lightness}%)`;
+        }
+
+        function generateColorPalette(color) {
+            const [h, s, l] = rgbToHsl(...color);
+            return {
+                primary: `hsl(${h}, ${s}%, ${l}%)`,
+                primaryLight: `hsl(${h}, ${s}%, ${Math.min(l + 15, 95)}%)`,
+                primaryDark: `hsl(${h}, ${s}%, ${Math.max(l - 15, 10)}%)`,
+                surface: `hsl(${h}, ${Math.max(s - 50, 5)}%, 98%)`,
+                surfaceAlt: `hsl(${h}, ${Math.max(s - 45, 8)}%, 95%)`,
+                text: `hsl(${h}, ${Math.min(s + 10, 100)}%, 10%)`,
+                textLight: `hsl(${h}, ${Math.min(s + 5, 100)}%, 30%)`,
+            };
+        }
+
+        function applyTheme(palette) {
+            const styleSheet = document.getElementById('dynamicStyles');
+            styleSheet.textContent = `
+                :root {
+                    --primary: ${palette.primary};
+                    --primary-light: ${palette.primaryLight};
+                    --primary-dark: ${palette.primaryDark};
+                    --surface: ${palette.surface};
+                    --surface-alt: ${palette.surfaceAlt};
+                    --text: ${palette.text};
+                    --text-light: ${palette.textLight};
+                }
+            `;
+        }
+
+        // Attendre que l'image soit chargée
+        mainImage.addEventListener('load', function() {
+            try {
+                const dominantColor = colorThief.getColor(mainImage);
+                const palette = generateColorPalette(dominantColor);
+                applyTheme(palette);
+            } catch (e) {
+                console.error('Erreur lors de l\'extraction des couleurs:', e);
+            }
+        });
+
+        if (mainImage.complete) {
+            mainImage.dispatchEvent(new Event('load'));
+        }
+
         // Configuration Swiper
         var thumbSwiper = new Swiper(".thumbSwiper", {
             spaceBetween: 10,
