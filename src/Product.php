@@ -138,4 +138,24 @@ class Product
             throw $e;
         }
     }
+
+    public function getProductCharacteristics($productId) {
+        $stmt = $this->bd->prepare("
+            SELECT * FROM product_caracteristics 
+            WHERE product_id = :id 
+            ORDER BY id ASC
+        ");
+        $stmt->execute(['id' => $productId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getProductVideos($productId) {
+        $stmt = $this->bd->prepare("
+            SELECT * FROM product_video 
+            WHERE product_id = :id 
+            ORDER BY id ASC
+        ");
+        $stmt->execute(['id' => $productId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
