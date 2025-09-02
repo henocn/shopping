@@ -18,7 +18,7 @@
     <main class="container my-4">
         <h2 class="mb-4 text-center">Ajouter un nouveau produit</h2>
 
-        <form id="productForm" enctype="multipart/form-data" class="form-container">
+        <form id="productForm" enctype="multipart/form-data" class="form-container" method="POST" action="save.php">
             <!-- Champs cachés pour les images -->
             <input type="file" id="mainImageInput" name="mainImage" style="display: none;" accept="image/*">
             <input type="file" id="carouselImagesInput" name="carouselImages[]" style="display: none;" accept="image/*" multiple>
