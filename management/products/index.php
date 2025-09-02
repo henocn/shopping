@@ -31,9 +31,9 @@ $products = $product->getAllProducts();
 
     <main class="container my-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0">Products List</h2>
+            <h2 class="mb-0">Liste des produits</h2>
             <a href="add.php" class="btn btn-primary" style="background-color: var(--purple); border: none;">
-                <i class='bx bx-plus'></i> Add Product
+                <i class='bx bx-plus'></i> Ajouter
             </a>
         </div>
 
@@ -42,17 +42,15 @@ $products = $product->getAllProducts();
                 <thead class="table-light">
                     <tr>
                         <th>Image</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
+                        <th>Nom</th>
+                        <th>Prix</th>
+                        <th>Quantité</th>
                         <th>Description</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    // Simulation des données de la base de données
-                    
                     foreach ($products as $product):
                     ?>
                         <tr class="<?php echo $product['status'] == 1 ? 'status-active' : 'status-inactive'; ?>">
@@ -99,13 +97,26 @@ $products = $product->getAllProducts();
 
     <script src="../../assets/js/bootstrap.bundle.min.js"></script>
     <script>
-        function toggleStatus(productId) {
-            console.log('Toggle status for product:', productId);
-        }
-
         function deleteProduct(productId) {
-            if (confirm('Are you sure you want to delete this product?')) {
-                console.log('Delete product:', productId);
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'save.php';
+                
+                const validerInput = document.createElement('input');
+                validerInput.type = 'hidden';
+                validerInput.name = 'valider';
+                validerInput.value = 'delete';
+                
+                const productIdInput = document.createElement('input');
+                productIdInput.type = 'hidden';
+                productIdInput.name = 'product_id';
+                productIdInput.value = productId;
+                
+                form.appendChild(validerInput);
+                form.appendChild(productIdInput);
+                document.body.appendChild(form);
+                form.submit();
             }
         }
 
@@ -125,6 +136,15 @@ $products = $product->getAllProducts();
                 menu.style.display = 'none';
             });
         });
+
+        // Afficher les messages ou erreurs
+        <?php if (isset($_GET['message'])): ?>
+        alert('<?php echo htmlspecialchars($_GET['message']); ?>');
+        <?php endif; ?>
+        
+        <?php if (isset($_GET['error'])): ?>
+        alert('Erreur : <?php echo htmlspecialchars($_GET['error']); ?>');
+        <?php endif; ?>
     </script>
 </body>
 

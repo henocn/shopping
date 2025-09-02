@@ -115,4 +115,27 @@ class Product
             'id' => $productId
         ]);
     }
+
+    public function deleteProduct($productId) {
+        try {
+            $this->bd->beginTransaction();
+
+            // Supprimer d'abord les enregistrements liés
+            $tables = ['product_caracteristics', 'product_video', 'product_packs'];
+            foreach ($tables as $table) {
+                $stmt = $this->bd->prepare("DELETE FROM $table WHERE product_id = :id");
+                $stmt->execute(['id' => $productId]);
+            }
+
+            // Supprimer le produit
+            $stmt = $this->bd->prepare("DELETE FROM products WHERE id = :id");
+            $stmt->execute(['id' => $productId]);
+
+            $this->bd->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->bd->rollBack();
+            throw $e;
+        }
+    }
 }
