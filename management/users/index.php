@@ -1,3 +1,23 @@
+<?php
+//session_start();
+//if (!isset($_SESSION['email'])) {
+    //header('Location: login.php');
+    //exit();
+//}
+
+require '../../vendor/autoload.php';
+
+use src\Connectbd;
+use src\User;
+
+$cnx = Connectbd::getConnection();
+
+$user = new User($cnx);
+
+$users = $user->getAllAssistantes();
+
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -104,51 +124,7 @@
                 <tbody>
                     <?php
                     // Simulation des données de la base de données
-                    $users = [
-                        [
-                            'id' => 1,
-                            'email' => 'john@example.com',
-                            'is_active' => 1,
-                            'country' => "TG",
-                            'role' => 'Admin',
-                        ],
-                        [
-                            'id' => 2,
-                            'email' => 'jane@example.com',
-                            'is_active' => 1,
-                            'country' => "GH",
-                            'role' => 'Superadmin',
-                        ],
-                        [
-                            'id' => 3,
-                            'email' => 'bob@example.com',
-                            'is_active' => 0,
-                            'country' => "BF",
-                            'role' => 'Manager',
-                        ],
-                        [
-                            'id' => 4,
-                            'email' => 'alice@example.com',
-                            'is_active' => 1,
-                            'country' => "BF",
-                            'role' => 'Manager',
-                        ],
-                        [
-                            'id' => 5,
-                            'email' => 'charlie@example.com',
-                            'is_active' => 1,
-                            'country' => "BF",
-                            'role' => 'Manager',
-                        ],
-                        [
-                            'id' => 6,
-                            'email' => 'dave@example.com',
-                            'is_active' => 0,
-                            'country' => "BF",
-                            'role' => 'Manager',
-                        ]
-                    ];
-
+                    
                     foreach ($users as $user):
                     ?>
                         <tr class="<?php echo $user['is_active'] == 1 ? 'status-active' : 'status-inactive'; ?>">
@@ -159,7 +135,14 @@
                             </td>
                             <td><?php echo $user['country']; ?></td>
                             <td><?php echo $user['is_active'] == 1 ? '<i class="bx bxs-check-circle" style="color: green;"></i>' : '<i class="bx bxs-x-circle" style="color: red;"></i>'; ?></td>
-                            <td><?php echo $user['role']; ?></td>
+                            <td><?php 
+                                if ($user['role'] == 0 ) {
+                                    echo '<span style="color: var(--purple); font-weight: bold;">Assistante</span>';
+                                } else {
+                                    echo '<span style="color: gray; font-weight: bold;">Administrateur</span>';
+                                }
+                            
+                             ?></td>
                             <td>
                                 <i class='bx bxs-edit' style="font-size: 1.5rem; color: var(--purple);" title="Edit"></i>
                                 <i class='bx bxs-trash' style="font-size: 1.5rem; color: var(--secondary);" title="Delete"></i>

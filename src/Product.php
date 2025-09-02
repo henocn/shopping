@@ -18,7 +18,22 @@ class Product
      *Methodes get en private pour l'instant
      */
 
-    private function getProdiuts($id) {}
+    public function GetLastProductId()
+    {
+        $sql = "SELECT MAX(id) AS product_id FROM products";
+        $req = $this->bd->prepare($sql);
+        $req->execute();
+        $result = $req->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['product_id'] : null;
+    }
+
+
+    public function getProducts($id)
+    {
+        $stmt = $this->bd->prepare("SELECT * FROM products WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     /**
      * Fonctions de creation des differents éléments liée au produit
@@ -60,9 +75,9 @@ class Product
 
     public function createPacks($data)
     {
-        $req = $this->bd->prepare("INSERT INTO product_packs (product_id, pack_order, titre, description, quantite, image, price_reduction, price_normal, is_active) VALUES (:product_id, :pack_order, :titre, :description, :quantite, :image, :price_reduction, :price_normal, :is_active)");
+        $req = $this->bd->prepare("INSERT INTO product_packs (product_id, titre, description, quantite, price_reduction, price_normal) VALUES (:product_id, :titre, :description, :quantite, :price_reduction, :price_normal)");
         $req->execute([
-            'product_id' => $data['id'],
+            'product_id' => $data['product_id'],
             'titre' => $data['titre'],
             'description' => $data['description'],
             'quantity' => $data['quantity'],
@@ -80,5 +95,67 @@ class Product
             'image' => $data['image'],
             'description' => $data['description'],
         ]);
+    }
+
+
+    public function getAllProducts()
+    {
+        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`price`, `products`.`quantity`, `products`.`image`, `products`.`description`, `products`.`status`
+        FROM `products` ORDER BY id DESC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    public function updateProductStatus($productId, $newStatus)
+    {
+        $req = $this->bd->prepare("UPDATE products SET status = :status WHERE id = :id");
+        $req->execute([
+            'status' => $newStatus,
+            'id' => $productId
+        ]);
+    }
+
+    public function deleteProduct($productId) {
+        try {
+            $this->bd->beginTransaction();
+
+            // Supprimer d'abord les enregistrements liés
+            $tables = ['product_caracteristics', 'product_video', 'product_packs'];
+            foreach ($tables as $table) {
+                $stmt = $this->bd->prepare("DELETE FROM $table WHERE product_id = :id");
+                $stmt->execute(['id' => $productId]);
+            }
+
+            // Supprimer le produit
+            $stmt = $this->bd->prepare("DELETE FROM products WHERE id = :id");
+            $stmt->execute(['id' => $productId]);
+
+            $this->bd->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->bd->rollBack();
+            throw $e;
+        }
+    }
+
+    public function getProductCharacteristics($productId) {
+        $stmt = $this->bd->prepare("
+            SELECT * FROM product_caracteristics 
+            WHERE product_id = :id 
+            ORDER BY id ASC
+        ");
+        $stmt->execute(['id' => $productId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getProductVideos($productId) {
+        $stmt = $this->bd->prepare("
+            SELECT * FROM product_video 
+            WHERE product_id = :id 
+            ORDER BY id ASC
+        ");
+        $stmt->execute(['id' => $productId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

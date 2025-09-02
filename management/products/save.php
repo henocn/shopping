@@ -1,149 +1,174 @@
 <?php
 session_start();
-
 require("../../vendor/autoload.php");
 
 use src\Connectbd;
 use src\Product;
 
 $cnx = Connectbd::getConnection();
+$manager = new Product($cnx);
 
+if (!isset($_POST['valider'])) {
+    header('Location: index.php?error=' . urlencode("Action non spécifiée"));
+    exit;
+}
 
-if (isset($_POST['valider'])) {
-    $connect = strtolower(htmlspecialchars($_POST['valider']));
-    $manager = new Product($cnx);
+$action = $_POST['valider'];
 
-    var_dump($connect);
+switch($action) {
+    case 'upstatus':
+        if (isset($_POST['product_id'], $_POST['new_status']) && 
+            is_numeric($_POST['product_id']) && 
+            in_array($_POST['new_status'], [0, 1])) {
+            
+            try {
+                $manager->updateProductStatus($_POST['product_id'], $_POST['new_status']);
+                $message = "Statut du produit mis à jour avec succès !";
+                header('Location: index.php?message=' . urlencode($message));
+                exit;
+            } catch (Exception $e) {
+                $message = "Erreur lors de la mise à jour du statut : " . $e->getMessage();
+                header('Location: index.php?error=' . urlencode($message));
+                exit;
+            }
+        }
+        break;
+        
+    case 'delete':
+        if (isset($_POST['product_id']) && is_numeric($_POST['product_id'])) {
+            try {
+                $manager->deleteProduct($_POST['product_id']);
+                $message = "Produit supprimé avec succès !";
+                header('Location: index.php?message=' . urlencode($message));
+                exit;
+            } catch (Exception $e) {
+                $message = "Erreur lors de la suppression : " . $e->getMessage();
+                header('Location: index.php?error=' . urlencode($message));
+                exit;
+            }
+        }
+        break;
+        
+    case 'Enregistrer le produit':
+        // Création des dossiers d'upload si nécessaire
+        $uploadDirs = [
+            'main' => __DIR__ . '/../../uploads/main/',
+            'carousel' => __DIR__ . '/../../uploads/carousel/',
+            'characteristics' => __DIR__ . '/../../uploads/characteristics/',
+            'videos' => __DIR__ . '/../../uploads/videos/'
+        ];
 
-    switch ($connect) {
+        foreach ($uploadDirs as $dir) {
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
+        }
 
-        case 'upload':
-            if (
-                isset(
-                    $_FILES['image'],
-                    $_POST['name'],
-                    $_POST['price'],
-                    $_POST['quantity'],
-                    $_POST['description'],
-                    $_POST['status']
-                ) &&
-                $_FILES['image']['error'] === UPLOAD_ERR_OK &&
-                is_numeric($_POST['price']) &&
-                is_numeric($_POST['quantity'])
-            ) {
-                $data = [
-                    'name' => htmlspecialchars($_POST['name']),
-                    'price' => (int)$_POST['price'],
-                    'quantity' => (int)$_POST['quantity'],
-                    'image' => basename($_FILES['image']['name']),
-                    'description' => htmlspecialchars($_POST['description']),
-                    'status' => (int)$_POST['status'],
-                ];
+        try {
+            // Traitement de l'image principale
+            $mainImageName = '';
+            if (isset($_FILES['mainImage']) && $_FILES['mainImage']['error'] === UPLOAD_ERR_OK) {
+                $mainImageName = time() . '_' . basename($_FILES['mainImage']['name']);
+                move_uploaded_file(
+                    $_FILES['mainImage']['tmp_name'],
+                    $uploadDirs['main'] . $mainImageName
+                );
+            }
 
-                $uploadDir = __DIR__ . '/../../uploads/main/';
-                $carouselDir = __DIR__ . '/../../uploads/carousel/';
-
-                if (!file_exists($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-                if (!file_exists($carouselDir)) {
-                    mkdir($carouselDir, 0755, true);
-                }
-
-                $filePath = $uploadDir . basename($_FILES['image']['name']);
-
-                for ($i = 1; $i <= 5; $i++) {
-                    $fieldName = 'carousel' . $i;
-                    if (isset($_FILES[$fieldName]) && $_FILES[$fieldName]['error'] === UPLOAD_ERR_OK) {
-                        $data[$fieldName] = basename($_FILES[$fieldName]['name']);
-                    } else {
-                        $data[$fieldName] = '';
-                    }
-                }
-
-                if (move_uploaded_file($_FILES['image']['tmp_name'], $filePath)) {
-
-                    for ($i = 1; $i <= 5; $i++) {
-                        $fieldName = 'carousel' . $i;
-                        if (isset($_FILES[$fieldName]) && $_FILES[$fieldName]['error'] === UPLOAD_ERR_OK) {
-                            $carouselPath = $carouselDir . basename($_FILES[$fieldName]['name']);
-
-                            $counter = 1;
-                            $originalName = pathinfo($_FILES[$fieldName]['name'], PATHINFO_FILENAME);
-                            $extension = pathinfo($_FILES[$fieldName]['name'], PATHINFO_EXTENSION);
-
-                            while (file_exists($carouselPath)) {
-                                $newFilename = $originalName . '_' . $counter . '.' . $extension;
-                                $carouselPath = $carouselDir . $newFilename;
-                                $counter++;
-                            }
-
-                            if (move_uploaded_file($_FILES[$fieldName]['tmp_name'], $carouselPath)) {
-                                if ($counter > 1) {
-                                    $data[$fieldName] = basename($carouselPath);
-                                }
-                            } else {
-                                echo "Erreur lors du téléchargement de l'image carousel $i<br>";
-                            }
+            // Traitement des images du carousel
+            $carouselImages = ['', '', '', '', ''];
+            if (isset($_FILES['carouselImages'])) {
+                foreach ($_FILES['carouselImages']['tmp_name'] as $key => $tmp_name) {
+                    if (isset($_FILES['carouselImages']['error'][$key]) && 
+                        $_FILES['carouselImages']['error'][$key] === UPLOAD_ERR_OK && 
+                        $key < 5) {
+                        $fileName = time() . '_' . basename($_FILES['carouselImages']['name'][$key]);
+                        if (move_uploaded_file($tmp_name, $uploadDirs['carousel'] . $fileName)) {
+                            $carouselImages[$key] = $fileName;
                         }
                     }
-
-                    $manager->createProduct($data);
-                    $message = "Product add success !";
-                    header('Location:index.php?message=' . urlencode($message));
-                    exit;
-                } else {
-                    echo "Erreur lors du téléchargement de l'image principale. Vérifiez les permissions du répertoire.";
                 }
-            } else {
-                echo "Erreur: Données manquantes ou invalides";
             }
-            break;
-        case 'video':
-            if (isset($_POST['product_id']) && is_numeric($_POST['product_id'])) {
-                $productId = intval($_POST['product_id']);
-                $videoDir = __DIR__ . '/../../uploads/videos/';
-                
-                
-                if ($productId > 0) {
-                    /*if (!is_dir($videoDir)) {
-                        mkdir($videoDir, 0775, true);
-                    }*/
 
-                    for ($i = 1; $i <= 3; $i++) {
-                        if (isset($_FILES["video$i"]) && $_FILES["video$i"]['error'] === UPLOAD_ERR_OK) {
-                            $fileTmp  = $_FILES["video$i"]['tmp_name'];
-                            $fileName = basename($_FILES["video$i"]['name']);
-                            $videoPath = $videoDir . $fileName;
+            // Création du produit principal
+            $productData = [
+                'name' => htmlspecialchars($_POST['name']),
+                'price' => floatval($_POST['price']),
+                'quantity' => intval($_POST['quantity']),
+                'image' => $mainImageName,
+                'description' => $_POST['description'],
+                'status' => 1,  // Actif par défaut
+                'carousel1' => $carouselImages[0],
+                'carousel2' => $carouselImages[1],
+                'carousel3' => $carouselImages[2],
+                'carousel4' => $carouselImages[3],
+                'carousel5' => $carouselImages[4]
+            ];
 
-                            $description = trim($_POST["video{$i}_description"]);
+            $manager->createProduct($productData);
+            $productId = $manager->GetLastProductId();
 
-                            if (move_uploaded_file($fileTmp, $videoPath)) {
+            if ($productId) {
+                // Traitement des caractéristiques
+                if (isset($_POST['characteristic_title'])) {
+                    foreach ($_POST['characteristic_title'] as $key => $title) {
+                        if (!empty($title)) {
+                            $characteristicImage = '';
+                            if (isset($_FILES['characteristic_image']['tmp_name'][$key]) && 
+                                $_FILES['characteristic_image']['error'][$key] === UPLOAD_ERR_OK) {
+                                
+                                $characteristicImage = time() . '_' . basename($_FILES['characteristic_image']['name'][$key]);
+                                move_uploaded_file(
+                                    $_FILES['characteristic_image']['tmp_name'][$key],
+                                    $uploadDirs['characteristics'] . $characteristicImage
+                                );
+                            }
+
+                            $characteristicData = [
+                                'product_id' => $productId,
+                                'title' => htmlspecialchars($title),
+                                'image' => $characteristicImage,
+                                'description' => htmlspecialchars($_POST['characteristic_description'][$key] ?? '')
+                            ];
+
+                            $manager->createCaracteristics($characteristicData);
+                        }
+                    }
+                }
+
+                // Traitement des vidéos
+                if (isset($_FILES['video'])) {
+                    foreach ($_FILES['video']['tmp_name'] as $key => $tmp_name) {
+                        if ($_FILES['video']['error'][$key] === UPLOAD_ERR_OK) {
+                            $videoName = time() . '_' . basename($_FILES['video']['name'][$key]);
+                            if (move_uploaded_file($tmp_name, $uploadDirs['videos'] . $videoName)) {
                                 $videoData = [
                                     'product_id' => $productId,
-                                    'video_url'  => $fileName,
-                                    'texte'      => $description
+                                    'video_url' => $videoName,
+                                    'texte' => htmlspecialchars($_POST['video_text'][$key] ?? '')
                                 ];
-                                var_dump($videoData);
+                                
                                 $manager->createVideos($videoData);
-                            } else {
-                                echo "Erreur lors du téléchargement de la vidéo $i<br>";
                             }
                         }
                     }
-
-                    $message = "Vidéos ajoutées avec succès !";
-                    header('Location:index.php?message=' . urlencode($message));
-                    exit;
-                } else {
-                    echo "ID produit invalide<br>";
                 }
-            }
-            break;
 
-        default:
-            echo "On est pas bon";
-    }
-} else {
-    echo "Il manque le POST['connect']";
+                $message = "Produit ajouté avec succès !";
+                header('Location: index.php?message=' . urlencode($message));
+                exit;
+            } else {
+                throw new Exception("Erreur lors de la création du produit");
+            }
+
+        } catch (Exception $e) {
+            $message = "Erreur lors de l'ajout du produit : " . $e->getMessage();
+            header('Location: add.php?error=' . urlencode($message));
+            exit;
+        }
+        break;
+
+    default:
+        header('Location: index.php?error=' . urlencode("Action non reconnue"));
+        exit;
 }

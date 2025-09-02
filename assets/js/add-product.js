@@ -1,39 +1,37 @@
-function validateStep(step) {
-    const currentStepElement = document.querySelector(`#step${step}`);
-    const requiredFields = currentStepElement.querySelectorAll('[required]');
+function validateForm() {
+    const requiredFields = document.querySelectorAll('[required]');
     let isValid = true;
-    let errorMessage = '';
+    let errorMessages = [];
 
     requiredFields.forEach(field => {
-        if (!field.value) {
+        if (!field.value.trim()) {
             isValid = false;
-            errorMessage += `Le champ "${field.previousElementSibling.textContent.trim()}" est requis.\n`;
+            const label = field.closest('.mb-3').querySelector('.form-label').textContent.trim();
+            errorMessages.push(`Le champ "${label}" est obligatoire`);
         }
     });
 
     if (!isValid) {
-        alert(errorMessage);
+        alert(errorMessages.join('\n'));
     }
-    
+
     return isValid;
 }
 
-function nextStep(currentStep) {
-    if (!validateStep(currentStep)) {
-        return;
+function toggleSection(section) {
+    const sectionElement = document.getElementById(`${section}Section`);
+    const button = document.querySelector(`[onclick="toggleSection('${section}')"]`);
+    const isHidden = window.getComputedStyle(sectionElement).display === 'none';
+    
+    if (isHidden) {
+        document.querySelectorAll('[id$="Section"]').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.floating-btn').forEach(btn => btn.classList.remove('active'));
+        sectionElement.style.display = 'block';
+        button.classList.add('active');
+    } else {
+        sectionElement.style.display = 'none';
+        button.classList.remove('active');
     }
-    
-    document.querySelector(`#step${currentStep}`).classList.remove('active');
-    document.querySelector(`#step${currentStep + 1}`).classList.add('active');
-    
-    document.querySelectorAll('.step')[currentStep].classList.add('active');
-}
-
-function prevStep(currentStep) {
-    document.querySelector(`#step${currentStep}`).classList.remove('active');
-    document.querySelector(`#step${currentStep - 1}`).classList.add('active');
-    
-    document.querySelectorAll('.step')[currentStep - 1].classList.remove('active');
 }
 
 function addCharacteristic() {
@@ -64,8 +62,8 @@ function addVideo() {
     videoDiv.className = 'characteristic-item';
     videoDiv.innerHTML = `
         <div class="mb-3">
-            <label class="form-label">URL de la vidéo</label>
-            <input type="url" class="form-control" name="video_url[]" required>
+            <label class="form-label">Vidéo</label>
+            <input type="file" class="form-control" name="video[]" accept="video/*" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Texte</label>
@@ -80,13 +78,24 @@ function addVideo() {
 
 // Gestion du drag & drop des images
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialisation de TinyMCE
-    tinymce.init({
-        selector: '#description',
-        plugins: 'lists link image table code help wordcount',
-        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | indent outdent | bullist numlist | code',
-        height: 300
-    });
+    ClassicEditor
+        .create(document.querySelector('#description'), {
+            toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 'blockQuote', 'insertTable', 'undo', 'redo'],
+            heading: {
+                options: [
+                    { model: 'paragraph', title: 'Paragraphe', class: 'ck-heading_paragraph' },
+                    { model: 'heading1', view: 'h1', title: 'Titre 1', class: 'ck-heading_heading1' },
+                    { model: 'heading2', view: 'h2', title: 'Titre 2', class: 'ck-heading_heading2' }
+                ]
+            },
+            language: 'fr'
+        })
+        .then(editor => {
+            window.editor = editor;
+        })
+        .catch(error => {
+            console.error(error);
+        });
 
     // Gestion des zones de dépôt d'images
     ['mainImageUpload', 'carouselImageUpload'].forEach(id => {
@@ -119,13 +128,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    document.getElementById('productForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (validateForm()) {
-            // Ajoutez ici la logique pour envoyer les données au serveur
-            console.log('Formulaire soumis');
-        }
-    });
 });
 
 function validateForm() {
