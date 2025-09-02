@@ -17,8 +17,6 @@ $user = new User($cnx);
 $users = $user->getAllAssistantes();
 
 
-
-
 ?>
 <!DOCTYPE html>
 <html lang="fr">

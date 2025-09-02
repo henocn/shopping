@@ -103,7 +103,7 @@ class User{
 
     public function getAllAssistantes(): array
     {
-        $sql = $this->bd->prepare('SELECT `users`.`email`, `users`.`role`, `users`.`country`, `users`.`is_active`
+        $sql = $this->bd->prepare('SELECT `users`.`id`, `users`.`email`, `users`.`role`, `users`.`country`, `users`.`is_active`
             FROM `users` WHERE role = "assistante"');
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_ASSOC);
