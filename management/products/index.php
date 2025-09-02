@@ -137,14 +137,6 @@ $products = $product->getAllProducts();
             });
         });
 
-        // Afficher les messages ou erreurs
-        <?php if (isset($_GET['message'])): ?>
-        alert('<?php echo htmlspecialchars($_GET['message']); ?>');
-        <?php endif; ?>
-        
-        <?php if (isset($_GET['error'])): ?>
-        alert('Erreur : <?php echo htmlspecialchars($_GET['error']); ?>');
-        <?php endif; ?>
     </script>
 </body>
 
