@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.documentElement.style.setProperty("--primary-light", primaryLight);
             document.documentElement.style.setProperty("--surface", surface);
             document.documentElement.style.setProperty("--text", text);
+            console.log({ primary, primaryDark, primaryLight, surface, text });
         });
     });
 
