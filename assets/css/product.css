@@ -2,10 +2,11 @@
    VARIABLES & RESET
 ================================ */
 :root {
-  --primary: #FF9D23;      /* Orange clair */
-  --secondary: #6A1B9A;    /* Violet */
-  --neutral-dark: #2F2F2F; /* Gris foncé */
-  --neutral-light: #F5F5F5;/* Gris clair */
+  --primary: #FF9D23;
+  --primary-dark: #e88b15;
+  --primary-light: #FFD699;
+  --surface: #F5F5F5;
+  --text: #2F2F2F;
 }
 
 * {
@@ -16,8 +17,8 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: var(--neutral-light);
-  color: var(--neutral-dark);
+  background: var(--surface);
+  color: var(--text);
   line-height: 1.6;
 }
 
@@ -25,14 +26,14 @@ body {
    HEADER
 ================================ */
 header.navbar {
-  background: white;
-  border-bottom: 1px solid #ddd;
+  background: var(--primary);
+  border-bottom: 1px solid var(--primary-dark);
 }
 
 header .navbar-brand {
   font-weight: 700;
   font-size: 1.5rem;
-  color: var(--primary);
+  color: var(--text);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -47,52 +48,39 @@ header .navbar-brand img {
 ================================ */
 .product-hero {
   position: relative;
-  height: 75vh;
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: white;
+  height: 90vh;
+  width: 100%;
+  overflow: hidden;
 }
 
-.product-hero .overlay {
+.product-hero .hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-hero .hero-overlay {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: var(--primary-light);
 }
 
-.product-hero .hero-content {
-  position: relative;
-  z-index: 2;
-}
-
-.product-hero .product-title {
-  font-size: 2.8rem;
+.product-hero h1 {
+  font-size: 3rem;
   font-weight: 700;
   margin-bottom: 1rem;
 }
 
-.product-hero .product-price {
-  font-size: 1.5rem;
-  font-weight: 500;
-  margin-bottom: 1.5rem;
-  color: var(--primary);
-}
-
-.product-hero .btn-primary {
-  background: var(--primary);
-  border: none;
+.product-hero .hero-price {
+  font-size: 1.8rem;
   font-weight: 600;
-  padding: 0.8rem 1.6rem;
-  border-radius: 30px;
-  transition: all 0.3s ease;
-}
-
-.product-hero .btn-primary:hover {
-  background: #e88b15;
-  transform: scale(1.05);
+  color: var(--primary);
 }
 
 /* ================================
@@ -121,7 +109,8 @@ header .navbar-brand img {
    PRODUIT - DESCRIPTION
 ================================ */
 .product-info {
-  background: white;
+  background: var(--surface);
+  color: var(--text);
   border-radius: 12px;
   padding: 2rem;
   margin: 2rem auto;
@@ -146,7 +135,8 @@ header .navbar-brand img {
    CARACTÉRISTIQUES
 ================================ */
 .product-features {
-  background: var(--neutral-light);
+  background: var(--surface);
+  padding: 2rem;
 }
 
 .features-grid {
@@ -157,7 +147,8 @@ header .navbar-brand img {
 }
 
 .feature-card {
-  background: white;
+  background: var(--surface);
+  color: var(--text);
   padding: 1.5rem;
   border-radius: 12px;
   text-align: center;
@@ -193,8 +184,10 @@ header .navbar-brand img {
    FOOTER
 ================================ */
 footer.footer {
-  background: var(--neutral-dark);
-  color: white;
+  background: var(--primary-dark);
+  color: var(--primary-light);
+  text-align: center;
+  padding: 1rem;
 }
 
 footer.footer p {
