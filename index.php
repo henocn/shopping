@@ -205,6 +205,7 @@ $videos = $productManager->getProductVideos($productId);
     <!-- Scripts -->
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js"></script>
     <script src="assets/js/theme.js"></script>
     <script src="assets/js/product.js"></script>
 </body>
