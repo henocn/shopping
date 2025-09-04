@@ -41,11 +41,11 @@ $products = $product->getAllProducts();
             <table class="table align-middle mb-0">
                 <thead class="table-light">
                     <tr>
+                        <th>ID</th>
                         <th>Image</th>
                         <th>Nom</th>
                         <th>Prix</th>
                         <th>Quantité</th>
-                        <th>Description</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -54,17 +54,15 @@ $products = $product->getAllProducts();
                     foreach ($products as $product):
                     ?>
                         <tr class="<?php echo $product['status'] == 1 ? 'status-active' : 'status-inactive'; ?>">
+                            <td><?php echo $product['product_id']; ?></td>
                             <td>
                                 <img src="../../uploads/main/<?php echo $product['image']; ?>"
                                     alt="<?php echo $product['name']; ?>"
                                     class="product-image">
                             </td>
                             <td><?php echo $product['name']; ?></td>
-                            <td>$<?php echo number_format($product['price']); ?></td>
+                            <td><?php echo $product['price']; ?> FCFA</td>
                             <td><?php echo $product['quantity']; ?></td>
-                            <td>
-                                <?php echo mb_strimwidth($product['description'], 0, 50, "..."); ?>
-                            </td>
                             <td style="position:relative;">
                                 <button type="button" class="action-btn context-menu-btn" data-id="<?php echo $product['product_id']; ?>">
                                     <i class='bx bx-dots-vertical-rounded'></i>
@@ -77,7 +75,7 @@ $products = $product->getAllProducts();
                                         <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
                                         <input type="hidden" name="new_status" value="<?php echo $product['status'] == 1 ? 0 : 1; ?>">
                                         <input type="hidden" name="valider" value="upstatus">
-                                        <button type="submit" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:#ff9800; background:none; border:none; width:100%; text-align:left; cursor:pointer;">
+                                        <button type="submit" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; background:none; border:none; width:100%; text-align:left; cursor:pointer;">
                                             <i class='bx bx-power-off'></i> <?php echo $product['status'] == 1 ? 'Disable' : 'Enable'; ?> Product
                                         </button>
                                     </form>
