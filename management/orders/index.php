@@ -120,6 +120,20 @@ $orders = $order->GetOrders();
 
                                             <div class="row mb-3">
                                                 <div class="col-sm-4 fw-bold">
+                                                    <label for="status<?php echo $order['order_id']; ?>" class="form-label">Status</label>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <select class="form-select" id="status<?php echo $order['order_id']; ?>" name="status" required>
+                                                        <option value="processing" <?php echo $order['status'] == 'processing' ? 'selected' : ''; ?>>En cours</option>
+                                                        <option value="validated" <?php echo $order['status'] == 'validated' ? 'selected' : ''; ?>>Traitement</option>
+                                                        <option value="canceled" <?php echo $order['status'] == 'canceled' ? 'selected' : ''; ?>>Annulé</option>
+                                                        <option value="rejected" <?php echo $order['status'] == 'rejected' ? 'selected' : ''; ?>>Validé</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">
                                                     <label for="managerNote<?php echo $order['order_id']; ?>" class="form-label">Note Manager</label>
                                                 </div>
                                                 <div class="col-sm-8">
