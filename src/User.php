@@ -15,7 +15,7 @@ class User
     }
 
 
-    private function getOne($email)
+    private function getUserByEmail($email)
     {
         $sql = $this->bd->prepare('SELECT * FROM users WHERE email = :email');
         $sql->execute([
@@ -71,7 +71,7 @@ class User
 
     public function verify($data)
     {
-        $user = $this->getOne($data['email']);
+        $user = $this->getUserByEmail($data['email']);
         if ($user) {
             if (hash_equals($user['password'], crypt($data['password'], $user['password']))) {
                 $message = "Email et mot de passe correct";
@@ -101,8 +101,6 @@ class User
     }
 
 
-
-    // Ajout d'assistante.
     public function create(array $data)
     {
 
@@ -128,31 +126,10 @@ class User
     }
 
 
-
-    public function getAllAssistantes(): array
+    public function deleteUser($id): bool
     {
-        $sql = $this->bd->prepare('SELECT `users`.`id`, `users`.`email`, `users`.`role`, `users`.`country`, `users`.`is_active`
-            FROM `users` WHERE role = "assistante"');
-        $sql->execute();
-        return $sql->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function deleteAssistante($id): bool
-    {
-        $sql = $this->bd->prepare('DELETE FROM users WHERE id = :id AND role = "assistante"');
+        $sql = $this->bd->prepare('DELETE FROM users WHERE id = :id');
         return $sql->execute(['id' => $id]);
     }
 
-    public function getAssistanteById($id)
-    {
-        $sql = $this->bd->prepare('SELECT * FROM users WHERE id = :id AND role = "assistante"');
-        $sql->execute(['id' => $id]);
-        return $sql->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function updateAssistanteStatus($id, $status): bool
-    {
-        $sql = $this->bd->prepare('UPDATE users SET status = :status WHERE id = :id AND role = "assistante"');
-        return $sql->execute(['id' => $id, 'status' => $status]);
-    }
 }

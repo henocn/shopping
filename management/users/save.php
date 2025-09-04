@@ -64,7 +64,7 @@ if (isset($_POST['validate'])) {
             if (
                 !isset($_POST['email']) || empty(trim($_POST['email'])) ||
                 !isset($_POST['country']) || empty(trim($_POST['country'])) ||
-                !isset($_POST['role']) || empty(trim($_POST['role']))
+                !isset($_POST['role'])
             ) {
                 redirect('index.php', "Veuillez remplir tous les champs.");
             }
@@ -105,6 +105,22 @@ if (isset($_POST['validate'])) {
                 }
             } else {
                 redirect('index.php', "Données invalides pour la mise à jour du statut.");
+            }
+            break;
+
+        case 'delete':
+            if (
+                isset($_POST['user_id']) && is_numeric($_POST['user_id'])
+            ) {
+                $user_id = (int)$_POST['user_id'];
+
+                if ($manager->deleteUser($user_id)) {
+                    redirect('index.php', "Utilisateur supprimé avec succès !");
+                } else {
+                    redirect('index.php', "Erreur lors de la suppression de l'utilisateur.");
+                }
+            } else {
+                redirect('index.php', "Données invalides pour la suppression de l'utilisateur.");
             }
         default:
             echo "On est pas bon";

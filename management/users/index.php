@@ -59,7 +59,7 @@ $users = $user->getAllUsers();
                                 <label class="form-label" style="color: var(--purple);">
                                     <i class='bx bx-envelope'></i> Email
                                 </label>
-                                <input type="email" class="form-control" required name="email"
+                                <input type="email" class="form-control" name="email" required
                                     style="border-color: var(--purple); border-radius: 10px; padding-left: 35px;">
                             </div>
 
@@ -141,27 +141,19 @@ $users = $user->getAllUsers();
 
                                 ?></td>
                             <td class="d-flex justify-content-center gap-2">
-                                <form action="save.php" method="post" class="d-inline">
-                                    <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-                                    <input type="hidden" name="valider" value="edit">
-                                    <button type="submit" class="btn btn-link p-0" style="color: var(--purple);">
-                                        <i class='bx bxs-edit' style="font-size: 1.5rem;" title="Edit"></i>
-                                    </button>
-                                </form>
-
-                                <form action="save.php" method="post" class="d-inline">
-                                    <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-                                    <input type="hidden" name="valider" value="delete">
-                                    <button type="submit" class="btn btn-link p-0" style="color: var(--secondary);">
-                                        <i class='bx bxs-trash' style="font-size: 1.5rem;" title="Delete"></i>
-                                    </button>
-                                </form>
 
                                 <form action="save.php" method="post" class="d-inline">
                                     <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
                                     <input type="hidden" name="validate" value="suspend">
                                     <button type="submit" class="btn btn-link p-0" style="color: var(--purple);">
                                         <i class='bx bxs-user-x' style="font-size: 1.5rem;" title="Suspend"></i>
+                                    </button>
+                                </form>
+                                <form action="save.php" method="post" class="d-inline">
+                                    <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                    <input type="hidden" name="validate" value="delete">
+                                    <button type="submit" class="btn btn-link p-0" style="color: var(--secondary);">
+                                        <i class='bx bxs-trash' style="font-size: 1.5rem;" title="Delete"></i>
                                     </button>
                                 </form>
                             </td>
