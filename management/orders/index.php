@@ -134,6 +134,20 @@ $orders = $order->GetOrders();
 
                                             <div class="row mb-3">
                                                 <div class="col-sm-4 fw-bold">
+                                                    <label for="action<?php echo $order['order_id']; ?>" class="form-label">Action</label>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <select class="form-select" id="action<?php echo $order['order_id']; ?>" name="action" required>
+                                                        <option value="">Sélectionner une action</option>
+                                                        <option value="remind" <?php echo isset($order['action']) && $order['action'] == 'remind' ? 'selected' : ''; ?>>Relancer</option>
+                                                        <option value="call" <?php echo isset($order['action']) && $order['action'] == 'call' ? 'selected' : ''; ?>>Appeler</option>
+                                                        <option value="unreachable" <?php echo isset($order['action']) && $order['action'] == 'unreachable' ? 'selected' : ''; ?>>Injoignable</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">
                                                     <label for="managerNote<?php echo $order['order_id']; ?>" class="form-label">Note Manager</label>
                                                 </div>
                                                 <div class="col-sm-8">
