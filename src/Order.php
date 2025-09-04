@@ -60,6 +60,29 @@ class Order
     }
 
 
+    public function getOrdersByCountry($country)
+    {
+        $sql = "
+        SELECT 
+            orders.id AS order_id,
+            orders.*,
+            products.name AS product_name,
+            products.image AS product_image,
+            products.price AS unit_price,
+            product_packs.titre as pack_name
+        FROM orders
+        INNER JOIN products ON products.id = orders.product_id
+        LEFT JOIN product_packs ON product_packs.id = orders.pack_id
+        WHERE orders.client_country = :country
+        ORDER BY orders.id DESC
+    ";
+
+        $req = $this->bd->prepare($sql);
+        $req->execute(['country' => $country]);
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
     public function GetOrderByCountry($country)
     {
         $sql = "
