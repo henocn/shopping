@@ -14,6 +14,24 @@ class Order
         $this->bd = $bd;
     }
 
+    public function getTotalOrders()
+    {
+        $query = "SELECT COUNT(*) as total FROM orders";
+        $stmt = $this->bd->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['total'];
+    }
+
+    public function getOrdersByStatus($status)
+    {
+        $query = "SELECT COUNT(*) as total FROM orders WHERE status = :status";
+        $stmt = $this->bd->prepare($query);
+        $stmt->execute(['status' => $status]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['total'];
+    }
+
 
     public function CreateOrder($data)
     {
@@ -44,9 +62,10 @@ class Order
         SELECT 
             orders.id AS order_id,
             orders.*,
-            products.name,
-            products.price AS prix_unitaire,
-            product_packs.titre
+            products.name AS product_name,
+            products.image AS product_image,
+            products.price AS unit_price,
+            product_packs.titre as pack_name
         FROM orders
         INNER JOIN products ON products.id = orders.product_id
         LEFT JOIN product_packs ON product_packs.id = orders.pack_id
@@ -55,6 +74,29 @@ class Order
 
         $req = $this->bd->prepare($sql);
         $req->execute();
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    public function getOrdersByCountry($country)
+    {
+        $sql = "
+        SELECT 
+            orders.id AS order_id,
+            orders.*,
+            products.name AS product_name,
+            products.image AS product_image,
+            products.price AS unit_price,
+            product_packs.titre as pack_name
+        FROM orders
+        INNER JOIN products ON products.id = orders.product_id
+        LEFT JOIN product_packs ON product_packs.id = orders.pack_id
+        WHERE orders.client_country = :country
+        ORDER BY orders.id DESC
+    ";
+
+        $req = $this->bd->prepare($sql);
+        $req->execute(['country' => $country]);
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 

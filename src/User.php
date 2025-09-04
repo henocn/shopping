@@ -1,11 +1,13 @@
 <?php
+
 namespace src;
 
 use PDO;
 use PDOException;
 
-class User{
-      private $bd;
+class User
+{
+    private $bd;
 
     public function __construct(PDO $bd)
     {
@@ -13,18 +15,57 @@ class User{
     }
 
 
-    private function getOne($email)
+    private function getUserByEmail($email)
     {
         $sql = $this->bd->prepare('SELECT * FROM users WHERE email = :email');
         $sql->execute([
             'email' => $email
         ]);
-
         $user = $sql->fetch(PDO::FETCH_ASSOC);
         return $user;
     }
 
-    private function email_exists($email): bool
+    public function getTotalUsers()
+    {
+        $query = "SELECT COUNT(*) as total FROM users";
+        $stmt = $this->bd->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['total'];
+    }
+
+    public function getActiveUsers()
+    {
+        $query = "SELECT COUNT(*) as total FROM users WHERE is_active = 1";
+        $stmt = $this->bd->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['total'];
+    }
+
+
+
+    private function getUserById($id)
+    {
+        $sql = $this->bd->prepare('SELECT * FROM users WHERE id = :id');
+        $sql->execute([
+            'id' => $id
+        ]);
+        $user = $sql->fetch(PDO::FETCH_ASSOC);
+        return $user;
+    }
+
+
+    public function getAllUsers(): array
+    {
+        $sql = $this->bd->prepare('SELECT `users`.`id`, `users`.`email`, `users`.`role`, `users`.`country`, `users`.`is_active`
+            FROM `users`');
+        $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    public function email_exists($email): bool
     {
         $sql = $this->bd->prepare('SELECT COUNT(*) FROM users WHERE email = :email');
         $sql->execute([
@@ -34,10 +75,21 @@ class User{
         return $sql->fetchColumn() > 0;
     }
 
+    public function switchaccountStatus($id): bool
+    {
+        $user = $this->getUserById($id);
+        if ($user["is_active"] == 0) {
+            $sql = $this->bd->prepare('UPDATE users SET is_active = 1 WHERE id = :id');
+        } else {
+            $sql = $this->bd->prepare('UPDATE users SET is_active = 0 WHERE id = :id');
+        }
+        return $sql->execute(['id' => $id]);
+    }
+
 
     public function verify($data)
     {
-        $user = $this->getOne($data['email']);
+        $user = $this->getUserByEmail($data['email']);
         if ($user) {
             if (hash_equals($user['password'], crypt($data['password'], $user['password']))) {
                 $message = "Email et mot de passe correct";
@@ -67,65 +119,35 @@ class User{
     }
 
 
-
-    // Ajout d'assistante.
     public function create(array $data)
     {
-        if (!$this->email_exists($data['email'])) {
-            $options = [
-                'cost' => 12,
-            ];
-            $password = password_hash($data['password'], PASSWORD_BCRYPT, $options);
-            $numero = $data['numero'];
-            $country = $data['country'];
-            $role = "assistante";
-            $req = $this->bd->prepare("INSERT INTO users (username, numero, country, password, role) VALUES (:username, :numero, :country, :password, :role)");
 
-            if ($req->execute([
-                'username' => $data['username'],
-                'numero' => $numero,
-                'country' => $country,
-                'password' => $password,
-                'role' => $role
-            ])) {
-                return true;
-            } else {
-                error_log("Erreur lors de l'insertion : " . implode(" ", $req->errorInfo()));
-                return false;
-            }
+        $options = [
+            'cost' => 12,
+        ];
+        $password = password_hash($data['password'], PASSWORD_BCRYPT, $options);
+        $country = $data['country'];
+        $role = $data['role'];
+        $req = $this->bd->prepare("INSERT INTO users (email, country, password, role) VALUES (:email, :country, :password, :role)");
+
+        if ($req->execute([
+            'email' => $data['email'],
+            'country' => $country,
+            'password' => $password,
+            'role' => $role
+        ])) {
+            return true;
         } else {
-            error_log("Le nom d'utilisateur existe déjà.");
+            error_log("Erreur lors de l'insertion : " . implode(" ", $req->errorInfo()));
             return false;
         }
     }
 
 
-
-    public function getAllAssistantes(): array
+    public function deleteUser($id): bool
     {
-        $sql = $this->bd->prepare('SELECT `users`.`id`, `users`.`email`, `users`.`role`, `users`.`country`, `users`.`is_active`
-            FROM `users` WHERE role = "assistante"');
-        $sql->execute();
-        return $sql->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function deleteAssistante($id): bool
-    {
-        $sql = $this->bd->prepare('DELETE FROM users WHERE id = :id AND role = "assistante"');
+        $sql = $this->bd->prepare('DELETE FROM users WHERE id = :id');
         return $sql->execute(['id' => $id]);
-    }
-
-    public function getAssistanteById($id)
-    {
-        $sql = $this->bd->prepare('SELECT * FROM users WHERE id = :id AND role = "assistante"');
-        $sql->execute(['id' => $id]);
-        return $sql->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function updateAssistanteStatus($id, $status): bool
-    {
-        $sql = $this->bd->prepare('UPDATE users SET status = :status WHERE id = :id AND role = "assistante"');
-        return $sql->execute(['id' => $id, 'status' => $status]);
     }
 
 }

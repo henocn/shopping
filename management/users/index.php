@@ -1,8 +1,8 @@
 <?php
 //session_start();
 //if (!isset($_SESSION['email'])) {
-    //header('Location: login.php');
-    //exit();
+//header('Location: login.php');
+//exit();
 //}
 
 require '../../vendor/autoload.php';
@@ -14,7 +14,7 @@ $cnx = Connectbd::getConnection();
 
 $user = new User($cnx);
 
-$users = $user->getAllAssistantes();
+$users = $user->getAllUsers();
 
 
 ?>
@@ -54,21 +54,20 @@ $users = $user->getAllAssistantes();
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="addUserForm">
+                        <form action="save.php" method="POST">
                             <div class="mb-3 position-relative">
                                 <label class="form-label" style="color: var(--purple);">
                                     <i class='bx bx-envelope'></i> Email
                                 </label>
-                                <input type="email" class="form-control" required 
-                                       style="border-color: var(--purple); border-radius: 10px; padding-left: 35px;">
+                                <input type="email" class="form-control" name="email" required
+                                    style="border-color: var(--purple); border-radius: 10px; padding-left: 35px;">
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label" style="color: var(--purple);">
                                     <i class='bx bx-flag'></i> Pays
                                 </label>
-                                <select class="form-select" required style="border-color: var(--purple); border-radius: 10px;">
-                                    <!-- plutot les emogie des drapeau puisque dans le front je ne vois pas le rendu des drapeaux -->
+                                <select class="form-select" name="country" required style="border-color: var(--purple); border-radius: 10px;">
                                     <option value="BJ">🇧🇯 Bénin</option>
                                     <option value="BF">🇧🇫 Burkina Faso</option>
                                     <option value="CV">🇨🇻 Cap-Vert</option>
@@ -91,17 +90,17 @@ $users = $user->getAllAssistantes();
                                 <label class="form-label" style="color: var(--purple);">
                                     <i class='bx bx-user-check'></i> Rôle
                                 </label>
-                                <select class="form-select" required style="border-color: var(--purple); border-radius: 10px;">
-                                    <option value="admin">Admin</option>
-                                    <option value="manager">Manager</option>
+                                <select class="form-select" name="role" required style="border-color: var(--purple); border-radius: 10px;">
+                                    <option value="0">Manager</option>
+                                    <option value="1">Admin</option>
                                 </select>
                             </div>
 
                             <div class="modal-footer border-0">
-                                <button type="button" class="btn" data-bs-dismiss="modal" 
-                                        style="background: var(--paper); color: var(--purple);">Annuler</button>
-                                <button type="submit" class="btn" 
-                                        style="background: var(--purple); color: var(--paper);">Enregistrer</button>
+                                <button type="button" class="btn" data-bs-dismiss="modal"
+                                    style="background: var(--paper); color: var(--purple);">Annuler</button>
+                                <input type="submit" class="btn" name="validate" value="Ajouter"
+                                    style="background: var(--purple); color: var(--paper);" />
                             </div>
                         </form>
                     </div>
@@ -113,40 +112,51 @@ $users = $user->getAllAssistantes();
             <table class="table align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Id</th>
-                        <th>Email</th>
-                        <th>Pays</th>
-                        <th>Status</th>
-                        <th>Role</th>
-                        <th>Actions</th>
+                        <th class="text-center" style="width: 5%;">Id</th>
+                        <th style="width: 35%;">Email</th>
+                        <th style="width: 15%;">Pays</th>
+                        <th class="text-center" style="width: 10%;">Status</th>
+                        <th style="width: 15%;">Role</th>
+                        <th class="text-center" style="width: 20%;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    // Simulation des données de la base de données
-                    
                     foreach ($users as $user):
                     ?>
                         <tr class="<?php echo $user['is_active'] == 1 ? 'status-active' : 'status-inactive'; ?>">
-                            <td><?php echo $user['id']; ?></td>
-                            <td style="display: flex; align-items: center;">
-                                <i class='bx bxs-user-circle' style="font-size: 2rem; color: var(--purple); margin-right: 0.5rem;"></i>
-                                <a href="mailto:<?php echo $user['email']; ?>" style="text-decoration: none; color: var(--purple);"><?php echo $user['email']; ?></a>
+                            <td class="text-center"><?php echo $user['id']; ?></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class='bx bxs-user-circle me-2' style="font-size: 2rem; color: var(--purple);"></i>
+                                    <a href="mailto:<?php echo $user['email']; ?>" class="text-decoration-none" style="color: var(--purple);"><?php echo $user['email']; ?></a>
+                                </div>
                             </td>
                             <td><?php echo $user['country']; ?></td>
-                            <td><?php echo $user['is_active'] == 1 ? '<i class="bx bxs-check-circle" style="color: green;"></i>' : '<i class="bx bxs-x-circle" style="color: red;"></i>'; ?></td>
-                            <td><?php 
-                                if ($user['role'] == 0 ) {
-                                    echo '<span style="color: var(--purple); font-weight: bold;">Assistante</span>';
+                            <td class="text-center"><?php echo $user['is_active'] == 1 ? '<i class="bx bxs-check-circle" style="color: green;"></i>' : '<i class="bx bxs-x-circle" style="color: red;"></i>'; ?></td>
+                            <td><?php
+                                if ($user['role'] == 0) {
+                                    echo '<span style="color: var(--purple); font-weight: bold;">Secondaire</span>';
                                 } else {
-                                    echo '<span style="color: gray; font-weight: bold;">Administrateur</span>';
+                                    echo '<span style="color: var(--purple); font-weight: bold;">Admin</span>';
                                 }
-                            
-                             ?></td>
-                            <td>
-                                <i class='bx bxs-edit' style="font-size: 1.5rem; color: var(--purple);" title="Edit"></i>
-                                <i class='bx bxs-trash' style="font-size: 1.5rem; color: var(--secondary);" title="Delete"></i>
-                                <i class='bx bxs-user-x' style="font-size: 1.5rem; color: var(--purple);" title="Suspend"></i>
+                                ?></td>
+                            <td class="text-center">
+
+                                <form action="save.php" method="post" class="d-inline">
+                                    <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                    <input type="hidden" name="validate" value="suspend">
+                                    <button type="submit" class="btn btn-link p-0" style="color: var(--purple);">
+                                        <i class='bx bxs-user-x' style="font-size: 1.5rem;" title="Suspend"></i>
+                                    </button>
+                                </form>
+                                <form action="save.php" method="post" class="d-inline">
+                                    <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                    <input type="hidden" name="validate" value="delete">
+                                    <button type="submit" class="btn btn-link p-0" style="color: var(--secondary);">
+                                        <i class='bx bxs-trash' style="font-size: 1.5rem;" title="Delete"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -157,8 +167,7 @@ $users = $user->getAllAssistantes();
 
     <?php include '../../includes/footer.php'; ?>
 
-    <script src="../../../assets/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../assets/js/users.js"></script>
+    <script src="../../assets/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
