@@ -79,31 +79,57 @@ $orders = $order->GetOrders();
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <dl class="row mb-0">
-                                            <dt class="col-sm-4">Pays</dt>
-                                            <dd class="col-sm-8"><?php echo $order['client_country']; ?></dd>
+                                        <form id="orderForm<?php echo $order['order_id']; ?>" onsubmit="updateOrder(event, <?php echo $order['order_id']; ?>)">
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">Pays</div>
+                                                <div class="col-sm-8"><?php echo $order['client_country']; ?></div>
+                                            </div>
                                             
-                                            <dt class="col-sm-4">Adresse</dt>
-                                            <dd class="col-sm-8"><?php echo $order['client_adress']; ?></dd>
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">Adresse</div>
+                                                <div class="col-sm-8"><?php echo $order['client_adress']; ?></div>
+                                            </div>
                                             
-                                            <dt class="col-sm-4">Quantité</dt>
-                                            <dd class="col-sm-8"><?php echo $order['quantity']; ?></dd>
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">
+                                                    <label for="quantity<?php echo $order['order_id']; ?>" class="form-label">Quantité</label>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <input type="number" class="form-control" id="quantity<?php echo $order['order_id']; ?>" 
+                                                           name="quantity" value="<?php echo $order['quantity']; ?>" min="1" required>
+                                                </div>
+                                            </div>
                                             
-                                            <dt class="col-sm-4">Prix Unitaire</dt>
-                                            <dd class="col-sm-8"><?php echo $order['unit_price']; ?> €</dd>
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">Prix Unitaire</div>
+                                                <div class="col-sm-8"><?php echo $order['unit_price']; ?> €</div>
+                                            </div>
                                             
-                                            <dt class="col-sm-4">Pack</dt>
-                                            <dd class="col-sm-8"><?php echo $order['pack_name']; ?></dd>
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">Pack</div>
+                                                <div class="col-sm-8"><?php echo $order['pack_name']; ?></div>
+                                            </div>
                                             
-                                            <dt class="col-sm-4">Note Client</dt>
-                                            <dd class="col-sm-8"><?php echo $order['client_note']; ?></dd>
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">Note Client</div>
+                                                <div class="col-sm-8"><?php echo $order['client_note']; ?></div>
+                                            </div>
                                             
-                                            <dt class="col-sm-4">Note Manager</dt>
-                                            <dd class="col-sm-8"><?php echo $order['manager_note']; ?></dd>
-                                        </dl>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">
+                                                    <label for="managerNote<?php echo $order['order_id']; ?>" class="form-label">Note Manager</label>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <textarea class="form-control" id="managerNote<?php echo $order['order_id']; ?>" 
+                                                              name="manager_note" rows="3"><?php echo $order['manager_note']; ?></textarea>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -138,6 +164,32 @@ $orders = $order->GetOrders();
                 ]
             });
         });
+
+        function updateOrder(event, orderId) {
+            event.preventDefault();
+            const form = document.getElementById(`orderForm${orderId}`);
+            const formData = new FormData(form);
+            formData.append('order_id', orderId);
+            formData.append('valider', 'update');
+
+            fetch('save.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Commande mise à jour avec succès');
+                    location.reload();
+                } else {
+                    alert('Erreur lors de la mise à jour de la commande');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Erreur lors de la mise à jour de la commande');
+            });
+        }
 
         function deleteorder(orderId) {
             if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
