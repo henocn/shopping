@@ -112,12 +112,12 @@ $users = $user->getAllUsers();
             <table class="table align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Id</th>
-                        <th>Email</th>
-                        <th>Pays</th>
-                        <th>Status</th>
-                        <th>Role</th>
-                        <th>Actions</th>
+                        <th class="text-center" style="width: 5%;">Id</th>
+                        <th style="width: 35%;">Email</th>
+                        <th style="width: 15%;">Pays</th>
+                        <th class="text-center" style="width: 10%;">Status</th>
+                        <th style="width: 15%;">Role</th>
+                        <th class="text-center" style="width: 20%;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -125,22 +125,23 @@ $users = $user->getAllUsers();
                     foreach ($users as $user):
                     ?>
                         <tr class="<?php echo $user['is_active'] == 1 ? 'status-active' : 'status-inactive'; ?>">
-                            <td><?php echo $user['id']; ?></td>
-                            <td style="display: flex; align-items: center;">
-                                <i class='bx bxs-user-circle' style="font-size: 2rem; color: var(--purple); margin-right: 0.5rem;"></i>
-                                <a href="mailto:<?php echo $user['email']; ?>" style="text-decoration: none; color: var(--purple);"><?php echo $user['email']; ?></a>
+                            <td class="text-center"><?php echo $user['id']; ?></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class='bx bxs-user-circle me-2' style="font-size: 2rem; color: var(--purple);"></i>
+                                    <a href="mailto:<?php echo $user['email']; ?>" class="text-decoration-none" style="color: var(--purple);"><?php echo $user['email']; ?></a>
+                                </div>
                             </td>
                             <td><?php echo $user['country']; ?></td>
-                            <td><?php echo $user['is_active'] == 1 ? '<i class="bx bxs-check-circle" style="color: green;"></i>' : '<i class="bx bxs-x-circle" style="color: red;"></i>'; ?></td>
+                            <td class="text-center"><?php echo $user['is_active'] == 1 ? '<i class="bx bxs-check-circle" style="color: green;"></i>' : '<i class="bx bxs-x-circle" style="color: red;"></i>'; ?></td>
                             <td><?php
                                 if ($user['role'] == 0) {
-                                    echo '<span style="color: var(--purple); font-weight: bold;">Assistante</span>';
+                                    echo '<span style="color: var(--purple); font-weight: bold;">Secondaire</span>';
                                 } else {
-                                    echo '<span style="color: gray; font-weight: bold;">Administrateur</span>';
+                                    echo '<span style="color: var(--purple); font-weight: bold;">Admin</span>';
                                 }
-
                                 ?></td>
-                            <td class="d-flex justify-content-center gap-2">
+                            <td class="text-center">
 
                                 <form action="save.php" method="post" class="d-inline">
                                     <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
