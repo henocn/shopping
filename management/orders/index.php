@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 require '../../vendor/autoload.php';
 
 use src\Connectbd;
@@ -9,8 +9,17 @@ $cnx = Connectbd::getConnection();
 
 $order = new Order($cnx);
 
-$orders = $order->GetOrders();
-//var_dump($orders);
+$_SESSION['role'] = 0;
+$_SESSION['country'] = '228';
+
+if (isset($_SESSION['role']) && isset($_SESSION['country'])) {
+    if ($_SESSION['role'] == 1) {
+        $orders = $order->GetOrders();
+    } else {
+        $orders = $order->GetOrderByCountry($_SESSION['country']);
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -82,7 +91,7 @@ $orders = $order->GetOrders();
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form id="orderForm<?php echo $order['order_id']; ?>" onsubmit="updateOrder(event, <?php echo $order['order_id']; ?>)">
+                                        <form action="save.php" method="POST" id="orderForm<?php echo $order['order_id']; ?>" onsubmit="updateOrder(event, <?php echo $order['order_id']; ?>)">
                                             <div class="row mb-2">
                                                 <div class="col-sm-4 fw-bold">Pays</div>
                                                 <div class="col-sm-8"><?php echo $order['client_country']; ?></div>
@@ -111,6 +120,14 @@ $orders = $order->GetOrders();
                                             <div class="row mb-2">
                                                 <div class="col-sm-4 fw-bold">Pack</div>
                                                 <div class="col-sm-8"><?php echo $order['pack_name']; ?></div>
+                                            </div>
+
+                                            <div class="row mb-2">
+                                                <div class="col-sm-4 fw-bold">Prix Total</div>
+                                                <div class="col-sm-8">
+                                                    <input type="number" class="form-control" id="total_price<?php echo $order['order_id']; ?>"
+                                                        name="total_price" value="<?php echo $order['total_price']; ?>" min="0" required>
+                                                </div>
                                             </div>
 
                                             <div class="row mb-2">
@@ -158,6 +175,8 @@ $orders = $order->GetOrders();
                                             </div>
 
                                             <div class="modal-footer">
+                                                <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
+                                                <input type="hidden" name="valider" value="update">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
                                                 <button type="submit" class="btn purple-bg magenta-color">Enregistrer</button>
                                             </div>

@@ -9,11 +9,13 @@ use src\Order;
 use src\Pack;
 
 $cnx = Connectbd::getConnection();
+
  
-if (isset($_POST['valider'])) {
+if (isset($_POST['valider']) || isset($_GET['valider'])) {
     $connect = strtolower(htmlspecialchars($_POST['valider']));
     $manager = new Product($cnx);
     $order = new Order($cnx);
+    
 
     switch ($connect) {
 
@@ -43,6 +45,30 @@ if (isset($_POST['valider'])) {
                   ];
                   $order->CreateOrder($data);
                   
+            }
+            break;
+        case 'update':
+            if(
+                  isset($_POST['order_id'])
+            ){
+
+                $data = [
+                    'id'           => htmlspecialchars($_POST['order_id']),
+                    'quantity'     => htmlspecialchars($_POST['quantity']),
+                    'total_price'  => htmlspecialchars($_POST['total_price']),
+                    'manager_note' => htmlspecialchars($_POST['manager_note']),
+                    'updated_at'    => date('Y-m-d H:i:s'),
+                    'status'       => htmlspecialchars($_POST['status']),
+                    'action'       => htmlspecialchars($_POST['action']),
+                ];
+
+
+                $order->updateOrder($data);
+                $message = urlencode("Le statut de la commande a été mis à jour avec succès.");
+                header("Location: index.php?message=".$message);
+            }else{
+               $message = urlencode("Données manquantes pour mettre à jour le statut de la commande.");
+               header("Location: index.php?message=".$message);
             }
             break;
 
