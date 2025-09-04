@@ -159,7 +159,7 @@ $users = $user->getAllUsers();
 
                                 <form action="save.php" method="post" class="d-inline">
                                     <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-                                    <input type="hidden" name="valider" value="suspend">
+                                    <input type="hidden" name="validate" value="suspend">
                                     <button type="submit" class="btn btn-link p-0" style="color: var(--purple);">
                                         <i class='bx bxs-user-x' style="font-size: 1.5rem;" title="Suspend"></i>
                                     </button>

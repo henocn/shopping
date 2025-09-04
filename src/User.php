@@ -21,7 +21,18 @@ class User
         $sql->execute([
             'email' => $email
         ]);
+        $user = $sql->fetch(PDO::FETCH_ASSOC);
+        return $user;
+    }
 
+
+
+    private function getUserById($id)
+    {
+        $sql = $this->bd->prepare('SELECT * FROM users WHERE id = :id');
+        $sql->execute([
+            'id' => $id
+        ]);
         $user = $sql->fetch(PDO::FETCH_ASSOC);
         return $user;
     }
@@ -46,10 +57,15 @@ class User
         return $sql->fetchColumn() > 0;
     }
 
-    public function suspendUser($id): bool
+    public function switchaccountStatus($id): bool
     {
-        $sql = $this->bd->prepare('UPDATE users SET is_active = :new_status WHERE id = :id');
-        return $sql->execute(['id' => $id, 'new_status' => 0]);
+        $user = $this->getUserById($id);
+        if ($user["is_active"] == 0) {
+            $sql = $this->bd->prepare('UPDATE users SET is_active = 1 WHERE id = :id');
+        } else {
+            $sql = $this->bd->prepare('UPDATE users SET is_active = 0 WHERE id = :id');
+        }
+        return $sql->execute(['id' => $id]);
     }
 
 

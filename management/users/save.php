@@ -58,7 +58,7 @@ if (isset($_POST['validate'])) {
                 echo "On ne peut pas se connecter";
             }
             break;
-            
+
 
         case 'ajouter':
             if (
@@ -93,15 +93,13 @@ if (isset($_POST['validate'])) {
             break;
 
         case 'suspend':
-            if (isset($_POST['user_id']) && is_numeric($_POST['user_id']) &&
-                isset($_POST['new_status']) && ($_POST['new_status'] == 0 || $_POST['new_status'] == 1)
+            if (
+                isset($_POST['user_id']) && is_numeric($_POST['user_id'])
             ) {
                 $user_id = (int)$_POST['user_id'];
-                $new_status = (int)$_POST['new_status'];
 
-                if ($manager->suspendUser($user_id)) {
-                    $message = $new_status == 1 ? "Utilisateur réactivé avec succès !" : "Utilisateur suspendu avec succès !";
-                    redirect('index.php', $message);
+                if ($manager->switchaccountStatus($user_id)) {
+                    redirect('index.php', "Opération réussie !");
                 } else {
                     redirect('index.php', "Erreur lors de la mise à jour du statut.");
                 }
