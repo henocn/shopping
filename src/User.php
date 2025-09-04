@@ -46,6 +46,12 @@ class User
         return $sql->fetchColumn() > 0;
     }
 
+    public function suspendUser($id): bool
+    {
+        $sql = $this->bd->prepare('UPDATE users SET is_active = :new_status WHERE id = :id');
+        return $sql->execute(['id' => $id, 'new_status' => 0]);
+    }
+
 
     public function verify($data)
     {

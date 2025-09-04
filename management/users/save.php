@@ -59,7 +59,7 @@ if (isset($_POST['validate'])) {
             }
             break;
             
-            
+
         case 'ajouter':
             if (
                 !isset($_POST['email']) || empty(trim($_POST['email'])) ||
@@ -92,6 +92,22 @@ if (isset($_POST['validate'])) {
             }
             break;
 
+        case 'suspend':
+            if (isset($_POST['user_id']) && is_numeric($_POST['user_id']) &&
+                isset($_POST['new_status']) && ($_POST['new_status'] == 0 || $_POST['new_status'] == 1)
+            ) {
+                $user_id = (int)$_POST['user_id'];
+                $new_status = (int)$_POST['new_status'];
+
+                if ($manager->suspendUser($user_id)) {
+                    $message = $new_status == 1 ? "Utilisateur réactivé avec succès !" : "Utilisateur suspendu avec succès !";
+                    redirect('index.php', $message);
+                } else {
+                    redirect('index.php', "Erreur lors de la mise à jour du statut.");
+                }
+            } else {
+                redirect('index.php', "Données invalides pour la mise à jour du statut.");
+            }
         default:
             echo "On est pas bon";
     }
