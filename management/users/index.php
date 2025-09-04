@@ -54,7 +54,7 @@ $users = $user->getAllUsers();
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="addUserForm" action="save.php" method="POST">
+                        <form action="save.php" method="POST">
                             <div class="mb-3 position-relative">
                                 <label class="form-label" style="color: var(--purple);">
                                     <i class='bx bx-envelope'></i> Email
@@ -91,15 +91,15 @@ $users = $user->getAllUsers();
                                     <i class='bx bx-user-check'></i> Rôle
                                 </label>
                                 <select class="form-select" name="role" required style="border-color: var(--purple); border-radius: 10px;">
-                                    <option value="1">Admin</option>
                                     <option value="0">Manager</option>
+                                    <option value="1">Admin</option>
                                 </select>
                             </div>
 
                             <div class="modal-footer border-0">
                                 <button type="button" class="btn" data-bs-dismiss="modal"
                                     style="background: var(--paper); color: var(--purple);">Annuler</button>
-                                <input type="submit" class="btn" name="valider" value="Ajouter"
+                                <input type="submit" class="btn" name="validate" value="Ajouter"
                                     style="background: var(--purple); color: var(--paper);" />
                             </div>
                         </form>
@@ -122,8 +122,6 @@ $users = $user->getAllUsers();
                 </thead>
                 <tbody>
                     <?php
-                    // Simulation des données de la base de données
-
                     foreach ($users as $user):
                     ?>
                         <tr class="<?php echo $user['is_active'] == 1 ? 'status-active' : 'status-inactive'; ?>">
@@ -156,8 +154,7 @@ $users = $user->getAllUsers();
 
     <?php include '../../includes/footer.php'; ?>
 
-    <script src="../../../assets/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../assets/js/users.js"></script>
+    <script src="../../assets/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

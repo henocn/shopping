@@ -13,7 +13,8 @@ $cnx = Connectbd::getConnection();
 
 
 // Fonction de redirection
-function redirect($url, $message = '') {
+function redirect($url, $message = '')
+{
     if (!empty($message)) {
         $url .= '?message=' . urlencode($message);
     }
@@ -23,41 +24,42 @@ function redirect($url, $message = '') {
 
 if (isset($_POST['validate'])) {
     $connect = strtolower(htmlspecialchars($_POST['validate']));
-    $manager= new User($cnx);
+    $manager = new User($cnx);
 
     switch ($connect) {
 
         case 'login':
-                if (
-                    isset($_POST['email']) && !empty($_POST['email']) &&
-                    isset($_POST['password']) && !empty($_POST['password'])
-                ) {
-                    $email = htmlspecialchars($_POST['email']);
-                    $password = htmlspecialchars($_POST['password']);
-    
-                    $data = [
-                        'email'  => $email,
-                        'password'  => $password
-                    ];
-    
-                    $result = $manager->verify($data);
-    
-                    if ($result["success"]) {
-                        $_SESSION['email'] = $data['email'];
-                        $_SESSION['role'] = $result['role'];
-                        $_SESSION['country'] = $result['country'];
-                        $_SESSION['is_active'] = $result['is_active'];
+            if (
+                isset($_POST['email']) && !empty($_POST['email']) &&
+                isset($_POST['password']) && !empty($_POST['password'])
+            ) {
+                $email = htmlspecialchars($_POST['email']);
+                $password = htmlspecialchars($_POST['password']);
 
-                        header('location:../dashboard.php?message='. $message);
-                    } else {
-                        $message = $result['message'];
-                        header('location:login.php?message=' . $message);
-                    }
+                $data = [
+                    'email'  => $email,
+                    'password'  => $password
+                ];
+
+                $result = $manager->verify($data);
+
+                if ($result["success"]) {
+                    $_SESSION['email'] = $data['email'];
+                    $_SESSION['role'] = $result['role'];
+                    $_SESSION['country'] = $result['country'];
+                    $_SESSION['is_active'] = $result['is_active'];
+
+                    header('location:../dashboard.php?message=' . $message);
                 } else {
-                    echo "On ne peut pas se connecter";
+                    $message = $result['message'];
+                    header('location:login.php?message=' . $message);
                 }
-                break;    
-        case 'Ajouter':
+            } else {
+                echo "On ne peut pas se connecter";
+            }
+            break;
+            
+        case 'ajouter':
             if (
                 !isset($_POST['email']) || empty(trim($_POST['email'])) ||
                 !isset($_POST['country']) || empty(trim($_POST['country'])) ||
@@ -67,7 +69,6 @@ if (isset($_POST['validate'])) {
             }
 
             $email = trim($_POST['email']);
-            $password = "manager123";
             $role = trim($_POST['role']);
             $country = trim($_POST['country']);
 
@@ -75,11 +76,10 @@ if (isset($_POST['validate'])) {
                 redirect('add.php', "L'email existe déjà. Veuillez en choisir un autre.");
             }
 
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
             $data = [
                 'email' => $email,
-                'password' => $hashedPassword,
+                'password' => "user1234",
                 'role' => $role,
                 'country' => $country
             ];
@@ -90,7 +90,7 @@ if (isset($_POST['validate'])) {
                 redirect('add.php', "Une erreur est survenue lors de l'inscription.");
             }
             break;
-            
+
         default:
             echo "On est pas bon";
     }

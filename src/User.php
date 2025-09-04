@@ -83,30 +83,24 @@ class User
     // Ajout d'assistante.
     public function create(array $data)
     {
-        if (!$this->email_exists($data['email'])) {
-            $options = [
-                'cost' => 12,
-            ];
-            $password = password_hash($data['password'], PASSWORD_BCRYPT, $options);
-            $numero = $data['numero'];
-            $country = $data['country'];
-            $role = "assistante";
-            $req = $this->bd->prepare("INSERT INTO users (username, numero, country, password, role) VALUES (:username, :numero, :country, :password, :role)");
 
-            if ($req->execute([
-                'username' => $data['username'],
-                'numero' => $numero,
-                'country' => $country,
-                'password' => $password,
-                'role' => $role
-            ])) {
-                return true;
-            } else {
-                error_log("Erreur lors de l'insertion : " . implode(" ", $req->errorInfo()));
-                return false;
-            }
+        $options = [
+            'cost' => 12,
+        ];
+        $password = password_hash($data['password'], PASSWORD_BCRYPT, $options);
+        $country = $data['country'];
+        $role = $data['role'];
+        $req = $this->bd->prepare("INSERT INTO users (email, country, password, role) VALUES (:email, :country, :password, :role)");
+
+        if ($req->execute([
+            'email' => $data['email'],
+            'country' => $country,
+            'password' => $password,
+            'role' => $role
+        ])) {
+            return true;
         } else {
-            error_log("Le nom d'utilisateur existe déjà.");
+            error_log("Erreur lors de l'insertion : " . implode(" ", $req->errorInfo()));
             return false;
         }
     }
