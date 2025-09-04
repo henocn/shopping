@@ -83,17 +83,17 @@ $orders = $order->GetOrders();
                                     </div>
                                     <div class="modal-body">
                                         <form id="orderForm<?php echo $order['order_id']; ?>" onsubmit="updateOrder(event, <?php echo $order['order_id']; ?>)">
-                                            <div class="row mb-3">
+                                            <div class="row mb-2">
                                                 <div class="col-sm-4 fw-bold">Pays</div>
                                                 <div class="col-sm-8"><?php echo $order['client_country']; ?></div>
                                             </div>
 
-                                            <div class="row mb-3">
+                                            <div class="row mb-2">
                                                 <div class="col-sm-4 fw-bold">Adresse</div>
                                                 <div class="col-sm-8"><?php echo $order['client_adress']; ?></div>
                                             </div>
 
-                                            <div class="row mb-3">
+                                            <div class="row mb-2">
                                                 <div class="col-sm-4 fw-bold">
                                                     <label for="quantity<?php echo $order['order_id']; ?>" class="form-label">Quantité</label>
                                                 </div>
@@ -103,22 +103,22 @@ $orders = $order->GetOrders();
                                                 </div>
                                             </div>
 
-                                            <div class="row mb-3">
+                                            <div class="row mb-2">
                                                 <div class="col-sm-4 fw-bold">Prix Unitaire</div>
                                                 <div class="col-sm-8"><?php echo $order['unit_price']; ?> FCFA</div>
                                             </div>
 
-                                            <div class="row mb-3">
+                                            <div class="row mb-2">
                                                 <div class="col-sm-4 fw-bold">Pack</div>
                                                 <div class="col-sm-8"><?php echo $order['pack_name']; ?></div>
                                             </div>
 
-                                            <div class="row mb-3">
+                                            <div class="row mb-2">
                                                 <div class="col-sm-4 fw-bold">Note Client</div>
                                                 <div class="col-sm-8"><?php echo $order['client_note']; ?></div>
                                             </div>
 
-                                            <div class="row mb-3">
+                                            <div class="row mb-2">
                                                 <div class="col-sm-4 fw-bold">
                                                     <label for="status<?php echo $order['order_id']; ?>" class="form-label">Status</label>
                                                 </div>
@@ -132,13 +132,14 @@ $orders = $order->GetOrders();
                                                 </div>
                                             </div>
 
-                                            <div class="row mb-3">
+                                            <div class="row mb-2">
                                                 <div class="col-sm-4 fw-bold">
                                                     <label for="action<?php echo $order['order_id']; ?>" class="form-label">Action</label>
                                                 </div>
                                                 <div class="col-sm-8">
                                                     <select class="form-select" id="action<?php echo $order['order_id']; ?>" name="action" required>
                                                         <option value="">Sélectionner une action</option>
+                                                        <option value="done" <?php echo isset($order['action']) && $order['action'] == 'done' ? 'selected' : ''; ?>>Terminé</option>
                                                         <option value="remind" <?php echo isset($order['action']) && $order['action'] == 'remind' ? 'selected' : ''; ?>>Relancer</option>
                                                         <option value="call" <?php echo isset($order['action']) && $order['action'] == 'call' ? 'selected' : ''; ?>>Appeler</option>
                                                         <option value="unreachable" <?php echo isset($order['action']) && $order['action'] == 'unreachable' ? 'selected' : ''; ?>>Injoignable</option>
@@ -146,7 +147,7 @@ $orders = $order->GetOrders();
                                                 </div>
                                             </div>
 
-                                            <div class="row mb-3">
+                                            <div class="row mb-2">
                                                 <div class="col-sm-4 fw-bold">
                                                     <label for="managerNote<?php echo $order['order_id']; ?>" class="form-label">Note Manager</label>
                                                 </div>
