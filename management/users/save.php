@@ -59,13 +59,14 @@ if (isset($_POST['validate'])) {
             }
             break;
             
+            
         case 'ajouter':
             if (
                 !isset($_POST['email']) || empty(trim($_POST['email'])) ||
                 !isset($_POST['country']) || empty(trim($_POST['country'])) ||
                 !isset($_POST['role']) || empty(trim($_POST['role']))
             ) {
-                redirect('add.php', "Veuillez remplir tous les champs.");
+                redirect('index.php', "Veuillez remplir tous les champs.");
             }
 
             $email = trim($_POST['email']);
@@ -73,7 +74,7 @@ if (isset($_POST['validate'])) {
             $country = trim($_POST['country']);
 
             if ($manager->email_exists($email)) {
-                redirect('add.php', "L'email existe déjà. Veuillez en choisir un autre.");
+                redirect('index.php', "L'email existe déjà. Veuillez en choisir un autre.");
             }
 
 
@@ -85,9 +86,9 @@ if (isset($_POST['validate'])) {
             ];
 
             if ($manager->create($data)) {
-                redirect('add.php', "Inscription réussie !");
+                redirect('index.php', "Inscription réussie !");
             } else {
-                redirect('add.php', "Une erreur est survenue lors de l'inscription.");
+                redirect('index.php', "Une erreur est survenue lors de l'inscription.");
             }
             break;
 
