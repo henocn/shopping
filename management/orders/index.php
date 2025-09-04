@@ -40,6 +40,7 @@ $orders = $order->GetOrders();
             <table id="ordersTable" class="table table-striped dt-responsive nowrap" style="width:100%">
                 <thead class="table-light">
                     <tr>
+                        <th>ID</th>
                         <th>Product</th>
                         <th>Client</th>
                         <th>Status</th>
@@ -49,17 +50,19 @@ $orders = $order->GetOrders();
                 <tbody>
                     <?php foreach ($orders as $order): ?>
                         <tr class="<?php echo $order['status'] == "processing" ? 'status-active' : 'status-inactive'; ?>">
-                            <td><?php echo $order['product_name']; ?></td>
+                            <td><?php echo $order['product_id']; ?></td>
+                            <td>
+                                <img src="../../uploads/main/<?php echo $order['product_image']; ?>"
+                                    alt="<?php echo $order['product_name']; ?>"
+                                    class="product-image"><?php echo $order['product_name']; ?>
+                            </td>
                             <td><?php echo $order['client_name']; ?></td>
                             <td><?php echo $order['status']; ?></td>
                             <td>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-info" type="button" data-bs-toggle="modal" 
-                                            data-bs-target="#detailsModal<?php echo $order['order_id']; ?>">
+                                    <button class="btn btn-sm btn-info" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#detailsModal<?php echo $order['order_id']; ?>">
                                         <i class='bx bx-info-circle'></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-primary" onclick="location.href='edit.php?id=<?php echo $order['order_id']; ?>'">
-                                        <i class='bx bx-edit-alt'></i>
                                     </button>
                                     <button class="btn btn-sm btn-danger" onclick="deleteorder(<?php echo $order['order_id']; ?>)">
                                         <i class='bx bx-trash'></i>
@@ -84,50 +87,50 @@ $orders = $order->GetOrders();
                                                 <div class="col-sm-4 fw-bold">Pays</div>
                                                 <div class="col-sm-8"><?php echo $order['client_country']; ?></div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <div class="col-sm-4 fw-bold">Adresse</div>
                                                 <div class="col-sm-8"><?php echo $order['client_adress']; ?></div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <div class="col-sm-4 fw-bold">
                                                     <label for="quantity<?php echo $order['order_id']; ?>" class="form-label">Quantité</label>
                                                 </div>
                                                 <div class="col-sm-8">
-                                                    <input type="number" class="form-control" id="quantity<?php echo $order['order_id']; ?>" 
-                                                           name="quantity" value="<?php echo $order['quantity']; ?>" min="1" required>
+                                                    <input type="number" class="form-control" id="quantity<?php echo $order['order_id']; ?>"
+                                                        name="quantity" value="<?php echo $order['quantity']; ?>" min="1" required>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <div class="col-sm-4 fw-bold">Prix Unitaire</div>
-                                                <div class="col-sm-8"><?php echo $order['unit_price']; ?> €</div>
+                                                <div class="col-sm-8"><?php echo $order['unit_price']; ?> FCFA</div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <div class="col-sm-4 fw-bold">Pack</div>
                                                 <div class="col-sm-8"><?php echo $order['pack_name']; ?></div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <div class="col-sm-4 fw-bold">Note Client</div>
                                                 <div class="col-sm-8"><?php echo $order['client_note']; ?></div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <div class="col-sm-4 fw-bold">
                                                     <label for="managerNote<?php echo $order['order_id']; ?>" class="form-label">Note Manager</label>
                                                 </div>
                                                 <div class="col-sm-8">
-                                                    <textarea class="form-control" id="managerNote<?php echo $order['order_id']; ?>" 
-                                                              name="manager_note" rows="3"><?php echo $order['manager_note']; ?></textarea>
+                                                    <textarea class="form-control" id="managerNote<?php echo $order['order_id']; ?>"
+                                                        name="manager_note" rows="3"><?php echo $order['manager_note']; ?></textarea>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                                                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                                                <button type="submit" class="btn purple-bg magenta-color">Enregistrer</button>
                                             </div>
                                         </form>
                                     </div>
@@ -149,7 +152,7 @@ $orders = $order->GetOrders();
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
-    
+
     <script>
         $(document).ready(function() {
             $('#ordersTable').DataTable({
@@ -158,10 +161,13 @@ $orders = $order->GetOrders();
                     url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/fr-FR.json'
                 },
                 pageLength: 10,
-                order: [[0, 'asc']],
-                columnDefs: [
-                    { targets: 'no-sort', orderable: false }
-                ]
+                order: [
+                    [0, 'asc']
+                ],
+                columnDefs: [{
+                    targets: 'no-sort',
+                    orderable: false
+                }]
             });
         });
 
@@ -173,22 +179,22 @@ $orders = $order->GetOrders();
             formData.append('valider', 'update');
 
             fetch('save.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Commande mise à jour avec succès');
-                    location.reload();
-                } else {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Commande mise à jour avec succès');
+                        location.reload();
+                    } else {
+                        alert('Erreur lors de la mise à jour de la commande');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                     alert('Erreur lors de la mise à jour de la commande');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Erreur lors de la mise à jour de la commande');
-            });
+                });
         }
 
         function deleteorder(orderId) {

@@ -45,6 +45,7 @@ class Order
             orders.id AS order_id,
             orders.*,
             products.name AS product_name,
+            products.image AS product_image,
             products.price AS unit_price,
             product_packs.titre as pack_name
         FROM orders
