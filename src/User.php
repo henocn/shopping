@@ -1,11 +1,13 @@
 <?php
+
 namespace src;
 
 use PDO;
 use PDOException;
 
-class User{
-      private $bd;
+class User
+{
+    private $bd;
 
     public function __construct(PDO $bd)
     {
@@ -24,7 +26,17 @@ class User{
         return $user;
     }
 
-    private function email_exists($email): bool
+
+    public function getAllUsers(): array
+    {
+        $sql = $this->bd->prepare('SELECT `users`.`id`, `users`.`email`, `users`.`role`, `users`.`country`, `users`.`is_active`
+            FROM `users`');
+        $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    public function email_exists($email): bool
     {
         $sql = $this->bd->prepare('SELECT COUNT(*) FROM users WHERE email = :email');
         $sql->execute([
@@ -127,5 +139,4 @@ class User{
         $sql = $this->bd->prepare('UPDATE users SET status = :status WHERE id = :id AND role = "assistante"');
         return $sql->execute(['id' => $id, 'status' => $status]);
     }
-
 }

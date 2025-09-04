@@ -57,47 +57,37 @@ if (isset($_POST['validate'])) {
                     echo "On ne peut pas se connecter";
                 }
                 break;    
-        case 'create':
+        case 'Ajouter':
             if (
-                !isset($_POST['username']) || empty(trim($_POST['username'])) ||
-                !isset($_POST['password']) || empty($_POST['password']) ||
-                !isset($_POST['numero']) || empty(trim($_POST['numero'])) ||
-                !isset($_POST['country']) || empty(trim($_POST['country']))
+                !isset($_POST['email']) || empty(trim($_POST['email'])) ||
+                !isset($_POST['country']) || empty(trim($_POST['country'])) ||
+                !isset($_POST['role']) || empty(trim($_POST['role']))
             ) {
-                redirect('../managements/add_personnel.php', "Veuillez remplir tous les champs.");
+                redirect('add.php', "Veuillez remplir tous les champs.");
             }
 
-            $username = trim($_POST['username']);
-            $password = $_POST['password'];
-            $numero = trim($_POST['numero']);
+            $email = trim($_POST['email']);
+            $password = "manager123";
+            $role = trim($_POST['role']);
             $country = trim($_POST['country']);
 
-            if (strlen($username) < 3 || strlen($username) > 20) {
-                redirect('../managements/add_personnel.php', "Le nom d'utilisateur doit contenir entre 3 et 20 caractères.");
+            if ($manager->email_exists($email)) {
+                redirect('add.php', "L'email existe déjà. Veuillez en choisir un autre.");
             }
 
-        // Validation du mot de passe avec une expression régulière
-            $passwordPattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/';
-            if (!preg_match($passwordPattern, $password)) {
-                redirect('../managements/add_personnel.php', "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.");
-            }
-
-        // Hachage du mot de passe pour plus de sécurité
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Préparation des données
             $data = [
-                'username' => $username,
+                'email' => $email,
                 'password' => $hashedPassword,
-                'numero' => $numero,
+                'role' => $role,
                 'country' => $country
             ];
 
-        // Insertion dans la base de données via le manager
             if ($manager->create($data)) {
-                redirect('login.php', "Inscription réussie !");
+                redirect('add.php', "Inscription réussie !");
             } else {
-                redirect('../managements/add_personnel.php', "Une erreur est survenue lors de l'inscription.");
+                redirect('add.php', "Une erreur est survenue lors de l'inscription.");
             }
             break;
             

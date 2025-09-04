@@ -1,8 +1,8 @@
 <?php
 //session_start();
 //if (!isset($_SESSION['email'])) {
-    //header('Location: login.php');
-    //exit();
+//header('Location: login.php');
+//exit();
 //}
 
 require '../../vendor/autoload.php';
@@ -14,7 +14,7 @@ $cnx = Connectbd::getConnection();
 
 $user = new User($cnx);
 
-$users = $user->getAllAssistantes();
+$users = $user->getAllUsers();
 
 
 ?>
@@ -54,21 +54,20 @@ $users = $user->getAllAssistantes();
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="addUserForm">
+                        <form id="addUserForm" action="save.php" method="POST">
                             <div class="mb-3 position-relative">
                                 <label class="form-label" style="color: var(--purple);">
                                     <i class='bx bx-envelope'></i> Email
                                 </label>
-                                <input type="email" class="form-control" required 
-                                       style="border-color: var(--purple); border-radius: 10px; padding-left: 35px;">
+                                <input type="email" class="form-control" required name="email"
+                                    style="border-color: var(--purple); border-radius: 10px; padding-left: 35px;">
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label" style="color: var(--purple);">
                                     <i class='bx bx-flag'></i> Pays
                                 </label>
-                                <select class="form-select" required style="border-color: var(--purple); border-radius: 10px;">
-                                    <!-- plutot les emogie des drapeau puisque dans le front je ne vois pas le rendu des drapeaux -->
+                                <select class="form-select" name="country" required style="border-color: var(--purple); border-radius: 10px;">
                                     <option value="BJ">🇧🇯 Bénin</option>
                                     <option value="BF">🇧🇫 Burkina Faso</option>
                                     <option value="CV">🇨🇻 Cap-Vert</option>
@@ -91,17 +90,17 @@ $users = $user->getAllAssistantes();
                                 <label class="form-label" style="color: var(--purple);">
                                     <i class='bx bx-user-check'></i> Rôle
                                 </label>
-                                <select class="form-select" required style="border-color: var(--purple); border-radius: 10px;">
-                                    <option value="admin">Admin</option>
-                                    <option value="manager">Manager</option>
+                                <select class="form-select" name="role" required style="border-color: var(--purple); border-radius: 10px;">
+                                    <option value="1">Admin</option>
+                                    <option value="0">Manager</option>
                                 </select>
                             </div>
 
                             <div class="modal-footer border-0">
-                                <button type="button" class="btn" data-bs-dismiss="modal" 
-                                        style="background: var(--paper); color: var(--purple);">Annuler</button>
-                                <button type="submit" class="btn" 
-                                        style="background: var(--purple); color: var(--paper);">Enregistrer</button>
+                                <button type="button" class="btn" data-bs-dismiss="modal"
+                                    style="background: var(--paper); color: var(--purple);">Annuler</button>
+                                <input type="submit" class="btn" name="valider" value="Ajouter"
+                                    style="background: var(--purple); color: var(--paper);" />
                             </div>
                         </form>
                     </div>
@@ -124,7 +123,7 @@ $users = $user->getAllAssistantes();
                 <tbody>
                     <?php
                     // Simulation des données de la base de données
-                    
+
                     foreach ($users as $user):
                     ?>
                         <tr class="<?php echo $user['is_active'] == 1 ? 'status-active' : 'status-inactive'; ?>">
@@ -135,14 +134,14 @@ $users = $user->getAllAssistantes();
                             </td>
                             <td><?php echo $user['country']; ?></td>
                             <td><?php echo $user['is_active'] == 1 ? '<i class="bx bxs-check-circle" style="color: green;"></i>' : '<i class="bx bxs-x-circle" style="color: red;"></i>'; ?></td>
-                            <td><?php 
-                                if ($user['role'] == 0 ) {
+                            <td><?php
+                                if ($user['role'] == 0) {
                                     echo '<span style="color: var(--purple); font-weight: bold;">Assistante</span>';
                                 } else {
                                     echo '<span style="color: gray; font-weight: bold;">Administrateur</span>';
                                 }
-                            
-                             ?></td>
+
+                                ?></td>
                             <td>
                                 <i class='bx bxs-edit' style="font-size: 1.5rem; color: var(--purple);" title="Edit"></i>
                                 <i class='bx bxs-trash' style="font-size: 1.5rem; color: var(--secondary);" title="Delete"></i>

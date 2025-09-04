@@ -15,7 +15,6 @@ document.querySelector('.bx-show').parentElement.addEventListener('click', funct
 // Gestion du formulaire
 document.getElementById('addUserForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    // Ajouter ici la logique pour sauvegarder l'utilisateur
     const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
     modal.hide();
 });
