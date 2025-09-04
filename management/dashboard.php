@@ -93,7 +93,7 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
                                     <p class="text-muted mb-2">Total Produits</p>
                                     <h3 class="mb-0"><?php echo $totalProducts; ?></h3>
                                 </div>
-                                <div class="stat-icon bg-purple-light">
+                                <div class="stat-icon bg-purple-light border-style-1">
                                     <i class='bx bx-package' style="color: var(--purple); font-size: 24px;"></i>
                                 </div>
                             </div>
@@ -108,7 +108,7 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
                                     <p class="text-muted mb-2">Produits Disponibles</p>
                                     <h3 class="mb-0"><?php echo $availableProducts; ?></h3>
                                 </div>
-                                <div class="stat-icon bg-success-light">
+                                <div class="stat-icon bg-success-light border-style-1">
                                     <i class='bx bx-check-circle' style="color: var(--bs-success); font-size: 24px;"></i>
                                 </div>
                             </div>
@@ -123,7 +123,7 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
                                     <p class="text-muted mb-2">Produits Inisponibles</p>
                                     <h3 class="mb-0"><?php echo $unavailableProducts; ?></h3>
                                 </div>
-                                <div class="stat-icon bg-danger-light">
+                                <div class="stat-icon bg-danger-light border-style-1">
                                     <i class='bx bx-x-circle' style="color: var(--bs-danger); font-size: 24px;"></i>
                                 </div>
                             </div>
@@ -138,8 +138,8 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
                                     <p class="text-muted mb-2">Total Commandes</p>
                                     <h3 class="mb-0"><?php echo $totalOrders; ?></h3>
                                 </div>
-                                <div class="stat-icon bg-warning-light">
-                                    <i class='bx bx-cart' style="color: var(--bs-warning); font-size: 24px;"></i>
+                                <div class="stat-icon bg-warning-light border-style-1">
+                                    <i class='bx bx-cart' style="color: var(--bs-blue); font-size: 24px;"></i>
                                 </div>
                             </div>
                         </div>
@@ -155,21 +155,21 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
                             <h5 class="card-title mb-4">État des Utilisateurs</h5>
                             <div class="d-flex justify-content-around text-center">
                                 <div>
-                                    <div class="stat-icon mx-auto bg-purple-light mb-2">
+                                    <div class="stat-icon mx-auto bg-purple-light mb-2 border-style-2">
                                         <i class='bx bx-user-check' style="color: var(--purple); font-size: 24px;"></i>
                                     </div>
                                     <h4><?php echo $activeUsers; ?></h4>
                                     <p class="text-muted">Actifs</p>
                                 </div>
                                 <div>
-                                    <div class="stat-icon mx-auto bg-danger-light mb-2">
+                                    <div class="stat-icon mx-auto bg-danger-light mb-2 border-style-2">
                                         <i class='bx bx-user-x' style="color: var(--bs-danger); font-size: 24px;"></i>
                                     </div>
                                     <h4><?php echo $inactiveUsers; ?></h4>
                                     <p class="text-muted">Inactifs</p>
                                 </div>
                                 <div>
-                                    <div class="stat-icon mx-auto bg-warning-light mb-2">
+                                    <div class="stat-icon mx-auto bg-warning-light mb-2 border-style-2">
                                         <i class='bx bx-group' style="color: var(--bs-warning); font-size: 24px;"></i>
                                     </div>
                                     <h4><?php echo $totalUsers; ?></h4>
@@ -186,21 +186,21 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
                             <h5 class="card-title mb-4">État des Commandes</h5>
                             <div class="d-flex justify-content-around text-center">
                                 <div>
-                                    <div class="stat-icon mx-auto bg-warning-light mb-2">
+                                    <div class="stat-icon mx-auto bg-warning-light mb-2 border-style-2">
                                         <i class='bx bx-time' style="color: var(--bs-warning); font-size: 24px;"></i>
                                     </div>
                                     <h4><?php echo $processingOrders; ?></h4>
                                     <p class="text-muted">En cours</p>
                                 </div>
                                 <div>
-                                    <div class="stat-icon mx-auto bg-success-light mb-2">
+                                    <div class="stat-icon mx-auto bg-success-light mb-2 border-style-2">
                                         <i class='bx bx-check-double' style="color: var(--bs-success); font-size: 24px;"></i>
                                     </div>
                                     <h4><?php echo $validatedOrders; ?></h4>
                                     <p class="text-muted">Validées</p>
                                 </div>
                                 <div>
-                                    <div class="stat-icon mx-auto bg-danger-light mb-2">
+                                    <div class="stat-icon mx-auto bg-danger-light mb-2 border-style-2">
                                         <i class='bx bx-x' style="color: var(--bs-danger); font-size: 24px;"></i>
                                     </div>
                                     <h4><?php echo $canceledOrders; ?></h4>
