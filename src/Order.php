@@ -44,9 +44,10 @@ class Order
         SELECT 
             orders.id AS order_id,
             orders.*,
-            products.name,
-            products.price AS prix_unitaire,
-            product_packs.titre
+            products.name AS product_name,
+            products.image AS product_image,
+            products.price AS unit_price,
+            product_packs.titre as pack_name
         FROM orders
         INNER JOIN products ON products.id = orders.product_id
         LEFT JOIN product_packs ON product_packs.id = orders.pack_id

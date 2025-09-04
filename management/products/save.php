@@ -104,7 +104,7 @@ switch ($action) {
                 'quantity' => intval($_POST['quantity']),
                 'image' => $mainImageName,
                 'description' => $_POST['description'],
-                'status' => 1,  // Actif par défaut
+                'status' => 1,
                 'carousel1' => $carouselImages[0],
                 'carousel2' => $carouselImages[1],
                 'carousel3' => $carouselImages[2],
