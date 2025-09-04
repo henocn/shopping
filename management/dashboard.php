@@ -87,7 +87,7 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
             <div class="row g-4 mb-4">
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="card stat-card shadow-sm">
-                        <div class="card-body">
+                        <div class="card-body paper-bg border-style-2">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
                                     <p class="text-muted mb-2">Total Produits</p>
@@ -102,7 +102,7 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
                 </div>
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="card stat-card shadow-sm">
-                        <div class="card-body">
+                        <div class="card-body paper-bg border-style-2">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
                                     <p class="text-muted mb-2">Produits Disponibles</p>
@@ -117,10 +117,10 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
                 </div>
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="card stat-card shadow-sm">
-                        <div class="card-body">
+                        <div class="card-body paper-bg border-style-2">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <p class="text-muted mb-2">Produits Non Disponibles</p>
+                                    <p class="text-muted mb-2">Produits Inisponibles</p>
                                     <h3 class="mb-0"><?php echo $unavailableProducts; ?></h3>
                                 </div>
                                 <div class="stat-icon bg-danger-light">
@@ -132,7 +132,7 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
                 </div>
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="card stat-card shadow-sm">
-                        <div class="card-body">
+                        <div class="card-body paper-bg border-style-2">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
                                     <p class="text-muted mb-2">Total Commandes</p>
@@ -151,7 +151,7 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
             <div class="row g-4">
                 <div class="col-12 col-lg-6">
                     <div class="card shadow-sm">
-                        <div class="card-body">
+                        <div class="card-body border-style-1">
                             <h5 class="card-title mb-4">État des Utilisateurs</h5>
                             <div class="d-flex justify-content-around text-center">
                                 <div>
@@ -182,7 +182,7 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
 
                 <div class="col-12 col-lg-6">
                     <div class="card shadow-sm">
-                        <div class="card-body">
+                        <div class="card-body border-style-1">
                             <h5 class="card-title mb-4">État des Commandes</h5>
                             <div class="d-flex justify-content-around text-center">
                                 <div>
