@@ -25,6 +25,24 @@ class User
         return $user;
     }
 
+    public function getTotalUsers()
+    {
+        $query = "SELECT COUNT(*) as total FROM users";
+        $stmt = $this->bd->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['total'];
+    }
+
+    public function getActiveUsers()
+    {
+        $query = "SELECT COUNT(*) as total FROM users WHERE is_active = 1";
+        $stmt = $this->bd->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['total'];
+    }
+
 
 
     private function getUserById($id)

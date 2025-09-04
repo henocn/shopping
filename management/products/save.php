@@ -177,7 +177,7 @@ switch ($action) {
         break;
     case 'Mettre a jour le produit':
         // Code pour mettre à jour un produit
-        if ( isset($_POST['productId'])) {
+        if (isset($_POST['productId'])) {
             $productId = $_POST['productId'];
 
             // Création des dossiers d'upload si nécessaire

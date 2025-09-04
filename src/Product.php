@@ -27,6 +27,24 @@ class Product
         return $result ? $result['product_id'] : null;
     }
 
+    public function getTotalProducts()
+    {
+        $query = "SELECT COUNT(*) as total FROM products";
+        $stmt = $this->bd->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['total'];
+    }
+
+    public function getAvailableProducts()
+    {
+        $query = "SELECT COUNT(*) as total FROM products WHERE status = 1";
+        $stmt = $this->bd->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['total'];
+    }
+
 
     public function getProducts($id)
     {
