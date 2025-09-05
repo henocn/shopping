@@ -1,3 +1,10 @@
+<?php
+require '../../utils/middleware.php';
+
+verifyConnection("/shopping/management/products/add.php");
+checkAdminAccess($_SESSION['role']);
+checkIsActive($_SESSION['user_id']);
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
