@@ -3,6 +3,8 @@ require '../vendor/autoload.php';
 require '../utils/verify.php';
 
 verify("/management/");
+checkAdminAccess($_SESSION['role']);
+checkIsActive($_SESSION['user_id']);
 
 use src\Connectbd;
 use src\Product;

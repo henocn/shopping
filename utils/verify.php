@@ -1,8 +1,34 @@
 <?php
 
-function verify($redirection){
+use src\User;
+use src\Connectbd;
+
+function verify($redirection)
+{
     session_start();
     if (empty($_SESSION)) {
-        header('location: /shopping/management/users/login.php?redirect='. $redirection);
+        header('location: /shopping/management/users/login.php?redirect=' . $redirection);
+    }
+}
+
+function checkAdminAccess($role)
+{
+    if ($role !== 1) {
+        header('HTTP/1.0 403 Forbidden');
+        exit();
+    }
+}
+
+
+function checkIsActive($id)
+{
+    $cnx = Connectbd::getConnection();
+    $manager = new User($cnx);
+    $user = $manager->getUserById($id);
+    if ($user) {
+        if ($user['is_active'] == 0) {
+            header('HTTP/1.0 401 Unauthorized');
+            exit();
+        }
     }
 }

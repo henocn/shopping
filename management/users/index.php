@@ -134,13 +134,9 @@ $users = $user->getAllUsers();
                             </td>
                             <td><?php echo $user['country']; ?></td>
                             <td class="text-center"><?php echo $user['is_active'] == 1 ? '<i class="bx bxs-check-circle" style="color: green;"></i>' : '<i class="bx bxs-x-circle" style="color: red;"></i>'; ?></td>
-                            <td><?php
-                                if ($user['role'] == 0) {
-                                    echo '<span style="color: var(--purple); font-weight: bold;">Secondaire</span>';
-                                } else {
-                                    echo '<span style="color: var(--purple); font-weight: bold;">Admin</span>';
-                                }
-                                ?></td>
+                            <td>
+                                <span style="color: var(--purple); font-weight: bold;"><?php echo $user['role'] == 0 ? 'Secondaire' : 'Admin'; ?></span>
+                            </td>
                             <td class="text-center">
 
                                 <form action="save.php" method="post" class="d-inline">
