@@ -1,4 +1,5 @@
 <?php
+require '../../vendor/autoload.php';
 require '../../utils/middleware.php';
 
 verifyConnection("/shopping/management/products/add.php");
