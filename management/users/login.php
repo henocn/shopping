@@ -1,8 +1,14 @@
 <?php
+session_start();
+if (isset($_SESSION) && !empty($_SESSION)) {
+  header('location:../dashboard.php');
+}
 
-  if(isset($_SESSION) && !empty($_SESSION)){
-    header('location:../dashboard.php');
-  }
+$redirect = "";
+
+if (isset($_GET['redirect'])) {
+  $redirect = $_GET['redirect'];
+}
 
 ?>
 
@@ -30,9 +36,10 @@
     </div>
 
     <div class="error-message" id="errorMessage">
-      <?=$message; ?>
+      <?= $message; ?>
     </div>
 
+    <!-- ajouter un GET redirect si redirect n'est pas empty -->
     <form action="save.php" method="POST" id="loginForm">
       <div class="form-floating">
         <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
@@ -43,6 +50,7 @@
         <label for="password">Mot de passe</label>
       </div>
       <div>
+        <input type="hidden" name="redirect" value="<?= $redirect; ?>">
         <input type="hidden" name="validate" value="login">
       </div>
       <button type="submit" class="btn btn-login">

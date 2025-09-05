@@ -1,11 +1,10 @@
 <?php
-//session_start();
-//if (!isset($_SESSION['email'])) {
-//header('Location: login.php');
-//exit();
-//}
-
 require '../../vendor/autoload.php';
+require '../../utils/middleware.php';
+
+verifyConnection("/management/users/");
+checkAdminAccess($_SESSION['role']);
+checkIsActive($_SESSION['user_id']);
 
 use src\Connectbd;
 use src\User;

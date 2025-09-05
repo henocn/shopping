@@ -1,8 +1,8 @@
 <?php
 require '../vendor/autoload.php';
-require '../utils/verify.php';
+require '../utils/middleware.php';
 
-verify("/management/");
+verifyConnection("/management/");
 checkAdminAccess($_SESSION['role']);
 checkIsActive($_SESSION['user_id']);
 

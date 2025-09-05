@@ -31,10 +31,12 @@ if (isset($_POST['validate'])) {
         case 'login':
             if (
                 isset($_POST['email']) && !empty($_POST['email']) &&
-                isset($_POST['password']) && !empty($_POST['password'])
+                isset($_POST['password']) && !empty($_POST['password']) &&
+                isset($_POST['redirect'])
             ) {
                 $email = htmlspecialchars($_POST['email']);
                 $password = htmlspecialchars($_POST['password']);
+                $redirect = htmlspecialchars($_POST['redirect']);
 
                 $data = [
                     'email'  => $email,
@@ -50,10 +52,9 @@ if (isset($_POST['validate'])) {
                     $_SESSION['country'] = $result['country'];
                     $_SESSION['is_active'] = $result['is_active'];
 
-                    header('location:../dashboard.php');
+                    header('Location: ' . ($redirect ?: "../dashboard.php"));
                 } else {
-                    $message = $result['message'];
-                    header('location:login.php?error=' . $message);
+                    header('Location: login.php?error=' . $result['message'] . ($redirect ? '&redirect=' . $redirect : ''));
                 }
             } else {
                 echo "On ne peut pas se connecter";

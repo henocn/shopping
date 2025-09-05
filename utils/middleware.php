@@ -3,11 +3,12 @@
 use src\User;
 use src\Connectbd;
 
-function verify($redirection)
+function verifyConnection($redirection)
 {
     session_start();
     if (empty($_SESSION)) {
         header('location: /shopping/management/users/login.php?redirect=' . $redirection);
+        die();
     }
 }
 

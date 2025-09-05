@@ -43,8 +43,8 @@
 
         <!-- Actions -->
         <div class="d-flex align-items-center">
-            <a href="users/change-pass.php" class="btn btn-login">Change Password</a>
-            <a href="users/logout.php" class="btn btn-signup">Logout</a>
+            <a href="/shopping/management/users/change-pass.php" class="btn btn-login">Change Password</a>
+            <a href="/shopping/management/users/logout.php" class="btn btn-signup">Logout</a>
         </div>
     </div>
 </nav>
