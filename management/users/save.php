@@ -49,10 +49,10 @@ if (isset($_POST['validate'])) {
                     $_SESSION['country'] = $result['country'];
                     $_SESSION['is_active'] = $result['is_active'];
 
-                    header('location:../dashboard.php?message=' . $message);
+                    header('location:../dashboard.php');
                 } else {
                     $message = $result['message'];
-                    header('location:login.php?message=' . $message);
+                    header('location:login.php?error=' . $message);
                 }
             } else {
                 echo "On ne peut pas se connecter";

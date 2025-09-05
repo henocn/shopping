@@ -92,7 +92,7 @@ class User
         $user = $this->getUserByEmail($data['email']);
         if ($user) {
             if (hash_equals($user['password'], crypt($data['password'], $user['password']))) {
-                $message = "Email et mot de passe correct";
+                $message = "OK";
                 $result = [
                     "success" => true,
                     "message" => $message,
@@ -102,14 +102,14 @@ class User
                     "is_active" => $user['is_active']
                 ];
             } else {
-                $message = "error1";
+                $message = "failed";
                 $result = [
                     "success" => false,
                     "message" => $message
                 ];
             }
         } else {
-            $message = "error2";
+            $message = "failed";
             $result = [
                 "success" => false,
                 "message" => $message

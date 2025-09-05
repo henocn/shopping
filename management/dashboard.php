@@ -1,5 +1,8 @@
 <?php
 require '../vendor/autoload.php';
+require '../utils/verify.php';
+
+verify("/management/");
 
 use src\Connectbd;
 use src\Product;

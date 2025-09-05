@@ -1,3 +1,11 @@
+<?php
+
+  if(isset($_SESSION) && !empty($_SESSION)){
+    header('location:../dashboard.php');
+  }
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -17,28 +25,28 @@
       <div class="logo">
         <i class='bx bx-shopping-bag'></i>
       </div>
-      <h1>Welcome Back!</h1>
-      <p>Please enter your credentials</p>
+      <h1>Bienvenue de nouveau!</h1>
+      <p>Entrez vos informations de connexion</p>
     </div>
 
     <div class="error-message" id="errorMessage">
-      <!-- Les messages d'erreur seront affichés ici -->
+      <?=$message; ?>
     </div>
 
     <form action="save.php" method="POST" id="loginForm">
       <div class="form-floating">
         <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
-        <label for="email">Email address</label>
+        <label for="email">Addresse email</label>
       </div>
       <div class="form-floating">
         <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-        <label for="password">Password</label>
+        <label for="password">Mot de passe</label>
       </div>
       <div>
         <input type="hidden" name="validate" value="login">
       </div>
       <button type="submit" class="btn btn-login">
-        Sign In
+        Connecter
       </button>
     </form>
   </div>
@@ -52,14 +60,11 @@
     if (error) {
       errorMessage.style.display = 'block';
       switch (error) {
-        case 'invalid':
-          errorMessage.textContent = 'Invalid email or password';
-          break;
-        case 'empty':
-          errorMessage.textContent = 'Please fill in all fields';
+        case 'failed':
+          errorMessage.textContent = "Mot de passe ou email invalide";
           break;
         default:
-          errorMessage.textContent = 'An error occurred. Please try again';
+          errorMessage.textContent = "Un erreur s'est produite, réessayez s'il vous plaît";
       }
     }
 
