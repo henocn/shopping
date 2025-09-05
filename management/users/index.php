@@ -2,7 +2,7 @@
 require '../../vendor/autoload.php';
 require '../../utils/middleware.php';
 
-verifyConnection("/management/users/");
+verifyConnection("/shopping/management/users/");
 checkAdminAccess($_SESSION['role']);
 checkIsActive($_SESSION['user_id']);
 
