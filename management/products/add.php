@@ -2,8 +2,9 @@
 require '../../utils/middleware.php';
 
 verifyConnection("/shopping/management/products/add.php");
-checkAdminAccess($_SESSION['role']);
+checkAdminAccess($_SESSION['user_id']);
 checkIsActive($_SESSION['user_id']);
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">

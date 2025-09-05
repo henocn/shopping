@@ -12,11 +12,16 @@ function verifyConnection($redirection)
     }
 }
 
-function checkAdminAccess($role)
+function checkAdminAccess($id)
 {
-    if ($role !== 1) {
-        header('HTTP/1.0 403 Forbidden');
-        exit();
+    $cnx = Connectbd::getConnection();
+    $manager = new User($cnx);
+    $user = $manager->getUserById($id);
+    if ($user) {
+        if ($user['role'] !== 1) {
+            header('HTTP/1.0 403 Forbidden');
+            exit();
+        }
     }
 }
 
