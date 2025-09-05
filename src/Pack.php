@@ -26,8 +26,22 @@ class Pack
         return $packs;
     }
 
-    
 
+    public function createPack($data)
+    {
+        $sql = $this->bd->prepare('
+            INSERT INTO `product_packs` (`product_id`, `titre`, `description`, `quantity`, `price_reduction`, `price_normal`)
+            VALUES (:product_id, :titre, :description, :quantity, :price_reduction, :price_normal)
+        ');
 
-    
+        $sql->execute([
+            'product_id' => $data['product_id'],
+            'titre' => $data['titre'],
+            'description' => $data['description'],
+            'quantity' => $data['quantity'],
+            'price_reduction' => $data['price_reduction'],
+            'price_normal' => $data['price_normal']
+        ]);
+    }
+
 }

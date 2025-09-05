@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
     <link href="../../assets/css/add-product.css" rel="stylesheet">
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 </head>
+
 <body>
     <?php include '../../includes/navbar.php'; ?>
 
@@ -34,7 +36,7 @@
                     <i class='bx bx-video-plus'></i>
                 </button>
             </div>
-            
+
             <!-- Informations de base -->
             <div class="card mb-4">
                 <div class="card-body">
@@ -127,6 +129,22 @@
                 </div>
             </div>
 
+            <!-- Packs -->
+            <div class="card mb-4" id="packsSection" >
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Packs</h5>
+                    <button type="button" class="btn-close" onclick="toggleSection('packs')"></button>
+                </div>
+                <div class="card-body">
+                    <div id="packs">
+                        <button type="button" class="btn mb-3" onclick="addPack()" style="background: var(--secondary); color: white;">
+                            <i class='bx bx-package'></i> Ajouter un pack
+                        </button>
+                        <div id="packsList"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="d-grid">
                 <input type="submit" value="Enregistrer le produit" name="valider" class="btn" style="background: var(--primary); color: white;">
             </div>
@@ -138,4 +156,5 @@
     <script src="../../assets/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/add-product.js"></script>
 </body>
+
 </html>
