@@ -98,11 +98,10 @@ class Product
 
     public function createProduct($data)
     {
-        $req = $this->bd->prepare("INSERT INTO products (name, price, quantity, image,description, status, carousel1, carousel2, carousel3, carousel4, carousel5) VALUES (:name, :price, :quantity, :image, :description, :status, :carousel1, :carousel2, :carousel3, :carousel4, :carousel5)");
+        $req = $this->bd->prepare("INSERT INTO products (name, price, image,description, status, carousel1, carousel2, carousel3, carousel4, carousel5, country, manager_id) VALUES (:name, :price, :image, :description, :status, :carousel1, :carousel2, :carousel3, :carousel4, :carousel5, :country, manager_id)");
         $req->execute([
             'name'   => $data['name'],
             'price'    => $data['price'],
-            'quantity' => $data['quantity'],
             'image'     => $data['image'],
             'description' => $data['description'],
             'status'  => $data['status'],
@@ -111,6 +110,8 @@ class Product
             'carousel3' => $data['carousel3'],
             'carousel4' => $data['carousel4'],
             'carousel5' => $data['carousel5'],
+            'country' => $data['country'],
+            'manager_id' => $data['manager_id'],
         ]);
     }
 
@@ -131,11 +132,10 @@ class Product
 
     public function createPacks($data)
     {
-        $req = $this->bd->prepare("INSERT INTO product_packs (product_id, titre, description, quantite, price_reduction, price_normal) VALUES (:product_id, :titre, :description, :quantite, :price_reduction, :price_normal)");
+        $req = $this->bd->prepare("INSERT INTO product_packs (product_id, titre, quantite, price_reduction, price_normal) VALUES (:product_id, :titre, :quantite, :price_reduction, :price_normal)");
         $req->execute([
             'product_id' => $data['product_id'],
             'titre' => $data['titre'],
-            'description' => $data['description'],
             'quantity' => $data['quantity'],
             'price_reduction' => $data['price_reduction'],
             'price_normal' => $data['price_normal'],
@@ -157,15 +157,12 @@ class Product
     {
         try {
             $this->bd->beginTransaction();
-
-            // Supprimer d'abord les enregistrements liés
             $tables = ['product_caracteristics', 'product_video', 'product_packs'];
             foreach ($tables as $table) {
                 $stmt = $this->bd->prepare("DELETE FROM $table WHERE product_id = :id");
                 $stmt->execute(['id' => $productId]);
             }
 
-            // Supprimer le produit
             $stmt = $this->bd->prepare("DELETE FROM products WHERE id = :id");
             $stmt->execute(['id' => $productId]);
 
@@ -180,7 +177,7 @@ class Product
 
     public function getAllProducts()
     {
-        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`price`, `products`.`quantity`, `products`.`image`, `products`.`description`, `products`.`status`
+        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`price`, `products`.`image`, `products`.`description`, `products`.`status`
         FROM `products` ORDER BY id DESC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -214,11 +211,11 @@ class Product
 
     public function updateProduct($productId, $data)
     {
-        $req = $this->bd->prepare("UPDATE products SET name = :name, price = :price, quantity = :quantity, image = :image, description = :description, carousel1 = :carousel1, carousel2 = :carousel2, carousel3 = :carousel3, carousel4 = :carousel4, carousel5 = :carousel5 WHERE id = :id");
+        $req = $this->bd->prepare("UPDATE products SET name = :name, price = :price, image = :image, description = :description, carousel1 = :carousel1, carousel2 = :carousel2, carousel3 = :carousel3, carousel4 = :carousel4, carousel5 = :carousel5, country = :country, manager_id = :manager_id WHERE id = :id");
         $req->execute([
+            'id' => $productId,
             'name'   => $data['name'],
             'price'    => $data['price'],
-            'quantity' => $data['quantity'],
             'image'     => $data['image'],
             'description' => $data['description'],
             'carousel1' => $data['carousel1'],
@@ -226,7 +223,8 @@ class Product
             'carousel3' => $data['carousel3'],
             'carousel4' => $data['carousel4'],
             'carousel5' => $data['carousel5'],
-            'id' => $productId
+            'country' => $data['country'],
+            'manager_id' => $data['manager_id']
         ]);
     }
 
