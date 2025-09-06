@@ -125,20 +125,15 @@ class User
 
     public function create(array $data)
     {
-
-        $options = [
-            'cost' => 12,
-        ];
-        $password = password_hash($data['password'], PASSWORD_BCRYPT, $options);
-        $country = $data['country'];
-        $role = $data['role'];
-        $req = $this->bd->prepare("INSERT INTO users (email, country, password, role) VALUES (:email, :country, :password, :role)");
+        $password = password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 12]);
+        $req = $this->bd->prepare("INSERT INTO users (email, name, country, password, role) VALUES (:email, :name, :country, :password, :role)");
 
         if ($req->execute([
             'email' => $data['email'],
-            'country' => $country,
+            'name' => $data['name'],
+            'country' => $data['country'],
             'password' => $password,
-            'role' => $role
+            'role' =>  $data['role'],
         ])) {
             return true;
         } else {

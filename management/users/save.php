@@ -65,6 +65,7 @@ if (isset($_POST['validate'])) {
         case 'ajouter':
             if (
                 !isset($_POST['email']) || empty(trim($_POST['email'])) ||
+                !isset($_POST['name']) || empty(trim($_POST['name'])) ||
                 !isset($_POST['country']) || empty(trim($_POST['country'])) ||
                 !isset($_POST['role'])
             ) {
@@ -72,6 +73,7 @@ if (isset($_POST['validate'])) {
             }
 
             $email = trim($_POST['email']);
+            $name = trim($_POST['name']);
             $role = trim($_POST['role']);
             $country = trim($_POST['country']);
 
@@ -82,6 +84,7 @@ if (isset($_POST['validate'])) {
 
             $data = [
                 'email' => $email,
+                'name' => $name,
                 'password' => "user1234",
                 'role' => $role,
                 'country' => $country
