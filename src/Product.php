@@ -177,8 +177,8 @@ class Product
 
     public function getAllProducts()
     {
-        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`price`, `products`.`image`, `products`.`description`, `products`.`status`
-        FROM `products` ORDER BY id DESC");
+        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`price`, `products`.`image`, `products`.`description`, `products`.`status`, `products`.`country`, `users`.`name` AS `manager_name`
+        FROM `products` INNER JOIN `users` ON `products`.`manager_id` = `users`.`id` ORDER BY `products`.`id` DESC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

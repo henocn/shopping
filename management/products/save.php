@@ -102,7 +102,6 @@ switch ($action) {
             $productData = [
                 'name' => htmlspecialchars($_POST['name']),
                 'price' => floatval($_POST['price']),
-                'quantity' => intval($_POST['quantity']),
                 'image' => $mainImageName,
                 'description' => $_POST['description'],
                 'status' => 1,
@@ -173,7 +172,6 @@ switch ($action) {
                         $packData = [
                             'product_id'       => $productId,
                             'titre'            => htmlspecialchars($titre ?? ''),
-                            'description'      => htmlspecialchars($_POST['pack_description'][$key] ?? ''),
                             'quantity'         => (int)($_POST['pack_quantity'][$key] ?? 0),
                             'price_reduction'  => (float)($_POST['pack_price_reduction'][$key] ?? 0),
                             'price_normal'     => (float)($_POST['pack_price'][$key] ?? 0)
@@ -296,7 +294,6 @@ switch ($action) {
                 $productData = [
                     'name' => htmlspecialchars($_POST['name']),
                     'price' => floatval($_POST['price']),
-                    'quantity' => intval($_POST['quantity']),
                     'image' => $mainImageName,
                     'description' => $_POST['description'],
                     'carousel1' => $carouselImages[0],

@@ -63,12 +63,6 @@ checkIsActive($_SESSION['user_id']);
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            <i class='bx bx-box'></i> Quantité
-                        </label>
-                        <input type="number" class="form-control" name="quantity" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
                             <i class='bx bx-image'></i> Image principale
                         </label>
                         <div class="custom-file-input" id="mainImageUpload">
