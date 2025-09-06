@@ -68,15 +68,21 @@ class User
     }
 
 
+    public function getUsersByRole($role): array
+    {
+        $sql = $this->bd->prepare('SELECT id, email, name, role, country, is_active FROM users WHERE role =:role');
+        $sql->execute(["role" => $role]);
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
     public function email_exists($email): bool
     {
         $sql = $this->bd->prepare('SELECT COUNT(*) FROM users WHERE email = :email');
-        $sql->execute([
-            'email' => $email
-        ]);
-
+        $sql->execute(['email' => $email]);
         return $sql->fetchColumn() > 0;
     }
+    
 
     public function switchaccountStatus($id): bool
     {
@@ -148,5 +154,4 @@ class User
         $sql = $this->bd->prepare('DELETE FROM users WHERE id = :id');
         return $sql->execute(['id' => $id]);
     }
-
 }

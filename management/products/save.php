@@ -109,7 +109,9 @@ switch ($action) {
                 'carousel2' => $carouselImages[1],
                 'carousel3' => $carouselImages[2],
                 'carousel4' => $carouselImages[3],
-                'carousel5' => $carouselImages[4]
+                'carousel5' => $carouselImages[4],
+                'country' => $_POST['country'],
+                'manager_id' =>$_POST['manager_id']
             ];
 
             $manager->createProduct($productData);

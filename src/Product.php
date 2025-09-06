@@ -98,7 +98,7 @@ class Product
 
     public function createProduct($data)
     {
-        $req = $this->bd->prepare("INSERT INTO products (name, price, image,description, status, carousel1, carousel2, carousel3, carousel4, carousel5, country, manager_id) VALUES (:name, :price, :image, :description, :status, :carousel1, :carousel2, :carousel3, :carousel4, :carousel5, :country, manager_id)");
+        $req = $this->bd->prepare("INSERT INTO products (name, price, image,description, status, carousel1, carousel2, carousel3, carousel4, carousel5, country, manager_id) VALUES (:name, :price, :image, :description, :status, :carousel1, :carousel2, :carousel3, :carousel4, :carousel5, :country, :manager_id)");
         $req->execute([
             'name'   => $data['name'],
             'price'    => $data['price'],

@@ -94,12 +94,7 @@ $caracteristics = $productInfo['caracteristics'];
                         </label>
                         <input type="number" class="form-control" name="price" value="<?= $product['price'] ?>" required>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            <i class='bx bx-box'></i> Quantité
-                        </label>
-                        <input type="number" class="form-control" name="quantity" value="<?= $product['quantity'] ?>" required>
-                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">
                             <i class='bx bx-image'></i> Image principale
