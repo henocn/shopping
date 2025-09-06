@@ -56,6 +56,13 @@ $users = $user->getAllUsers();
                         <form action="save.php" method="POST">
                             <div class="mb-3 position-relative">
                                 <label class="form-label" style="color: var(--purple);">
+                                    <i class='bx bx-user'></i> Nom et prénom
+                                </label>
+                                <input type="text" class="form-control" name="name" required
+                                    style="border-color: var(--purple); border-radius: 10px; padding-left: 35px;">
+                            </div>
+                            <div class="mb-3 position-relative">
+                                <label class="form-label" style="color: var(--purple);">
                                     <i class='bx bx-envelope'></i> Email
                                 </label>
                                 <input type="email" class="form-control" name="email" required
@@ -67,21 +74,8 @@ $users = $user->getAllUsers();
                                     <i class='bx bx-flag'></i> Pays
                                 </label>
                                 <select class="form-select" name="country" required style="border-color: var(--purple); border-radius: 10px;">
-                                    <option value="BJ">🇧🇯 Bénin</option>
-                                    <option value="BF">🇧🇫 Burkina Faso</option>
-                                    <option value="CV">🇨🇻 Cap-Vert</option>
-                                    <option value="CI">🇨🇮 Côte d'Ivoire</option>
-                                    <option value="GM">🇬🇲 Gambie</option>
-                                    <option value="GH">🇬🇭 Ghana</option>
-                                    <option value="GN">🇬🇳 Guinée</option>
-                                    <option value="GW">🇬🇼 Guinée-Bissau</option>
-                                    <option value="LR">🇱🇷 Libéria</option>
-                                    <option value="ML">🇲🇱 Mali</option>
-                                    <option value="NE">🇳🇪 Niger</option>
-                                    <option value="NG">🇳🇬 Nigeria</option>
-                                    <option value="SN">🇸🇳 Sénégal</option>
-                                    <option value="SL">🇸🇱 Sierra Leone</option>
-                                    <option value="TG" selected>🇹🇬 Togo</option>
+                                    <option value="GN" selected>🇬🇳 Guinée</option>
+                                    <option value="TD">🇹🇩 Tchad</option>
                                 </select>
                             </div>
 
