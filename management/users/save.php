@@ -52,7 +52,7 @@ if (isset($_POST['validate'])) {
                     $_SESSION['country'] = $result['country'];
                     $_SESSION['is_active'] = $result['is_active'];
 
-                    header('Location: ' . ($redirect ?: "../dashboard.php"));
+                    header('Location: ' . ($redirect ?: "/shopping/management/dashboard.php"));
                 } else {
                     header('Location: login.php?error=' . $result['message'] . ($redirect ? '&redirect=' . $redirect : ''));
                 }
