@@ -31,10 +31,12 @@ if (isset($_POST['validate'])) {
         case 'login':
             if (
                 isset($_POST['email']) && !empty($_POST['email']) &&
-                isset($_POST['password']) && !empty($_POST['password'])
+                isset($_POST['password']) && !empty($_POST['password']) &&
+                isset($_POST['redirect'])
             ) {
                 $email = htmlspecialchars($_POST['email']);
                 $password = htmlspecialchars($_POST['password']);
+                $redirect = htmlspecialchars($_POST['redirect']);
 
                 $data = [
                     'email'  => $email,
@@ -44,15 +46,15 @@ if (isset($_POST['validate'])) {
                 $result = $manager->verify($data);
 
                 if ($result["success"]) {
+                    $_SESSION['user_id'] = $result['id'];
                     $_SESSION['email'] = $data['email'];
                     $_SESSION['role'] = $result['role'];
                     $_SESSION['country'] = $result['country'];
                     $_SESSION['is_active'] = $result['is_active'];
 
-                    header('location:../dashboard.php?message=' . $message);
+                    header('Location: ' . ($redirect ?: "/shopping/management/dashboard.php"));
                 } else {
-                    $message = $result['message'];
-                    header('location:login.php?message=' . $message);
+                    header('Location: login.php?error=' . $result['message'] . ($redirect ? '&redirect=' . $redirect : ''));
                 }
             } else {
                 echo "On ne peut pas se connecter";

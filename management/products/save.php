@@ -4,11 +4,12 @@ require("../../vendor/autoload.php");
 
 use src\Connectbd;
 use src\Product;
+use src\Pack;
 
 $cnx = Connectbd::getConnection();
 $manager = new Product($cnx);
+$packManager = new Pack($cnx);
 
-var_dump($_POST['valider']);
 
 if (!isset($_POST['valider'])) {
     header('Location: index.php?error=' . urlencode("Action non spécifiée"));
@@ -162,6 +163,28 @@ switch ($action) {
                         }
                     }
                 }
+
+
+
+                // Traitement des Packs
+                // Vérifier si au moins un pack est envoyé
+                if (isset($_POST['pack_titre'])) {
+                    foreach ($_POST['pack_titre'] as $key => $titre) {
+                        $packData = [
+                            'product_id'       => $productId,
+                            'titre'            => htmlspecialchars($titre ?? ''),
+                            'description'      => htmlspecialchars($_POST['pack_description'][$key] ?? ''),
+                            'quantity'         => (int)($_POST['pack_quantity'][$key] ?? 0),
+                            'price_reduction'  => (float)($_POST['pack_price_reduction'][$key] ?? 0),
+                            'price_normal'     => (float)($_POST['pack_price'][$key] ?? 0)
+                        ];
+
+
+
+                        $packManager->createPack($packData);
+                    }
+                }
+
 
                 $message = "Produit ajouté avec succès !";
                 header('Location: index.php?message=' . urlencode($message));

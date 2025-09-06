@@ -76,6 +76,40 @@ function addVideo() {
     document.getElementById('videosList').appendChild(videoDiv);
 }
 
+
+function addPack(){
+    const packDiv = document.createElement('div');
+    packDiv.className = 'characteristic-item';
+    packDiv.innerHTML = `
+        <div class="mb-3">
+            <label class="form-label">Nom du Pack</label>
+            <input type="text" class="form-control" name="pack_titre[]" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <input type="text" class="form-control" name="pack_description[]" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Quantité</label>
+            <input type="number" class="form-control" name="pack_quantity[]" min="0" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Prix de reduction</label>
+            <input type="number" class="form-control" name="pack_price_reduction[]" min="0" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Prix normal</label>
+            <input type="number" class="form-control" name="pack_price[]" min="0" required>
+        </div>
+        <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">
+            <i class='bx bx-trash'></i> Supprimer
+        </button>
+    `;
+    document.getElementById('packsList').appendChild(packDiv);
+}
+
+
+
 // Gestion du drag & drop des images
 document.addEventListener('DOMContentLoaded', function() {
     ClassicEditor

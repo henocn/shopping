@@ -107,9 +107,10 @@ class Order
         SELECT 
             orders.id AS order_id,
             orders.*,
-            products.name,
-            products.price AS prix_unitaire,
-            product_packs.titre
+            products.name AS product_name,
+            products.image AS product_image,
+            products.price AS unit_price,
+            product_packs.titre as pack_name
         FROM orders
         INNER JOIN products ON products.id = orders.product_id
         LEFT JOIN product_packs ON product_packs.id = orders.pack_id
@@ -123,27 +124,27 @@ class Order
     }
 
 
-    public function updateOrderStatus($orderId, $status)
+
+    public function updateOrder(array $data)
     {
-        $sql = "UPDATE orders SET status = :status WHERE id = :order_id";
+        $sql = "UPDATE orders 
+            SET quantity = :quantity,
+                total_price = :total_price,
+                manager_note = :manager_note,
+                updated_at = :updated_at,
+                status = :status,
+                action = :action
+            WHERE id = :id";
+
         $req = $this->bd->prepare($sql);
         $req->execute([
-            'status'   => $status,
-            'id' => $orderId,
+            'quantity'     => $data['quantity'],
+            'total_price'  => $data['total_price'],
+            'manager_note' => $data['manager_note'],
+            'updated_at'   => $data['updated_at'],
+            'status'       => $data['status'],
+            'action'       => $data['action'],
+            'id'           => $data['id'],
         ]);
     }
-    
-
-    public function updateOrderAction($orderId, $action)
-    {
-        $sql = "UPDATE orders SET action = :action WHERE id = :order_id";
-        $req = $this->bd->prepare($sql);
-        $req->execute([
-            'action'   => $action,
-            'order_id' => $orderId,
-        ]);
-    }
-
-    
-
 }

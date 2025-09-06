@@ -15,7 +15,8 @@ class User
     }
 
 
-    private function getUserByEmail($email)
+
+    public function getUserByEmail($email)
     {
         $sql = $this->bd->prepare('SELECT * FROM users WHERE email = :email');
         $sql->execute([
@@ -24,6 +25,8 @@ class User
         $user = $sql->fetch(PDO::FETCH_ASSOC);
         return $user;
     }
+
+
 
     public function getTotalUsers()
     {
@@ -45,7 +48,7 @@ class User
 
 
 
-    private function getUserById($id)
+    public function getUserById($id)
     {
         $sql = $this->bd->prepare('SELECT * FROM users WHERE id = :id');
         $sql->execute([
@@ -92,8 +95,9 @@ class User
         $user = $this->getUserByEmail($data['email']);
         if ($user) {
             if (hash_equals($user['password'], crypt($data['password'], $user['password']))) {
-                $message = "Email et mot de passe correct";
+                $message = "OK";
                 $result = [
+                    "id" => $user['id'],
                     "success" => true,
                     "message" => $message,
                     "role" => $user['role'],
@@ -102,14 +106,14 @@ class User
                     "is_active" => $user['is_active']
                 ];
             } else {
-                $message = "error1";
+                $message = "failed";
                 $result = [
                     "success" => false,
                     "message" => $message
                 ];
             }
         } else {
-            $message = "error2";
+            $message = "failed";
             $result = [
                 "success" => false,
                 "message" => $message
