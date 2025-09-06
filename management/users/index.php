@@ -106,9 +106,10 @@ $users = $user->getAllUsers();
                 <thead class="table-light">
                     <tr>
                         <th class="text-center" style="width: 5%;">Id</th>
-                        <th style="width: 35%;">Email</th>
-                        <th style="width: 15%;">Pays</th>
-                        <th class="text-center" style="width: 10%;">Status</th>
+                        <th style="width: 30%;">Email</th>
+                        <th style="width: 20%;">Nom & prénom</th>
+                        <th style="width: 5%;">Pays</th>
+                        <th class="text-center" style="width: 5%;">Status</th>
                         <th style="width: 15%;">Role</th>
                         <th class="text-center" style="width: 20%;">Actions</th>
                     </tr>
@@ -125,6 +126,7 @@ $users = $user->getAllUsers();
                                     <a href="mailto:<?php echo $user['email']; ?>" class="text-decoration-none" style="color: var(--purple);"><?php echo $user['email']; ?></a>
                                 </div>
                             </td>
+                            <td><?php echo $user['name']; ?></td>
                             <td><?php echo $user['country']; ?></td>
                             <td class="text-center"><?php echo $user['is_active'] == 1 ? '<i class="bx bxs-check-circle" style="color: green;"></i>' : '<i class="bx bxs-x-circle" style="color: red;"></i>'; ?></td>
                             <td>

@@ -61,7 +61,7 @@ class User
 
     public function getAllUsers(): array
     {
-        $sql = $this->bd->prepare('SELECT `users`.`id`, `users`.`email`, `users`.`role`, `users`.`country`, `users`.`is_active`
+        $sql = $this->bd->prepare('SELECT `users`.`id`, `users`.`email`, `users`.`name`, `users`.`role`, `users`.`country`, `users`.`is_active`
             FROM `users`');
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_ASSOC);
