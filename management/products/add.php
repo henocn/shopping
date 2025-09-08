@@ -52,6 +52,9 @@ $helpers = $userManager->getUsersByRole(0);
                 <button type="button" class="floating-btn" onclick="toggleSection('videos')" title="Ajouter des vidéos">
                     <i class='bx bx-video-plus'></i>
                 </button>
+                <button type="button" class="floating-btn" onclick="toggleSection('packs')" title="Ajouter des packs">
+                    <i class='bx bx-package-plus'></i>
+                </button>
             </div>
 
             <!-- Informations de base -->
@@ -163,7 +166,7 @@ $helpers = $userManager->getUsersByRole(0);
             </div>
 
             <!-- Packs -->
-            <div class="card mb-4" id="packsSection">
+            <div class="card mb-4" id="packsSection" style="display: none;">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Packs</h5>
                     <button type="button" class="btn-close" onclick="toggleSection('packs')"></button>

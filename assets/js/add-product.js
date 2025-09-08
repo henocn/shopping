@@ -86,8 +86,8 @@ function addPack(){
             <input type="text" class="form-control" name="pack_titre[]" required>
         </div>
         <div class="mb-3">
-            <label class="form-label">Description</label>
-            <input type="text" class="form-control" name="pack_description[]" required>
+            <label class="form-label">Image</label>
+            <input type="file" class="form-control" name="pack_image[]" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Quantité</label>

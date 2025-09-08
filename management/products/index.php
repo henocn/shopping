@@ -15,7 +15,7 @@ $cnx = Connectbd::getConnection();
 $product = new Product($cnx);
 
 $products = $product->getAllProducts();
-//var_dump($products);
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">

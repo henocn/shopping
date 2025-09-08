@@ -61,6 +61,7 @@ switch ($action) {
             'main' => __DIR__ . '/../../uploads/main/',
             'carousel' => __DIR__ . '/../../uploads/carousel/',
             'characteristics' => __DIR__ . '/../../uploads/characteristics/',
+            'packs' => __DIR__ . '/../../uploads/packs/',
             'videos' => __DIR__ . '/../../uploads/videos/'
         ];
 
@@ -170,21 +171,35 @@ switch ($action) {
                 // Traitement des Packs
                 // Vérifier si au moins un pack est envoyé
                 if (isset($_POST['pack_titre'])) {
-                    foreach ($_POST['pack_titre'] as $key => $titre) {
-                        $packData = [
+                    foreach ($_POST['pack_titre'] as $key => $title) {
+                        if (!empty($title)) {
+                            $packImage = '';
+                            if (
+                                isset($_FILES['pack_image']['tmp_name'][$key]) &&
+                                $_FILES['pack_image']['error'][$key] === UPLOAD_ERR_OK
+                            ) {
+
+                                $packImage = time() . '_' . basename($_FILES['pack_image']['name'][$key]);
+                                move_uploaded_file(
+                                    $_FILES['pack_image']['tmp_name'][$key],
+                                    $uploadDirs['packs'] . $packImage
+                                );
+                            }
+
+                            $packData = [
                             'product_id'       => $productId,
                             'titre'            => htmlspecialchars($titre ?? ''),
+                            'image'            => $packImage,
                             'quantity'         => (int)($_POST['pack_quantity'][$key] ?? 0),
                             'price_reduction'  => (float)($_POST['pack_price_reduction'][$key] ?? 0),
                             'price_normal'     => (float)($_POST['pack_price'][$key] ?? 0)
                         ];
 
-
-
-                        $packManager->createPack($packData);
+                            $manager->createPacks($packData);
+                        }
                     }
-                }
 
+                }
 
                 $message = "Produit ajouté avec succès !";
                 header('Location: index.php?message=' . urlencode($message));
