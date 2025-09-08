@@ -147,7 +147,7 @@ if (isset($_POST['validate'])) {
                 $result = $manager->changePassword($_SESSION['user_id'], $current_password, $new_password);
 
                 if ($result["success"]) {
-                    header('Location: change-pass.php?success=1' . ($redirect ? '&redirect=' . $redirect : ''));
+                    header('Location: logout.php' . ($redirect ? '&redirect=' . $redirect : ''));
                 } else {
                     header('Location: change-pass.php?error=' . $result['message'] . ($redirect ? '&redirect=' . $redirect : ''));
                 }
