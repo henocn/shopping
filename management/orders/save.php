@@ -73,8 +73,8 @@ if (isset($_POST['valider']) || isset($_GET['valider'])) {
             break;
 
         default:
-            echo "On est pas bon";
-    }
-} else {
-    echo "Il manque le POST['connect']";
+            header("Location: /shopping/error.php?code=400");
+        }
+    } else {
+    header("Location: /shopping/error.php?code=400");
 }
