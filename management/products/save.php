@@ -225,6 +225,7 @@ switch ($action) {
                 'main' => __DIR__ . '/../../uploads/main/',
                 'carousel' => __DIR__ . '/../../uploads/carousel/',
                 'characteristics' => __DIR__ . '/../../uploads/characteristics/',
+                'packs' => __DIR__ . '/../../uploads/packs/',
                 'videos' => __DIR__ . '/../../uploads/videos/'
             ];
 

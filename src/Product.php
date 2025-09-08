@@ -82,11 +82,13 @@ class Product
         $product = $this->getProducts($product_id);
         $videos = $this->getVideos($product_id);
         $caracteristics = $this->getCaracteristics($product_id);
+        $packs = $this->getPacks($product_id);
 
         return [
             'product' => $product,
             'videos' => $videos,
-            'caracteristics' => $caracteristics
+            'caracteristics' => $caracteristics,
+            'packs' => $packs
         ];
     }
 
@@ -198,6 +200,16 @@ class Product
     public function getProductVideos($productId) {
         $stmt = $this->bd->prepare("
             SELECT * FROM product_video 
+            WHERE product_id = :id 
+            ORDER BY id ASC
+        ");
+        $stmt->execute(['id' => $productId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getProductPacks($productId) {
+        $stmt = $this->bd->prepare("
+            SELECT * FROM product_packs 
             WHERE product_id = :id 
             ORDER BY id ASC
         ");

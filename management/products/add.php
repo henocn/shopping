@@ -53,7 +53,7 @@ $helpers = $userManager->getUsersByRole(0);
                     <i class='bx bx-video-plus'></i>
                 </button>
                 <button type="button" class="floating-btn" onclick="toggleSection('packs')" title="Ajouter des packs">
-                    <i class='bx bx-package-plus'></i>
+                    <i class='bx bx-package'></i>
                 </button>
             </div>
 
@@ -77,7 +77,7 @@ $helpers = $userManager->getUsersByRole(0);
                             <i class='bx bx-flag'></i> Pays de vente
                         </label>
                         <select class="form-select" name="country" required>
-                            <option value= '' selected>------------</option>
+                            <option value='' selected>------------</option>
                             <option value="GN">🇬🇳 Guinée</option>
                             <option value="TD">🇹🇩 Tchad</option>
                         </select>
@@ -87,7 +87,7 @@ $helpers = $userManager->getUsersByRole(0);
                             <i class='bx bx-user'></i> Assistante de vente
                         </label>
                         <select class="form-select" name="manager_id" required>
-                            <option value= '' selected>------------</option>
+                            <option value='' selected>------------</option>
                             <?php
                             foreach ($helpers as $helper) { ?>
                                 <option value=<?= $helper['id'] ?>><?= $helper['name'] ?> (<?= $helper['country'] ?>)</option>
