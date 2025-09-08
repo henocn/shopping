@@ -11,16 +11,14 @@ use src\Order;
 
 $cnx = Connectbd::getConnection();
 
-$order = new Order($cnx);
+$orderManager = new Order($cnx);
 
-$_SESSION['role'] = 0;
-$_SESSION['country'] = '228';
 
 if (isset($_SESSION['role']) && isset($_SESSION['country'])) {
     if ($_SESSION['role'] == 1) {
-        $orders = $order->GetOrders();
+        $orders = $orderManager->getAllOrders();
     } else {
-        $orders = $order->GetOrderByCountry($_SESSION['country']);
+        $orders = $orderManager->getOrderByCountry($_SESSION['country']);
     }
 }
 

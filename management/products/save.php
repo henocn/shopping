@@ -213,6 +213,8 @@ switch ($action) {
             exit;
         }
         break;
+
+
     case 'Mettre a jour le produit':
         // Code pour mettre à jour un produit
         if (isset($_POST['productId'])) {
@@ -497,6 +499,6 @@ switch ($action) {
         break;
 
     default:
-        header('Location: index.php?error=' . urlencode("Action non reconnue"));
+        header("Location: /shopping/error.php?code=400");
         exit;
 }

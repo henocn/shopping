@@ -56,7 +56,7 @@ class Order
     }
 
 
-    public function GetOrders()
+    public function getAllOrders()
     {
         $sql = "
         SELECT 
@@ -101,7 +101,7 @@ class Order
     }
 
 
-    public function GetOrderByCountry($country)
+    public function getOrderByCountry($country)
     {
         $sql = "
         SELECT 

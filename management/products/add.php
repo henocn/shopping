@@ -90,7 +90,7 @@ $helpers = $userManager->getUsersByRole(0);
                             <option value= '' selected>------------</option>
                             <?php
                             foreach ($helpers as $helper) { ?>
-                                <option value=<?= $helper['id'] ?>><?= $helper['name'] ?></option>
+                                <option value=<?= $helper['id'] ?>><?= $helper['name'] ?> (<?= $helper['country'] ?>)</option>
                             <?php } ?>
                         </select>
                     </div>

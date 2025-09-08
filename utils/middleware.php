@@ -19,9 +19,12 @@ function checkAdminAccess($id)
     $user = $manager->getUserById($id);
     if ($user) {
         if ($user['role'] !== 1) {
-            header('HTTP/1.0 403 Forbidden');
+            header('Location: ../error.php?code=403');
             exit();
         }
+    } else {
+        header('Location: ../error.php?code=401');
+        exit();
     }
 }
 
@@ -33,8 +36,11 @@ function checkIsActive($id)
     $user = $manager->getUserById($id);
     if ($user) {
         if ($user['is_active'] == 0) {
-            header('HTTP/1.0 401 Unauthorized');
+            header('Location: ../error.php?code=403');
             exit();
         }
+    } else {
+        header('Location: ../error.php?code=401');
+        exit();
     }
 }
