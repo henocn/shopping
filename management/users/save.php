@@ -61,7 +61,6 @@ if (isset($_POST['validate'])) {
             }
             break;
 
-
         case 'ajouter':
             if (
                 !isset($_POST['email']) || empty(trim($_POST['email'])) ||
@@ -127,6 +126,36 @@ if (isset($_POST['validate'])) {
             } else {
                 redirect('index.php', "Données invalides pour la suppression de l'utilisateur.");
             }
+            break;
+
+        case 'change_password':
+            if (
+                isset($_POST['current_password']) && !empty($_POST['current_password']) &&
+                isset($_POST['new_password']) && !empty($_POST['new_password']) &&
+                isset($_POST['confirm_password']) && !empty($_POST['confirm_password']) &&
+                isset($_SESSION['user_id'])
+            ) {
+                $current_password = htmlspecialchars($_POST['current_password']);
+                $new_password = htmlspecialchars($_POST['new_password']);
+                $confirm_password = htmlspecialchars($_POST['confirm_password']);
+
+                if ($new_password !== $confirm_password) {
+                    header('Location: change-pass.php?error=passwords_not_match' . ($redirect ? '&redirect=' . $redirect : ''));
+                    exit();
+                }
+
+                $result = $manager->changePassword($_SESSION['user_id'], $current_password, $new_password);
+
+                if ($result["success"]) {
+                    header('Location: change-pass.php?success=1' . ($redirect ? '&redirect=' . $redirect : ''));
+                } else {
+                    header('Location: change-pass.php?error=' . $result['message'] . ($redirect ? '&redirect=' . $redirect : ''));
+                }
+            } else {
+                header('Location: change-pass.php?error=missing_fields');
+            }
+            break;
+
         default:
             echo "On est pas bon";
     }

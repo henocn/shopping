@@ -154,4 +154,49 @@ class User
         $sql = $this->bd->prepare('DELETE FROM users WHERE id = :id');
         return $sql->execute(['id' => $id]);
     }
+
+    public function changePassword($user_id, $current_password, $new_password)
+    {
+        $user = $this->getUserById($user_id);
+        
+        if (!$user) {
+            return [
+                "success" => false,
+                "message" => "user_not_found"
+            ];
+        }
+
+        if (!hash_equals($user['password'], crypt($current_password, $user['password']))) {
+            return [
+                "success" => false,
+                "message" => "current_password_wrong"
+            ];
+        }
+
+        if (hash_equals($user['password'], crypt($new_password, $user['password']))) {
+            return [
+                "success" => false,
+                "message" => "same_password"
+            ];
+        }
+
+        $hashed_new_password = password_hash($new_password, PASSWORD_BCRYPT, ['cost' => 12]);
+
+        $sql = $this->bd->prepare('UPDATE users SET password = :password WHERE id = :id');
+        
+        if ($sql->execute([
+            'password' => $hashed_new_password,
+            'id' => $user_id
+        ])) {
+            return [
+                "success" => true,
+                "message" => "password_changed"
+            ];
+        } else {
+            return [
+                "success" => false,
+                "message" => "update_failed"
+            ];
+        }
+    }
 }
