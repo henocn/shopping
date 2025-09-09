@@ -9,9 +9,13 @@ checkIsActive($_SESSION['user_id']);
 
 use src\Connectbd;
 use src\Product;
+use src\User;
 
 $cnx = Connectbd::getConnection();
 $manager = new Product($cnx);
+
+$userManager = new User($cnx);
+$helpers = $userManager->getUsersByRole(0);
 
 if (!isset($_GET['id'])) {
     die("Produit introuvable.");
@@ -25,8 +29,6 @@ $videos = $productInfo['videos'];
 $caracteristics = $productInfo['caracteristics'];
 $packs = $productInfo['packs'];
 
-
-var_dump($packs);
 ?>
 
 <!DOCTYPE html>
@@ -106,7 +108,28 @@ var_dump($packs);
                         </label>
                         <input type="number" class="form-control" name="price" value="<?= $product['price'] ?>" required>
                     </div>
-
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-flag'></i> Pays de vente
+                        </label>
+                        <select class="form-select" name="country" required>
+                            <option value='' disabled>------------</option>
+                            <option value="GN" <?= ($product['country'] === 'GN' ? 'selected' : '') ?>>🇬🇳 Guinée</option>
+                            <option value="TD" <?= ($product['country'] === 'TD' ? 'selected' : '') ?>>🇹🇩 Tchad</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-user'></i> Assistante de vente
+                        </label>
+                        <select class="form-select" name="manager_id" required>
+                            <option value='' disabled>------------</option>
+                            <?php
+                            foreach ($helpers as $helper) { ?>
+                                <option value=<?= $helper['id'] ?> <?= ($product['manager_id'] == $helper['id'] ? 'selected' : '') ?>><?= $helper['name'] ?> (<?= $helper['country'] ?>)</option>
+                            <?php } ?>
+                        </select>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label">
                             <i class='bx bx-image'></i> Image principale
@@ -249,8 +272,7 @@ var_dump($packs);
                     <div id="characteristicsList"></div>
                 </div>
             </div>
-
-            <!-- Vidéos -->
+<!-- Vidéos -->
             <div class="card mb-4" id="videosSection" style="display: none;">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Vidéos</h5>
@@ -281,7 +303,7 @@ var_dump($packs);
                                     <?php if (filter_var($video['video_url'], FILTER_VALIDATE_URL)): ?>
                                         <input type="url" class="form-control" name="existing_video_url[]" value="<?= $video['video_url'] ?>">
                                     <?php else: ?>
-                                        <input type="file" class="form-control" name="video[]" accept="video/*">
+                                        <input type="file" class="form-control" name="existing_video_file[]" accept="video/*">
                                     <?php endif; ?>
                                 </div>
                                 <div class="mb-3">
@@ -321,7 +343,7 @@ var_dump($packs);
                                 <!-- Nom -->
                                 <div class="mb-3">
                                     <label class="form-label">Nom du Pack</label>
-                                    <input type="text" class="form-control" name="existing_pack_title[]"
+                                    <input type="text" class="form-control" name="existing_pack_titre[]"
                                         value="<?= htmlspecialchars($pack['titre']) ?>" required>
                                 </div>
 
@@ -347,7 +369,7 @@ var_dump($packs);
                                 <div class="mb-3">
                                     <label class="form-label">Nouvelle image (optionnel)</label>
                                     <input type="file" class="form-control pack-image-input"
-                                        name="pack_image[]" accept="image/*"
+                                        name="existing_pack_image_file[]" accept="image/*"
                                         onchange="previewPackImage(this)">
                                     <div class="pack-image-preview mt-2"></div>
                                 </div>
@@ -448,6 +470,8 @@ var_dump($packs);
                 });
         });
     </script>
+
+
 </body>
 
 </html>
