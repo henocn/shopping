@@ -17,7 +17,7 @@ $productManager = new Product($cnx);
 $product = $productManager->getProducts($productId);
 
 if (!$product) {
-    header('Location: error.php?message=' . urlencode('Produit non trouvé'));
+    header('Location: error.php?code=404');
     exit;
 }
 
@@ -35,8 +35,8 @@ $videos = $productManager->getProductVideos($productId);
     <meta property="og:description" content="<?= htmlspecialchars($product['description']); ?>">
     <meta property="og:image" content="uploads/main/<?= $product['image']; ?>">
 
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/css/product.css" rel="stylesheet">
+    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./assets/css/product.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" rel="stylesheet">
 
@@ -63,13 +63,42 @@ $videos = $productManager->getProductVideos($productId);
             class="hero-image" id="mainImage">
         <div class="hero-overlay">
             <h1><?= htmlspecialchars($product['name']); ?></h1>
-            <div class="hero-price"><?= number_format($product['price'], 2); ?> €</div>
+            <div class="hero-price"><?= $product['price'] ?> FCFA</div>
+            <div class="hero-cta">
+                <button class="btn-hero btn-hero-primary" onclick="openOrderForm()">
+                    <i class='bx bx-cart'></i>
+                    Commander maintenant
+                </button>
+                <button class="btn-hero btn-hero-secondary" onclick="document.querySelector('.carousel-section').scrollIntoView({behavior: 'smooth'})">
+                    <i class='bx bx-images'></i>
+                    Voir les photos
+                </button>
+            </div>
         </div>
     </header>
 
+    <!-- SECTION LUXEMARKET -->
+    <section class="luxemarket-intro">
+        <div class="container">
+            <div class="intro-content">
+                <h2 class="intro-title">LUXEMARKET</h2>
+                <p class="intro-description">
+                    Découvrez l'excellence du shopping en ligne avec LUXEMARKET. 
+                    Nous vous proposons une sélection premium de produits de qualité, 
+                    soigneusement choisis pour répondre à vos besoins les plus exigeants. 
+                    Une expérience d'achat unique, sécurisée et personnalisée.
+                </p>
+                <button class="btn-intro" onclick="openOrderForm()">
+                    <i class='bx bx-shopping-bag'></i>
+                    Commander maintenant
+                </button>
+            </div>
+        </div>
+    </section>
+
     <!-- CAROUSEL -->
     <section class="carousel-section">
-        <div class="container">
+        <div class="carousel-container">
             <div class="swiper mainSwiper">
                 <div class="swiper-wrapper">
                     <?php if (!empty($product['image'])): ?>
@@ -109,18 +138,39 @@ $videos = $productManager->getProductVideos($productId);
     </section>
 
     <!-- INFOS PRODUIT -->
-    <section class="product-info container">
+    <section class="product-info">
         <div class="stock-status <?= $product['quantity'] > 0 ? 'in-stock' : 'out-stock'; ?>">
             <?= $product['quantity'] > 0 ? 'En stock' : 'Rupture de stock'; ?>
         </div>
         <div class="product-description">
             <?= $product['description']; ?>
         </div>
+        
+        <!-- Boutons de partage social -->
+        <div class="social-sharing">
+            <h3>Partager ce produit :</h3>
+            <button class="share-btn share-facebook" onclick="shareProduct('facebook')">
+                <i class='bx bxl-facebook'></i>
+                Facebook
+            </button>
+            <button class="share-btn share-twitter" onclick="shareProduct('twitter')">
+                <i class='bx bxl-twitter'></i>
+                Twitter
+            </button>
+            <button class="share-btn share-whatsapp" onclick="shareProduct('whatsapp')">
+                <i class='bx bxl-whatsapp'></i>
+                WhatsApp
+            </button>
+            <button class="share-btn share-copy" onclick="copyLink()">
+                <i class='bx bx-link'></i>
+                Copier le lien
+            </button>
+        </div>
     </section>
 
     <!-- CARACTÉRISTIQUES -->
     <?php if (!empty($characteristics)): ?>
-        <section class="product-features container">
+        <section class="product-features">
             <h2>Caractéristiques</h2>
             <div class="features-grid">
                 <?php foreach ($characteristics as $c): ?>
@@ -138,13 +188,14 @@ $videos = $productManager->getProductVideos($productId);
 
     <!-- VIDÉOS -->
     <?php if (!empty($videos)): ?>
-        <section class="product-videos container">
+        <section class="product-videos">
             <h2>Découvrez en vidéo</h2>
             <div class="videos-grid">
                 <?php foreach ($videos as $v): ?>
                     <div class="video-card">
-                        <video controls>
+                        <video controls preload="metadata">
                             <source src="uploads/videos/<?= $v['video_url']; ?>" type="video/mp4">
+                            Votre navigateur ne supporte pas la lecture vidéo.
                         </video>
                         <?php if (!empty($v['texte'])): ?>
                             <h3><?= htmlspecialchars($v['texte']); ?></h3>
@@ -161,49 +212,59 @@ $videos = $productManager->getProductVideos($productId);
     </footer>
 
     <!-- BOUTON FIXE COMMANDER -->
-    <button class="btn btn-primary btn-lg fixed-order-btn" onclick="openOrderForm()">
+    <button class="fixed-order-btn" onclick="openOrderForm()">
         <i class='bx bx-cart'></i> Commander
     </button>
 
     <!-- MODAL COMMANDE -->
     <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content custom-modal">
 
                 <!-- Header -->
-                <div class="modal-header bg-primary text-white">
+                <div class="modal-header custom-modal-header">
                     <h5 class="modal-title" id="orderModalLabel">
                         <i class='bx bx-cart-alt'></i> Commander : <?= htmlspecialchars($product['name']); ?>
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Fermer">
+                        <i class='bx bx-x'></i>
+                    </button>
                 </div>
 
                 <!-- Body -->
-                <div class="modal-body">
+                <div class="modal-body custom-modal-body">
                     <form id="orderForm" action="order.php" method="POST">
                         <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
 
-                        <div class="mb-3">
+                        <div class="form-group">
                             <label class="form-label">Nom complet</label>
-                            <input type="text" class="form-control" name="fullname" required>
+                            <input type="text" class="form-control-custom" name="fullname" placeholder="Votre nom complet" required>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="form-group">
                             <label class="form-label">Téléphone</label>
-                            <input type="tel" class="form-control" name="phone" required>
+                            <input type="tel" class="form-control-custom" name="phone" placeholder="Votre numéro de téléphone" required>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="form-group">
                             <label class="form-label">Adresse de livraison</label>
-                            <textarea class="form-control" name="address" rows="3" required></textarea>
+                            <textarea class="form-control-custom" name="address" rows="3" placeholder="Votre adresse complète" required></textarea>
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="fw-bold text-primary fs-5">
-                                Total : <?= number_format($product['price'], 2); ?> €
+                        <div class="order-summary">
+                            <div class="product-info-modal">
+                                <img src="uploads/main/<?= $product['image']; ?>" alt="<?= htmlspecialchars($product['name']); ?>" class="product-image-modal">
+                                <div class="product-details">
+                                    <h6><?= htmlspecialchars($product['name']); ?></h6>
+                                    <span class="product-price"><?= $product['price'] ?> FCFA</span>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-success">
-                                <i class='bx bx-check-circle'></i> Valider la commande
+                        </div>
+
+                        <div class="modal-footer-custom">
+                            <button type="submit" class="btn-submit-order">
+                                <i class='bx bx-check-circle'></i> 
+                                <span>Valider la commande</span>
                             </button>
                         </div>
                     </form>
