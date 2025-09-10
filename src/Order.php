@@ -24,6 +24,15 @@ class Order
         return (int)$result['total'];
     }
 
+    public function getOrdersByStatus($status)
+    {
+        $query = "SELECT COUNT(*) as total FROM orders WHERE status = :status";
+        $stmt = $this->bd->prepare($query);
+        $stmt->execute(['status' => $status]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['total'];
+    }
+
     public function CreateOrder($data)
     {
         $req = $this->bd->prepare("
