@@ -112,7 +112,7 @@ switch ($action) {
                 'carousel4' => $carouselImages[3],
                 'carousel5' => $carouselImages[4],
                 'country' => $_POST['country'],
-                'manager_id' =>$_POST['manager_id']
+                'manager_id' => $_POST['manager_id']
             ];
 
             $manager->createProduct($productData);
@@ -187,18 +187,17 @@ switch ($action) {
                             }
 
                             $packData = [
-                            'product_id'       => $productId,
-                            'titre'            => htmlspecialchars($titre ?? ''),
-                            'image'            => $packImage,
-                            'quantity'         => (int)($_POST['pack_quantity'][$key] ?? 0),
-                            'price_reduction'  => (float)($_POST['pack_price_reduction'][$key] ?? 0),
-                            'price_normal'     => (float)($_POST['pack_price'][$key] ?? 0)
-                        ];
+                                'product_id'       => $productId,
+                                'titre'            => htmlspecialchars($titre ?? ''),
+                                'image'            => $packImage,
+                                'quantity'         => (int)($_POST['pack_quantity'][$key] ?? 0),
+                                'price_reduction'  => (int)($_POST['pack_price_reduction'][$key] ?? 0),
+                                'price_normal'     => (int)($_POST['pack_price'][$key] ?? 0)
+                            ];
 
                             $manager->createPacks($packData);
                         }
                     }
-
                 }
 
                 $message = "Produit ajouté avec succès !";
@@ -213,8 +212,6 @@ switch ($action) {
             exit;
         }
         break;
-
-
     case 'Mettre a jour le produit':
         // Code pour mettre à jour un produit
         if (isset($_POST['productId'])) {
@@ -225,6 +222,7 @@ switch ($action) {
                 'main' => __DIR__ . '/../../uploads/main/',
                 'carousel' => __DIR__ . '/../../uploads/carousel/',
                 'characteristics' => __DIR__ . '/../../uploads/characteristics/',
+                'packs' => __DIR__ . '/../../uploads/packs/',
                 'videos' => __DIR__ . '/../../uploads/videos/'
             ];
 
@@ -319,7 +317,9 @@ switch ($action) {
                     'carousel2' => $carouselImages[1],
                     'carousel3' => $carouselImages[2],
                     'carousel4' => $carouselImages[3],
-                    'carousel5' => $carouselImages[4]
+                    'carousel5' => $carouselImages[4],
+                    'country' => $_POST['country'],
+                    'manager_id' => $_POST['manager_id']
                 ];
 
                 $manager->updateProduct($productId, $productData);
@@ -330,8 +330,8 @@ switch ($action) {
                         // Vérifier si la caractéristique doit être supprimée
                         if (isset($_POST['delete_characteristic']) && in_array($charId, $_POST['delete_characteristic'])) {
                             // Récupérer l'image associée pour la supprimer
-                            $existingChar = $manager->getProductCharacteristics($charId);
-                            if (!empty($existingChar['image'])) {
+                            $existingChar = $manager->getCaracteristicById($charId);
+                            if (!empty($existingChar) && !empty($existingChar['image'])) {
                                 $filePath = $uploadDirs['characteristics'] . $existingChar['image'];
                                 if (file_exists($filePath)) {
                                     unlink($filePath);
@@ -416,8 +416,8 @@ switch ($action) {
                         // Vérifier si la vidéo doit être supprimée
                         if (isset($_POST['delete_video']) && in_array($videoId, $_POST['delete_video'])) {
                             // Récupérer le fichier vidéo associé pour le supprimer
-                            $existingVideo = $manager->getProductVideos($videoId);
-                            if (!empty($existingVideo['video_url']) && !filter_var($existingVideo['video_url'], FILTER_VALIDATE_URL)) {
+                            $existingVideo = $manager->getVideoById($videoId);
+                            if (!empty($existingVideo) && !empty($existingVideo['video_url']) && !filter_var($existingVideo['video_url'], FILTER_VALIDATE_URL)) {
                                 $filePath = $uploadDirs['videos'] . $existingVideo['video_url'];
                                 if (file_exists($filePath)) {
                                     unlink($filePath);
@@ -443,7 +443,8 @@ switch ($action) {
                         }
 
                         // Traiter la nouvelle vidéo (fichier)
-                        if (isset($_FILES['video']['tmp_name'][$index]) && $_FILES['video']['error'][$index] === UPLOAD_ERR_OK) {
+                        // Fichier de remplacement pour une vidéo existante
+                        if (isset($_FILES['existing_video_file']['tmp_name'][$index]) && $_FILES['existing_video_file']['error'][$index] === UPLOAD_ERR_OK) {
                             // Supprimer l'ancien fichier s'il existe
                             if (!empty($videoUrl) && !filter_var($videoUrl, FILTER_VALIDATE_URL)) {
                                 $oldFilePath = $uploadDirs['videos'] . $videoUrl;
@@ -452,9 +453,9 @@ switch ($action) {
                                 }
                             }
 
-                            $videoUrl = time() . '_' . basename($_FILES['video']['name'][$index]);
+                            $videoUrl = time() . '_' . basename($_FILES['existing_video_file']['name'][$index]);
                             move_uploaded_file(
-                                $_FILES['video']['tmp_name'][$index],
+                                $_FILES['existing_video_file']['tmp_name'][$index],
                                 $uploadDirs['videos'] . $videoUrl
                             );
                         }
@@ -486,6 +487,120 @@ switch ($action) {
                         }
                     }
                 }
+                // Compat: si le formulaire a envoyé des nouvelles vidéos sous le nom "video[]"
+                elseif (isset($_FILES['video'])) {
+                    foreach ($_FILES['video']['tmp_name'] as $key => $tmp_name) {
+                        if ($_FILES['video']['error'][$key] === UPLOAD_ERR_OK) {
+                            $videoName = time() . '_' . basename($_FILES['video']['name'][$key]);
+                            if (move_uploaded_file($tmp_name, $uploadDirs['videos'] . $videoName)) {
+                                $videoData = [
+                                    'product_id' => $productId,
+                                    'video_url' => $videoName,
+                                    'texte' => htmlspecialchars($_POST['video_text'][$key] ?? '')
+                                ];
+                                $manager->createVideos($videoData);
+                            }
+                        }
+                    }
+                }
+
+
+                // Traitement des packs existants
+                if (isset($_POST['existing_pack_id'])) {
+                    foreach ($_POST['existing_pack_id'] as $index => $packId) {
+                        // Vérifier si le pack doit être supprimé
+                        if (isset($_POST['delete_pack']) && in_array($packId, $_POST['delete_pack'])) {
+                            $existingPack = $manager->getPackById($packId);
+                            if (!empty($existingPack) && !empty($existingPack['image'])) {
+                                $filePath = $uploadDirs['packs'] . $existingPack['image'];
+                                if (file_exists($filePath)) {
+                                    unlink($filePath);
+                                }
+                            }
+                            $manager->deletePacks($packId);
+                            continue;
+                        }
+
+                        // Récupérer les valeurs envoyées
+                        $packTitre        = $_POST['existing_pack_titre'][$index] ?? '';
+                        $packQuantity     = (int)($_POST['existing_pack_quantity'][$index] ?? 0);
+                        $packReduction    = (int)($_POST['existing_pack_price_reduction'][$index] ?? 0);
+                        $packNormal       = (int)($_POST['existing_pack_price_normal'][$index] ?? 0);
+                        $packImage        = $_POST['existing_pack_image'][$index] ?? '';
+
+                        // Suppression d’image si demandé
+                        if (
+                            isset($_POST['delete_pack_image']) &&
+                            in_array($packId, $_POST['delete_pack_image']) &&
+                            !empty($packImage)
+                        ) {
+                            $filePath = $uploadDirs['packs'] . $packImage;
+                            if (file_exists($filePath)) {
+                                unlink($filePath);
+                            }
+                            $packImage = '';
+                        }
+
+                        // Upload nouvelle image pour un pack existant
+                        if (isset($_FILES['existing_pack_image_file']['tmp_name'][$index]) && $_FILES['existing_pack_image_file']['error'][$index] === UPLOAD_ERR_OK) {
+                            if (!empty($packImage)) {
+                                $oldFilePath = $uploadDirs['packs'] . $packImage;
+                                if (file_exists($oldFilePath)) {
+                                    unlink($oldFilePath);
+                                }
+                            }
+
+                            $packImage = time() . '_' . basename($_FILES['existing_pack_image_file']['name'][$index]);
+                            move_uploaded_file(
+                                $_FILES['existing_pack_image_file']['tmp_name'][$index],
+                                $uploadDirs['packs'] . $packImage
+                            );
+                        }
+
+                        // Mettre à jour le pack
+                        $packData = [
+                            'titre'           => htmlspecialchars($packTitre),
+                            'image'           => $packImage,
+                            'quantity'        => $packQuantity,
+                            'price_reduction' => $packReduction,
+                            'price_normal'    => $packNormal
+                        ];
+
+                        $manager->updatePack($packId, $packData);
+                    }
+                }
+
+                // Traitement des nouveaux packs (ton code adapté)
+                if (isset($_POST['pack_titre'])) {
+                    foreach ($_POST['pack_titre'] as $key => $titre) {
+                        if (!empty($titre)) {
+                            $packImage = '';
+
+                            if (
+                                isset($_FILES['pack_image']['tmp_name'][$key]) &&
+                                $_FILES['pack_image']['error'][$key] === UPLOAD_ERR_OK
+                            ) {
+                                $packImage = time() . '_' . basename($_FILES['pack_image']['name'][$key]);
+                                move_uploaded_file(
+                                    $_FILES['pack_image']['tmp_name'][$key],
+                                    $uploadDirs['packs'] . $packImage
+                                );
+                            }
+
+                            $packData = [
+                                'product_id'      => $productId,
+                                'titre'           => htmlspecialchars($titre),
+                                'image'           => $packImage,
+                                'quantity'        => (int)($_POST['pack_quantity'][$key] ?? 0),
+                                'price_reduction' => (int)($_POST['pack_price_reduction'][$key] ?? 0),
+                                'price_normal'    => (int)($_POST['pack_price'][$key] ?? 0)
+                            ];
+
+                            $manager->createPacks($packData);
+                        }
+                    }
+                }
+
 
                 $message = "Produit mis à jour avec succès !";
                 header('Location: index.php?message=' . urlencode($message));

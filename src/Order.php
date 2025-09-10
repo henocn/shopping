@@ -14,6 +14,7 @@ class Order
         $this->bd = $bd;
     }
 
+    //ok
     public function getTotalOrders()
     {
         $query = "SELECT COUNT(*) as total FROM orders";
@@ -23,107 +24,59 @@ class Order
         return (int)$result['total'];
     }
 
-    public function getOrdersByStatus($status)
-    {
-        $query = "SELECT COUNT(*) as total FROM orders WHERE status = :status";
-        $stmt = $this->bd->prepare($query);
-        $stmt->execute(['status' => $status]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return (int)$result['total'];
-    }
-
-
     public function CreateOrder($data)
     {
         $req = $this->bd->prepare("
         INSERT INTO orders 
-        (product_id, pack_id, quantity, total_price, client_name, client_country, client_adress, client_note, status) 
+        (product_id, pack_id, quantity, total_price, client_name, client_country, client_adress, client_note, status, action) 
         VALUES 
-        (:product_id, :pack_id, :quantity, :total_price, :client_name, :client_country, :client_adress, :client_note, :status)
+        (:product_id, :pack_id, :quantity, :total_price, :client_name, :client_country, :client_adress, :client_note, :status, :action)
     ");
 
         $req->execute([
-            'product_id'   => $data['product_id'],
-            'pack_id'      => $data['pack_id'],
-            'quantity'     => $data['quantity'],
-            'total_price'  => $data['total_price'],
-            'client_name'  => $data['client_name'],
-            'client_country' => $data['client_country'],
-            'client_adress' => $data['client_adress'],
-            'client_note'   => $data['client_note'],
-            'status'        => $data['status'],
+            'product_id'     => (int)($data['product_id'] ?? 0),
+            'pack_id'        => (int)($data['pack_id'] ?? 0),
+            'quantity'       => (int)($data['quantity'] ?? 1),
+            'total_price'    => (int)($data['total_price'] ?? 0),
+            'client_name'    => $data['client_name'] ?? '',
+            'client_country' => (int)($data['client_country'] ?? 0),
+            'client_adress'  => $data['client_adress'] ?? '',
+            'client_note'    => $data['client_note'] ?? null,
+            'status'         => $data['status'] ?? 'processing',
+            'action'         => $data['action'] ?? 'remind',
         ]);
     }
-
 
     public function getAllOrders()
     {
         $sql = "
-        SELECT 
-            orders.id AS order_id,
-            orders.*,
-            products.name AS product_name,
-            products.image AS product_image,
-            products.price AS unit_price,
-            product_packs.titre as pack_name
-        FROM orders
-        INNER JOIN products ON products.id = orders.product_id
-        LEFT JOIN product_packs ON product_packs.id = orders.pack_id
-        ORDER BY orders.id DESC
-    ";
+            SELECT 
+                orders.id AS order_id,
+                orders.product_id,
+                orders.pack_id,
+                orders.quantity,
+                orders.total_price,
+                orders.client_name,
+                orders.client_country,
+                orders.client_adress,
+                orders.client_note,
+                orders.manager_note,
+                orders.status,
+                orders.action,
+                COALESCE(products.name, 'Produit supprimé') AS product_name,
+                COALESCE(products.image, '') AS product_image,
+                COALESCE(product_packs.titre, '') AS pack_name,
+                CASE WHEN orders.quantity > 0 THEN ROUND(orders.total_price / orders.quantity, 2) ELSE orders.total_price END AS unit_price
+            FROM orders
+            LEFT JOIN products ON products.id = orders.product_id
+            LEFT JOIN product_packs ON product_packs.id = orders.pack_id
+            ORDER BY orders.id DESC
+        ";
 
         $req = $this->bd->prepare($sql);
         $req->execute();
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
-
-
-    public function getOrdersByCountry($country)
-    {
-        $sql = "
-        SELECT 
-            orders.id AS order_id,
-            orders.*,
-            products.name AS product_name,
-            products.image AS product_image,
-            products.price AS unit_price,
-            product_packs.titre as pack_name
-        FROM orders
-        INNER JOIN products ON products.id = orders.product_id
-        LEFT JOIN product_packs ON product_packs.id = orders.pack_id
-        WHERE orders.client_country = :country
-        ORDER BY orders.id DESC
-    ";
-
-        $req = $this->bd->prepare($sql);
-        $req->execute(['country' => $country]);
-        return $req->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-
-    public function getOrderByCountry($country)
-    {
-        $sql = "
-        SELECT 
-            orders.id AS order_id,
-            orders.*,
-            products.name AS product_name,
-            products.image AS product_image,
-            products.price AS unit_price,
-            product_packs.titre as pack_name
-        FROM orders
-        INNER JOIN products ON products.id = orders.product_id
-        LEFT JOIN product_packs ON product_packs.id = orders.pack_id
-        WHERE orders.client_country = :country
-        ORDER BY orders.id DESC
-    ";
-
-        $req = $this->bd->prepare($sql);
-        $req->execute(['country' => $country]);
-        return $req->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-
 
     public function updateOrder(array $data)
     {
@@ -146,5 +99,43 @@ class Order
             'action'       => $data['action'],
             'id'           => $data['id'],
         ]);
+    }
+
+    public function getOrdersByUserId($userId)
+    {
+        $sql = "
+            SELECT 
+                orders.id AS order_id,
+                orders.product_id,
+                orders.pack_id,
+                orders.quantity,
+                orders.total_price,
+                orders.client_name,
+                orders.client_country,
+                orders.client_adress,
+                orders.client_note,
+                orders.manager_note,
+                orders.status,
+                orders.action,
+                COALESCE(products.name, 'Produit supprimé') AS product_name,
+                COALESCE(products.image, '') AS product_image,
+                COALESCE(product_packs.titre, '') AS pack_name,
+                CASE WHEN orders.quantity > 0 THEN ROUND(orders.total_price / orders.quantity, 2) ELSE orders.total_price END AS unit_price
+            FROM orders
+            LEFT JOIN products ON products.id = orders.product_id
+            LEFT JOIN product_packs ON product_packs.id = orders.pack_id
+            ORDER BY orders.id DESC
+        ";
+
+        $req = $this->bd->prepare($sql);
+        $req->execute();
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteOrder($id)
+    {
+        $sql = "DELETE FROM orders WHERE id = :id";
+        $req = $this->bd->prepare($sql);
+        return $req->execute(['id' => $id]);
     }
 }

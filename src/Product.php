@@ -60,6 +60,14 @@ class Product
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Récupérer une caractéristique par son ID
+    public function getCaracteristicById($id)
+    {
+        $stmt = $this->bd->prepare("SELECT * FROM product_caracteristics WHERE id = :id LIMIT 1");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function getVideos($product_id)
     {
         $stmt = $this->bd->prepare("SELECT * FROM product_video WHERE product_id = :product_id");
@@ -67,11 +75,27 @@ class Product
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Récupérer une vidéo par son ID
+    public function getVideoById($id)
+    {
+        $stmt = $this->bd->prepare("SELECT * FROM product_video WHERE id = :id LIMIT 1");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function getPacks($product_id)
     {
         $stmt = $this->bd->prepare("SELECT * FROM product_packs WHERE product_id = :product_id");
         $stmt->execute(['product_id' => $product_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Récupérer un pack par son ID
+    public function getPackById($id)
+    {
+        $stmt = $this->bd->prepare("SELECT * FROM product_packs WHERE id = :id LIMIT 1");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
 
@@ -82,11 +106,13 @@ class Product
         $product = $this->getProducts($product_id);
         $videos = $this->getVideos($product_id);
         $caracteristics = $this->getCaracteristics($product_id);
+        $packs = $this->getPacks($product_id);
 
         return [
             'product' => $product,
             'videos' => $videos,
-            'caracteristics' => $caracteristics
+            'caracteristics' => $caracteristics,
+            'packs' => $packs
         ];
     }
 
@@ -205,6 +231,16 @@ class Product
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getProductPacks($productId) {
+        $stmt = $this->bd->prepare("
+            SELECT * FROM product_packs 
+            WHERE product_id = :id 
+            ORDER BY id ASC
+        ");
+        $stmt->execute(['id' => $productId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 
      /**
      * Fonctions de Mise à jour des differents éléments liée au produit
@@ -261,6 +297,19 @@ class Product
         ]);
     }
 
+    public function updatePack($packId, $data)
+    {
+        $req = $this->bd->prepare("UPDATE product_packs SET titre = :titre, quantity = :quantity, image = :image, price_reduction = :price_reduction, price_normal = :price_normal WHERE id = :id");
+        $req->execute([
+            'titre' => $data['titre'],
+            'quantity' => $data['quantity'],
+            'image' => $data['image'],
+            'price_reduction' => $data['price_reduction'],
+            'price_normal' => $data['price_normal'],
+            'id' => $packId
+        ]);
+    }
+
     public function updateProductStatus($productId, $newStatus)
     {
         $req = $this->bd->prepare("UPDATE products SET status = :status WHERE id = :id");
@@ -280,6 +329,12 @@ class Product
     public function deleteVideo($id)
     {
         $stmt = $this->bd->prepare("DELETE FROM product_video WHERE id = :id");
+        return $stmt->execute(['id' => $id]);
+    }
+
+    public function deletePacks($id)
+    {
+        $stmt = $this->bd->prepare("DELETE FROM product_packs WHERE id = :id");
         return $stmt->execute(['id' => $id]);
     }
 
