@@ -142,9 +142,6 @@ $videos = $productManager->getProductVideos($productId);
 
     <!-- INFOS PRODUIT -->
     <section class="product-info">
-        <div class="stock-status <?= $product['quantity'] > 0 ? 'in-stock' : 'out-stock'; ?>">
-            <?= $product['quantity'] > 0 ? 'En stock' : 'Rupture de stock'; ?>
-        </div>
         <div class="product-description">
             <?= $product['description']; ?>
         </div>
@@ -154,19 +151,15 @@ $videos = $productManager->getProductVideos($productId);
             <h3>Partager ce produit :</h3>
             <button class="share-btn share-facebook" onclick="shareProduct('facebook')">
                 <i class='bx bxl-facebook'></i>
-                Facebook
             </button>
             <button class="share-btn share-twitter" onclick="shareProduct('twitter')">
                 <i class='bx bxl-twitter'></i>
-                Twitter
             </button>
             <button class="share-btn share-whatsapp" onclick="shareProduct('whatsapp')">
                 <i class='bx bxl-whatsapp'></i>
-                WhatsApp
             </button>
             <button class="share-btn share-copy" onclick="copyLink()">
                 <i class='bx bx-link'></i>
-                Copier le lien
             </button>
         </div>
     </section>
@@ -196,7 +189,7 @@ $videos = $productManager->getProductVideos($productId);
             <div class="videos-grid">
                 <?php foreach ($videos as $v): ?>
                     <div class="video-card">
-                        <video controls preload="metadata">
+                        <video controls autoplay preload="metadata">
                             <source src="uploads/videos/<?= $v['video_url']; ?>" type="video/mp4">
                             Votre navigateur ne supporte pas la lecture vidéo.
                         </video>
@@ -236,33 +229,29 @@ $videos = $productManager->getProductVideos($productId);
 
                 <!-- Body -->
                 <div class="modal-body custom-modal-body">
-                    <form id="orderForm" action="order.php" method="POST">
+                    <form id="orderForm" action="./management/orders/save.php" method="POST">
                         <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
 
                         <div class="form-group">
                             <label class="form-label">Nom complet</label>
-                            <input type="text" class="form-control-custom" name="fullname" placeholder="Votre nom complet" required>
+                            <input type="text" class="form-control-custom" name="client_name" placeholder="Votre nom complet" required>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Téléphone</label>
-                            <input type="tel" class="form-control-custom" name="phone" placeholder="Votre numéro de téléphone" required>
+                            <input type="tel" class="form-control-custom" name="client_phone" placeholder="Votre numéro de téléphone" required>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Adresse de livraison</label>
-                            <textarea class="form-control-custom" name="address" rows="3" placeholder="Votre adresse complète" required></textarea>
+                            <input type="text" class="form-control-custom" name="client_adress" placeholder="Ville, Quartier" required>
                         </div>
-
-                        <div class="order-summary">
-                            <div class="product-info-modal">
-                                <img src="uploads/main/<?= $product['image']; ?>" alt="<?= htmlspecialchars($product['name']); ?>" class="product-image-modal">
-                                <div class="product-details">
-                                    <h6><?= htmlspecialchars($product['name']); ?></h6>
-                                    <span class="product-price"><?= $product['price'] ?> FCFA</span>
-                                </div>
-                            </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Note evantuelles</label>
+                            <textarea class="form-control-custom" name="client_note" rows="2" placeholder="Votre adresse complète" required></textarea>
                         </div>
+                        <input type="hidden" name="validate" name="commander">
 
                         <div class="modal-footer-custom">
                             <button type="submit" class="btn-submit-order">
