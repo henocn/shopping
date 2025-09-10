@@ -5,7 +5,6 @@ require '../../utils/middleware.php';
 verifyConnection("/shopping/management/orders/");
 checkIsActive($_SESSION['user_id']);
 
-
 use src\Connectbd;
 use src\Order;
 
@@ -37,6 +36,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
     <link href="../../assets/css/navbar.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../assets/css/order.css">
+    <link rel="stylesheet" href="../../assets/css/index.css">
 </head>
 
 <body>
@@ -50,10 +50,6 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                     <i class='bx bx-package me-2'></i>
                     Gestion des Commandes
                 </h1>
-                <div class="orders-counter" id="total-orders">
-                    <i class='bx bx-list-ul me-2'></i>
-                    Total: <span id="orders-count"><?= count($orders) ?></span> commandes
-                </div>
             </div>
         </div>
 
@@ -550,249 +546,9 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
 
     <?php include '../../includes/footer.php'; ?>
 
-    <!-- Scripts optimisés -->
     <script src="../../assets/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Gestion optimisée des commandes avec AJAX
-        
-        // Cache des éléments DOM pour de meilleures performances
-        const domCache = {
-            ordersCount: document.getElementById('orders-count'),
-            totalOrders: document.getElementById('total-orders')
-        };
+    <script src="../../assets/js/order.js"></script>
 
-        // Mise à jour du compteur de commandes
-        function updateOrdersCount() {
-            const allCards = document.querySelectorAll('[id^="order-card-"]');
-            if (domCache.ordersCount) {
-                domCache.ordersCount.textContent = allCards.length;
-            }
-        }
-
-        // Fonction pour trouver la carte de commande
-        function findOrderCard(orderId) {
-            return document.getElementById('order-card-' + orderId) || 
-                   document.getElementById('order-card-action-' + orderId);
-        }
-
-        // Déplacement optimisé des cartes entre les listes
-        function moveCardToStatusList(orderId, status, action) {
-            const card = findOrderCard(orderId);
-            if (!card) {
-                console.warn(`Carte de commande ${orderId} introuvable`);
-                return;
-            }
-
-            // Mise à jour des attributs de données
-            card.setAttribute('data-status', status);
-            if (action) {
-                card.setAttribute('data-action', action);
-            }
-
-            // Trouver la liste de destination pour le statut
-            const statusList = document.getElementById('list-status-' + status);
-            if (statusList) {
-                // Animation de disparition puis réapparition
-                card.style.opacity = '0.5';
-                card.style.transform = 'scale(0.95)';
-                
-                setTimeout(() => {
-                    statusList.appendChild(card);
-                    card.style.opacity = '1';
-                    card.style.transform = 'scale(1)';
-                    
-                    // Mise à jour du badge de statut dans la carte
-                    updateOrderCardBadge(card, status);
-                }, 200);
-            }
-
-            // Si une action est définie, aussi déplacer vers la liste d'action
-            if (action) {
-                const actionList = document.getElementById('list-action-' + action);
-                if (actionList) {
-                    // Cloner la carte pour la liste d'action si nécessaire
-                    const actionCard = card.cloneNode(true);
-                    actionCard.id = 'order-card-action-' + orderId;
-                    actionList.appendChild(actionCard);
-                }
-            }
-        }
-
-        // Mise à jour du badge de statut dans une carte
-        function updateOrderCardBadge(card, status) {
-            const badge = card.querySelector('.status-badge');
-            if (badge) {
-                const badgeClasses = {
-                    'processing': 'bg-warning',
-                    'validated': 'bg-success',
-                    'canceled': 'bg-secondary',
-                    'rejected': 'bg-danger'
-                };
-                
-                // Nettoyer les anciennes classes de badge
-                badge.className = badge.className.replace(/bg-\w+/g, '');
-                badge.classList.add('status-badge', 'badge', 'text-uppercase');
-                badge.classList.add(badgeClasses[status] || 'bg-light');
-                badge.textContent = status;
-            }
-        }
-
-        // Fermeture propre des modales
-        function closeModal(modalId) {
-            const modalEl = document.getElementById(modalId);
-            if (modalEl) {
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) {
-                    modal.hide();
-                }
-                
-                // Nettoyage des artifacts de modal
-                setTimeout(() => {
-                    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
-                        backdrop.remove();
-                    });
-                    document.body.classList.remove('modal-open');
-                    document.body.style.overflow = '';
-                    document.body.style.paddingRight = '';
-                }, 300);
-            }
-        }
-
-        // Fonction principale de mise à jour des commandes
-        function updateOrder(event, orderId) {
-            event.preventDefault();
-            
-            // Indicateur de chargement
-            const submitButton = event.target.querySelector('button[type="submit"]');
-            const originalText = submitButton.innerHTML;
-            submitButton.innerHTML = '<i class="bx bx-loader-alt bx-spin me-2"></i>Enregistrement...';
-            submitButton.disabled = true;
-
-            const form = event.target;
-            const formData = new FormData(form);
-            
-            // Assurer que l'ID de commande est inclus
-            formData.set('order_id', orderId);
-            formData.set('valider', 'update');
-
-            fetch('save.php', {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'fetch'
-                },
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!data || !data.success) {
-                    throw new Error(data?.message || "Erreur lors de la mise à jour");
-                }
-
-                // Mise à jour réussie
-                console.log('Commande mise à jour:', data);
-                
-                // Déplacer la carte vers la bonne liste
-                moveCardToStatusList(orderId, data.status, data.action);
-                
-                // Fermer les modales
-                closeModal('detailsModal' + orderId);
-                closeModal('detailsModalAction' + orderId);
-                
-                // Notification de succès
-                showNotification('Commande mise à jour avec succès', 'success');
-                
-                // Mise à jour du compteur
-                updateOrdersCount();
-            })
-            .catch(error => {
-                console.error('Erreur lors de la mise à jour:', error);
-                showNotification('Erreur lors de la mise à jour: ' + error.message, 'error');
-            })
-            .finally(() => {
-                // Restaurer le bouton
-                submitButton.innerHTML = originalText;
-                submitButton.disabled = false;
-            });
-        }
-
-        // Système de notifications
-        function showNotification(message, type = 'info') {
-            // Créer l'élément de notification
-            const notification = document.createElement('div');
-            notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
-            notification.style.cssText = 'top: 20px; right: 20px; z-index: 1060; max-width: 300px;';
-            notification.innerHTML = `
-                <i class='bx ${type === 'success' ? 'bx-check-circle' : 'bx-error-circle'} me-2'></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Auto-suppression après 5 secondes
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 5000);
-        }
-
-        // Calcul automatique du prix total
-        function setupPriceCalculation() {
-            document.addEventListener('input', function(e) {
-                if (e.target.name === 'quantity') {
-                    const form = e.target.closest('form');
-                    const orderId = form.querySelector('input[name="order_id"]').value;
-                    const totalPriceInput = form.querySelector('input[name="total_price"]');
-                    
-                    // Récupérer le prix unitaire depuis les données de la page
-                    const orderCard = findOrderCard(orderId);
-                    if (orderCard) {
-                        const unitPriceElement = orderCard.querySelector('.text-success');
-                        if (unitPriceElement) {
-                            const unitPriceText = unitPriceElement.textContent.replace(/[^\d]/g, '');
-                            const unitPrice = parseInt(unitPriceText) || 0;
-                            const quantity = parseInt(e.target.value) || 1;
-                            
-                            if (totalPriceInput) {
-                                totalPriceInput.value = unitPrice * quantity;
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Initialisation au chargement de la page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mise à jour du compteur initial
-            updateOrdersCount();
-            
-            // Configuration du calcul automatique des prix
-            setupPriceCalculation();
-            
-            // Améliorer l'accessibilité des onglets
-            const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
-            tabButtons.forEach(button => {
-                button.addEventListener('shown.bs.tab', function(e) {
-                    console.log('Onglet activé:', e.target.id);
-                });
-            });
-            
-            console.log('Gestion des commandes initialisée');
-        });
-
-        // Exposition globale pour compatibilité
-        window.updateOrder = updateOrder;
-        window.moveCardToStatusList = moveCardToStatusList;
-        window.showNotification = showNotification;
-    </script>
 </body>
 
 </html>

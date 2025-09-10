@@ -1,11 +1,11 @@
-/* Variables CSS pour la cohérence */
+/* Variables CSS pour la cohérence 
 :root {
   --primary-gradient: linear-gradient(135deg, #007bff, #0056b3);
   --border-radius: 8px;
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.15);
   --transition: all 0.3s ease;
-}
+}*/
 
 /* Amélioration des onglets */
 .nav-tabs {
