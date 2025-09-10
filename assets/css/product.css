@@ -7,6 +7,15 @@
   --primary-light: #FFD699;
   --surface: #F5F5F5;
   --text: #2F2F2F;
+  --accent: #FF6B6B;
+  --success: #4ECDC4;
+  --warning: #FFE66D;
+  --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  --gradient-surface: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.15);
+  --border-radius: 20px;
+  --border-radius-small: 12px;
 }
 
 * {
@@ -16,31 +25,69 @@
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
-  background: var(--surface);
+  font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--gradient-surface);
   color: var(--text);
   line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ================================
+   DYNAMIC THEME VARIABLES
+================================ */
+body.dynamic-theme {
+  --theme-primary: var(--primary);
+  --theme-secondary: var(--accent);
+  --theme-accent: var(--success);
+  --theme-surface: rgba(255, 255, 255, 0.95);
+  --theme-text: var(--text);
+  --theme-overlay: rgba(0, 0, 0, 0.4);
 }
 
 /* ================================
    HEADER
 ================================ */
-header.navbar {
-  background: var(--primary);
-  border-bottom: 1px solid var(--primary-dark);
+.navbar {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
 }
 
-header .navbar-brand {
+.navbar.scrolled {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: var(--shadow-soft);
+}
+
+.navbar-brand {
   font-weight: 700;
   font-size: 1.5rem;
   color: var(--text);
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
 }
 
-header .navbar-brand img {
-  height: 40px;
+.navbar-brand:hover {
+  transform: scale(1.05);
+  color: var(--primary);
+}
+
+.navbar-brand img {
+  height: 45px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.navbar-brand:hover img {
+  transform: rotate(5deg);
 }
 
 /* ================================
@@ -193,4 +240,30 @@ footer.footer {
 footer.footer p {
   margin: 0;
   font-size: 0.9rem;
+}
+
+
+/* ================================
+   BOUTON FIXE COMMANDER
+================================ */
+.fixed-order-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  border: none;
+  border-radius: 50px;
+  padding: 12px 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 1050;
+  transition: all 0.3s ease;
+}
+
+.fixed-order-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-3px);
 }
