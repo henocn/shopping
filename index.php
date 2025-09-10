@@ -51,7 +51,10 @@ $videos = $productManager->getProductVideos($productId);
     <nav class="navbar">
         <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand" href="#">
-                <img src="assets/images/logo.png" alt="Logo">
+                <div class="logo-container">
+                    <span class="logo-text">LUXE</span>
+                    <span class="logo-text-accent">MARKET</span>
+                </div>
             </a>
         </div>
     </nav>
