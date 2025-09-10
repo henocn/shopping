@@ -1,11 +1,8 @@
 <?php
 session_start();
 
-// Récupérer le code d'erreur depuis l'URL
 $error_code = isset($_GET['code']) ? (int)$_GET['code'] : 500;
-var_dump($error_code);
 
-// Définir les messages d'erreur par défaut
 $error_messages = [
     400 => [
         'title' => 'Mauvaise requête',

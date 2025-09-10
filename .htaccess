@@ -10,3 +10,7 @@ ErrorDocument 500 /shopping/error.php?code=500
     Order Allow,Deny
     Deny from all
 </FilesMatch>
+
+# securiser l'acces de assets
+# Les règles spécifiques au dossier assets sont définies dans assets/.htaccess
+

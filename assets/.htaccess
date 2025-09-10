@@ -1,0 +1,21 @@
+# Sécurité du dossier assets
+
+# Désactiver l’indexation du répertoire
+Options -Indexes
+
+# Bloquer l’exécution de scripts (PHP, CGI, etc.)
+<FilesMatch "\.(php|phtml|phps|phar|cgi|pl|py|asp|aspx|jsp)$">
+    Order Allow,Deny
+    Deny from all
+    Require all denied
+</FilesMatch>
+
+# Interdire l’accès aux fichiers cachés (.htaccess, .env, etc.)
+<FilesMatch "^\.">
+    Order Allow,Deny
+    Deny from all
+    Require all denied
+</FilesMatch>
+
+# Les fichiers statiques (css, js, images) restent accessibles par défaut
+
