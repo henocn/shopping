@@ -1,23 +1,61 @@
-/* Variables CSS pour la cohérence 
 :root {
-  --primary-gradient: linear-gradient(135deg, #007bff, #0056b3);
-  --border-radius: 8px;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.15);
-  --transition: all 0.3s ease;
-}*/
+  --primary: #ce8557;
+  --secondary: rgb(189, 133, 43);
+  --paper: #dcc5f5ff;
+  --magenta: #f1ebf1ff;
+  --purple: rgb(24, 4, 53);
+}
 
-/* Amélioration des onglets */
+.primary-color {
+  color: var(--primary);
+}
+
+.secondary-color {
+  color: var(--secondary);
+}
+
+.paper-color {
+  color: var(--paper);
+}
+
+.magenta-color {
+  color: var(--magenta);
+}
+
+.purple-color {
+  color: var(--purple);
+}
+
+.primary-bg {
+  background-color: var(--primary);
+}
+
+.secondary-bg {
+  background-color: var(--secondary);
+}
+
+.paper-bg {
+  background-color: var(--paper);
+}
+
+.magenta-bg {
+  background-color: var(--magenta);
+}
+
+.purple-bg {
+  background-color: var(--purple);
+}
+
 .nav-tabs {
-  border-bottom: 2px solid #dee2e6;
+  border-bottom: 2px solid var(--paper);
   margin-bottom: 2rem;
 }
 
 .nav-tabs .nav-link {
   border: none;
   border-bottom: 3px solid transparent;
-  background: none;
-  color: #6c757d;
+  background: var(--primary);
+  color: var(--primary);
   font-weight: 500;
   padding: 1rem 1.5rem;
   transition: var(--transition);
@@ -25,9 +63,9 @@
 }
 
 .nav-tabs .nav-link:hover:not(.active) {
-  border-color: #dee2e6;
-  background-color: #f8f9fa;
-  color: #495057;
+  border-color: #1e65ac;
+  background-color: var(--purple);
+  color: var(--purple);
 }
 
 .nav-tabs .nav-link.active {
@@ -168,29 +206,6 @@
   opacity: 0.5;
 }
 
-/* En-tête de page */
-.page-header {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: var(--border-radius);
-  padding: 2rem;
-  margin-bottom: 2rem;
-  border: 1px solid #dee2e6;
-}
-
-.page-title {
-  color: #495057;
-  font-weight: 700;
-  margin: 0;
-}
-
-.orders-counter {
-  background: var(--primary-gradient);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 50px;
-  font-weight: 600;
-  box-shadow: var(--shadow-sm);
-}
 
 /* Formulaires */
 .form-control,

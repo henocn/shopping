@@ -37,23 +37,26 @@ class Order
     {
         $req = $this->bd->prepare("
         INSERT INTO orders 
-        (product_id, pack_id, quantity, total_price, client_name, client_country, client_adress, client_note, status, action) 
+        (product_id, pack_id, quantity,	unit_price, total_price, client_name, client_country, client_adress,client_phone, client_note, status, action) 
         VALUES 
-        (:product_id, :pack_id, :quantity, :total_price, :client_name, :client_country, :client_adress, :client_note, :status, :action)
+        (:product_id, :pack_id, :quantity, :unit_price, :total_price, :client_name, :client_country, :client_adress,:client_phone, :client_note, :status, :action)
     ");
 
         $req->execute([
             'product_id'     => (int)($data['product_id'] ?? 0),
             'pack_id'        => (int)($data['pack_id'] ?? 0),
             'quantity'       => (int)($data['quantity'] ?? 1),
+            'unit_price'     => (int)($data['unit_price'] ?? 0),
             'total_price'    => (int)($data['total_price'] ?? 0),
             'client_name'    => $data['client_name'] ?? '',
-            'client_country' => (int)($data['client_country'] ?? 0),
+            'client_country' => $data['client_country'],
             'client_adress'  => $data['client_adress'] ?? '',
+            'client_phone' => $data['client_phone'] ?? '',
             'client_note'    => $data['client_note'] ?? null,
             'status'         => $data['status'] ?? 'processing',
-            'action'         => $data['action'] ?? 'remind',
+            'action'         => $data['action'] ?? 'call',
         ]);
+        return true;
     }
 
     public function getAllOrders()
@@ -64,9 +67,11 @@ class Order
                 orders.product_id,
                 orders.pack_id,
                 orders.quantity,
+                orders.unit_price,
                 orders.total_price,
                 orders.client_name,
                 orders.client_country,
+                orders.client_phone,
                 orders.client_adress,
                 orders.client_note,
                 orders.manager_note,
@@ -118,9 +123,11 @@ class Order
                 orders.product_id,
                 orders.pack_id,
                 orders.quantity,
+                orders.unit_price,
                 orders.total_price,
                 orders.client_name,
                 orders.client_country,
+                orders.client_phone,
                 orders.client_adress,
                 orders.client_note,
                 orders.manager_note,

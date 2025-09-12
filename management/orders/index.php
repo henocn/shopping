@@ -35,23 +35,14 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
     <link href="../../assets/css/orders.css" rel="stylesheet">
     <link href="../../assets/css/navbar.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="../../assets/css/order.css">
-    <link rel="stylesheet" href="../../assets/css/index.css">
+    <link href="../../assets/css/order.css" rel="stylesheet">
+    <!--<link rel="stylesheet" href="../../assets/css/index.css">-->
 </head>
 
 <body>
     <?php include '../../includes/navbar.php'; ?>
 
     <main class="container-fluid my-4">
-        <!-- En-tête de page harmonisé -->
-        <div class="page-header">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                <h1 class="page-title">
-                    <i class='bx bx-package me-2'></i>
-                    Gestion des Commandes
-                </h1>
-            </div>
-        </div>
 
         <!-- Navigation par onglets harmonisée -->
         <ul class="nav nav-tabs" id="ordersTabs" role="tablist">
@@ -75,12 +66,12 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                     <i class='bx bx-shield-x me-2'></i>Rejeté
                 </button>
             </li>
-            
+
             <!-- Séparateur visuel -->
             <li class="nav-item ms-auto" role="presentation">
                 <span class="nav-link text-muted border-0 pe-0">Actions :</span>
             </li>
-            
+
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="tab-action-remind" data-bs-toggle="tab" data-bs-target="#pane-action-remind" type="button" role="tab">
                     <i class='bx bx-bell me-2'></i>Relancer
@@ -141,10 +132,10 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                     <div class="card h-100 order-card">
                                         <div class="card-body p-3">
                                             <div class="d-flex align-items-start mb-3">
-                                                <img src="../../uploads/main/<?= !empty($order['product_image']) ? htmlspecialchars($order['product_image']) : 'default.jpg' ?>" 
-                                                     alt="<?= htmlspecialchars($order['product_name']) ?>" 
-                                                     class="product-image me-3" 
-                                                     onerror="this.src='../../assets/image/default.jpg'">
+                                                <img src="../../uploads/main/<?= !empty($order['product_image']) ? htmlspecialchars($order['product_image']) : 'default.jpg' ?>"
+                                                    alt="<?= htmlspecialchars($order['product_name']) ?>"
+                                                    class="product-image me-3"
+                                                    onerror="this.src='../../assets/image/default.jpg'">
                                                 <div class="flex-grow-1">
                                                     <div class="d-flex justify-content-between align-items-start mb-1">
                                                         <h6 class="mb-1 fw-bold text-primary">#<?= $order['order_id'] ?></h6>
@@ -161,7 +152,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                     </small>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="d-flex justify-content-between align-items-center mb-3">
                                                 <div class="text-center">
                                                     <small class="text-muted d-block">Quantité</small>
@@ -198,7 +189,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                 </div>
                                                 <div class="modal-body">
                                                     <form action="save.php" method="POST" id="orderForm<?= $order['order_id'] ?>" onsubmit="updateOrder(event, <?= $order['order_id'] ?>)">
-                                                        
+
                                                         <!-- Informations client (lecture seule) -->
                                                         <div class="row mb-4">
                                                             <div class="col-md-12">
@@ -208,6 +199,12 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                 <div class="mb-3">
                                                                     <label class="form-label fw-bold">Nom du client</label>
                                                                     <p class="form-control-plaintext"><?= htmlspecialchars($order['client_name']) ?></p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label fw-bold">Numero du client</label>
+                                                                    <p class="form-control-plaintext"><?= htmlspecialchars($order['client_phone']) ?></p>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6">
@@ -223,12 +220,12 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                 </div>
                                                             </div>
                                                             <?php if (!empty($order['client_note'])): ?>
-                                                            <div class="col-md-12">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label fw-bold">Note du client</label>
-                                                                    <p class="form-control-plaintext bg-light p-2 rounded"><?= htmlspecialchars($order['client_note']) ?></p>
+                                                                <div class="col-md-12">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label fw-bold">Note du client</label>
+                                                                        <p class="form-control-plaintext bg-light p-2 rounded"><?= htmlspecialchars($order['client_note']) ?></p>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
                                                             <?php endif; ?>
                                                         </div>
 
@@ -345,7 +342,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                     'canceled'   => 'secondary',
                                     'rejected'   => 'danger',
                                 ][$order['status']] ?? 'light';
-                                
+
                                 $actionBadgeClass = [
                                     'remind' => 'info',
                                     'call' => 'dark',
@@ -357,10 +354,10 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                     <div class="card h-100 order-card">
                                         <div class="card-body p-3">
                                             <div class="d-flex align-items-start mb-3">
-                                                <img src="../../uploads/main/<?= !empty($order['product_image']) ? htmlspecialchars($order['product_image']) : 'default.jpg' ?>" 
-                                                     alt="<?= htmlspecialchars($order['product_name']) ?>" 
-                                                     class="product-image me-3" 
-                                                     onerror="this.src='../../assets/image/default.jpg'">
+                                                <img src="../../uploads/main/<?= !empty($order['product_image']) ? htmlspecialchars($order['product_image']) : 'default.jpg' ?>"
+                                                    alt="<?= htmlspecialchars($order['product_name']) ?>"
+                                                    class="product-image me-3"
+                                                    onerror="this.src='../../assets/image/default.jpg'">
                                                 <div class="flex-grow-1">
                                                     <div class="d-flex justify-content-between align-items-start mb-1">
                                                         <h6 class="mb-1 fw-bold text-primary">#<?= $order['order_id'] ?></h6>
@@ -382,7 +379,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                     </small>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="d-flex justify-content-between align-items-center mb-3">
                                                 <div class="text-center">
                                                     <small class="text-muted d-block">Quantité</small>
@@ -419,7 +416,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                 </div>
                                                 <div class="modal-body">
                                                     <form action="save.php" method="POST" id="orderFormAction<?= $order['order_id'] ?>" onsubmit="updateOrder(event, <?= $order['order_id'] ?>)">
-                                                        
+
                                                         <!-- Informations client (lecture seule) -->
                                                         <div class="row mb-4">
                                                             <div class="col-md-12">
@@ -429,6 +426,12 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                 <div class="mb-3">
                                                                     <label class="form-label fw-bold">Nom du client</label>
                                                                     <p class="form-control-plaintext"><?= htmlspecialchars($order['client_name']) ?></p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label fw-bold">Numero du client</label>
+                                                                    <p class="form-control-plaintext"><?= htmlspecialchars($order['client_phone']) ?></p>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6">
@@ -444,12 +447,12 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                 </div>
                                                             </div>
                                                             <?php if (!empty($order['client_note'])): ?>
-                                                            <div class="col-md-12">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label fw-bold">Note du client</label>
-                                                                    <p class="form-control-plaintext bg-light p-2 rounded"><?= htmlspecialchars($order['client_note']) ?></p>
+                                                                <div class="col-md-12">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label fw-bold">Note du client</label>
+                                                                        <p class="form-control-plaintext bg-light p-2 rounded"><?= htmlspecialchars($order['client_note']) ?></p>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
                                                             <?php endif; ?>
                                                         </div>
 
@@ -529,7 +532,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                 <i class='bx bx-save me-2'></i>Enregistrer les modifications
                                                             </button>
                                                         </div>
-                                                        
+
                                                     </form>
                                                 </div>
                                             </div>

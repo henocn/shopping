@@ -19,31 +19,45 @@ if (isset($_POST['valider']) || isset($_GET['valider'])) {
 
     switch ($connect) {
 
-        case 'order':
+        case 'commander':
             if (
                 isset($_POST['product_id']) &&
                 isset($_POST['pack_id']) &&
                 isset($_POST['quantity']) &&
+                isset($_POST['unit_price']) &&
                 isset($_POST['total_price']) &&
                 isset($_POST['client_name']) &&
                 isset($_POST['client_country']) &&
+                isset($_POST['client_phone']) &&
+                isset($_POST['manager_id']) &&
                 isset($_POST['client_adress']) &&
-                isset($_POST['client_note']) ||
-                empty($_POST['client_note'])
+                (isset($_POST['client_note']) || empty($_POST['client_note']))
             ) {
 
                 $data = [
                     'product_id' => htmlspecialchars($_POST['product_id']),
                     'pack_id' => htmlspecialchars($_POST['pack_id']),
                     'quantity' => htmlspecialchars($_POST['quantity']),
+                    'unit_price' => htmlspecialchars($_POST['unit_price']),
                     'total_price' => htmlspecialchars($_POST['total_price']),
                     'client_name' => htmlspecialchars($_POST['client_name']),
                     'client_country' => htmlspecialchars($_POST['client_country']),
                     'client_adress' => htmlspecialchars($_POST['client_adress']),
+                    'client_phone' => htmlspecialchars($_POST['client_phone']),
+                    'manager_id' => htmlspecialchars($_POST['manager_id']),
                     'client_note' => htmlspecialchars($_POST['client_note']),
-                    'status' => 'processing'
+                    'status' => 'processing',
+                    'action' => 'call'
                 ];
-                $order->CreateOrder($data);
+                try {
+                    if ($order->CreateOrder($data)) {
+                        echo json_encode(['success' => true, 'message' => 'Merci ! Votre commande a été enregistrée avec succès !']);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'Échec enregistrement de votre commande']);
+                    }
+                } catch (Exception $e) {
+                    echo json_encode(['success' => false, 'message' => 'Erreur serveur : ' . $e->getMessage()]);
+                }
             }
             break;
         case 'update':

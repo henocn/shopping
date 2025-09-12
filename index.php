@@ -16,6 +16,8 @@ $productManager = new Product($cnx);
 
 $product = $productManager->getProducts($productId);
 
+
+
 if (!$product) {
     header('Location: error.php?code=404');
     exit;
@@ -86,9 +88,9 @@ $videos = $productManager->getProductVideos($productId);
             <div class="intro-content">
                 <h2 class="intro-title">LUXEMARKET</h2>
                 <p class="intro-description">
-                    Découvrez l'excellence du shopping en ligne avec LUXEMARKET. 
-                    Nous vous proposons une sélection premium de produits de qualité, 
-                    soigneusement choisis pour répondre à vos besoins les plus exigeants. 
+                    Découvrez l'excellence du shopping en ligne avec LUXEMARKET.
+                    Nous vous proposons une sélection premium de produits de qualité,
+                    soigneusement choisis pour répondre à vos besoins les plus exigeants.
                     Une expérience d'achat unique, sécurisée et personnalisée.
                 </p>
                 <button class="btn-intro" onclick="openOrderForm()">
@@ -145,7 +147,7 @@ $videos = $productManager->getProductVideos($productId);
         <div class="product-description">
             <?= $product['description']; ?>
         </div>
-        
+
         <!-- Boutons de partage social -->
         <div class="social-sharing">
             <h3>Partager ce produit :</h3>
@@ -229,8 +231,15 @@ $videos = $productManager->getProductVideos($productId);
 
                 <!-- Body -->
                 <div class="modal-body custom-modal-body">
-                    <form id="orderForm" action="./management/orders/save.php" method="POST">
+                    <form id="orderForm" action="management/orders/save.php" method="POST">
                         <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+
+                        <input type="hidden" name="quantity" value="1">
+                        <input type="hidden" name="pack_id" value="5">
+                        <input type="hidden" name="unit_price" value="<?= $product['price']; ?>">
+                        <input type="hidden" name="total_price" value="15000">
+                        <input type="hidden" name="client_country" value="<?= $product['country']; ?>">
+                        <input type="hidden" name="manager_id" value="<?= $product['manager_id']; ?>">
 
                         <div class="form-group">
                             <label class="form-label">Nom complet</label>
@@ -246,16 +255,17 @@ $videos = $productManager->getProductVideos($productId);
                             <label class="form-label">Adresse de livraison</label>
                             <input type="text" class="form-control-custom" name="client_adress" placeholder="Ville, Quartier" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label class="form-label">Note evantuelles</label>
-                            <textarea class="form-control-custom" name="client_note" rows="2" placeholder="Votre adresse complète" required></textarea>
+                            <textarea class="form-control-custom" name="client_note" rows="2" placeholder="Votre adresse complète"></textarea>
                         </div>
-                        <input type="hidden" name="validate" name="commander">
+                        <input type="hidden" name="manager_id" value="<?= $product['manager_id']; ?>">
+                        <input type="hidden" name="valider" value="commander">
 
                         <div class="modal-footer-custom">
                             <button type="submit" class="btn-submit-order">
-                                <i class='bx bx-check-circle'></i> 
+                                <i class='bx bx-check-circle'></i>
                                 <span>Valider la commande</span>
                             </button>
                         </div>
@@ -269,8 +279,10 @@ $videos = $productManager->getProductVideos($productId);
     <!-- JS -->
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="assets/js/product.js"></script>
     <script src="assets/js/theme.js"></script>
+
 </body>
 
 </html>
