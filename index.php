@@ -197,16 +197,23 @@ $packs = $productManager->getProductPacks($productId);
                 <div class="packs-grid">
                     <?php foreach ($packs as $pack): ?>
                         <div class="pack-card" data-pack-id="<?= $pack['id']; ?>" onclick="selectPack(<?= $pack['id']; ?>, <?= $pack['price_reduction']; ?>, <?= $pack['quantity']; ?>)">
-                            <div class="pack-header">
-                                <h3 class="pack-title"><?= htmlspecialchars($pack['titre']); ?></h3>
-                                <div class="pack-quantity">
-                                    <i class='bx bx-package'></i>
-                                    <?= $pack['quantity']; ?> unités
+                            <!-- Image du pack -->
+                            <?php if (!empty($pack['image'])): ?>
+                                <div class="pack-image">
+                                    <img src="uploads/packs/<?= $pack['image']; ?>" alt="<?= htmlspecialchars($pack['titre']); ?>" loading="lazy">
                                 </div>
-                            </div>
-                        
+                            <?php endif; ?>
                             
-                            <div class="pack-pricing">
+                            <div class="pack-content">
+                                <div class="pack-header">
+                                    <h3 class="pack-title"><?= htmlspecialchars($pack['titre']); ?></h3>
+                                    <div class="pack-quantity">
+                                        <i class='bx bx-package'></i>
+                                        <?= $pack['quantity']; ?> unités
+                                    </div>
+                                </div>
+                                
+                                <div class="pack-pricing">
                                 <div class="price-comparison">
                                     <div class="price-normal">
                                         <span class="price-label">Prix normal</span>
@@ -221,6 +228,7 @@ $packs = $productManager->getProductPacks($productId);
                                 <div class="savings">
                                     <i class='bx bx-trending-down'></i>
                                     <span>Économisez <?= number_format($pack['price_normal'] - $pack['price_reduction']); ?> FCFA</span>
+                                </div>
                                 </div>
                             </div>
                             
