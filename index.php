@@ -371,6 +371,12 @@ $packs = $productManager->getProductPacks($productId);
             // Ajouter la sélection à la carte cliquée
             event.currentTarget.classList.add('selected');
             
+            // Mettre à jour le dropdown
+            const select = document.getElementById('packSelection');
+            if (select) {
+                select.value = packId;
+            }
+            
             // Mettre à jour les champs cachés
             document.getElementById('selectedPackId').value = packId;
             document.getElementById('selectedQuantity').value = quantity;
@@ -381,14 +387,14 @@ $packs = $productManager->getProductPacks($productId);
             const packInfo = document.getElementById('selectedPackInfo');
             const packTitle = document.getElementById('packTitle');
             const packQuantity = document.getElementById('packQuantity');
-            const packPrice = document.getElementById('packPrice');
+            const packPriceElement = document.getElementById('packPrice');
             
             const selectedCard = event.currentTarget;
             const title = selectedCard.querySelector('.pack-title').textContent;
             
             packTitle.textContent = title;
             packQuantity.textContent = quantity + ' unités';
-            packPrice.textContent = new Intl.NumberFormat('fr-FR').format(packPrice) + ' FCFA';
+            packPriceElement.textContent = new Intl.NumberFormat('fr-FR').format(packPrice) + ' FCFA';
             
             packInfo.style.display = 'block';
             
