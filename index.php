@@ -4,15 +4,17 @@ require 'vendor/autoload.php';
 use src\Connectbd;
 use src\Product;
 
-if (!isset($_GET['id'])) {
-    header('Location: error.php?code=404');
-    exit;
-}
-
-$productId = intval($_GET['id']);
-
 $cnx = Connectbd::getConnection();
 $productManager = new Product($cnx);
+
+
+if (!isset($_GET['id'])) {
+    $product = $productManager->getRandomProduct();
+    $productId = intval($product['product_id']);
+} else {
+    $productId = intval($_GET['id']);
+}
+
 
 $product = $productManager->getProducts($productId);
 
