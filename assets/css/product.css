@@ -1173,8 +1173,8 @@ footer.footer p {
 
 .packs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -1226,7 +1226,7 @@ footer.footer p {
 
 .pack-image {
   width: 100%;
-  height: 200px;
+  height: 150px;
   overflow: hidden;
   position: relative;
 }
@@ -1243,7 +1243,7 @@ footer.footer p {
 }
 
 .pack-content {
-  padding: 2rem;
+  padding: 1.5rem;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -1253,11 +1253,11 @@ footer.footer p {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .pack-title {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--text);
   margin: 0;
@@ -1267,23 +1267,23 @@ footer.footer p {
 .pack-quantity {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   background: var(--primary-light);
   color: var(--primary-dark);
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .pack-quantity i {
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 
 .pack-pricing {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   margin-top: auto;
 }
 
@@ -1291,8 +1291,8 @@ footer.footer p {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding: 1rem;
+  margin-bottom: 0.8rem;
+  padding: 0.8rem;
   background: #f8f9fa;
   border-radius: var(--border-radius);
 }
@@ -1304,39 +1304,39 @@ footer.footer p {
 
 .price-label {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: #6c757d;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
   font-weight: 500;
 }
 
 .price-value {
   display: block;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--text);
 }
 
 .price-value.highlight {
   color: var(--primary);
-  font-size: 1.3rem;
+  font-size: 1.1rem;
 }
 
 .savings {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   background: var(--gradient-primary);
   color: white;
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 0.8rem;
   border-radius: var(--border-radius);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
 
 .savings i {
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .pack-footer {
@@ -1395,7 +1395,7 @@ footer.footer p {
   
   .packs-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
     padding: 0 1rem;
   }
   
@@ -1404,11 +1404,11 @@ footer.footer p {
   }
   
   .pack-content {
-    padding: 1.5rem;
+    padding: 1rem;
   }
   
   .pack-image {
-    height: 150px;
+    height: 120px;
   }
   
   .pack-header {
