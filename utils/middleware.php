@@ -19,11 +19,11 @@ function checkAdminAccess($id)
     $user = $manager->getUserById($id);
     if ($user) {
         if ($user['role'] !== 1) {
-            header('Location: ../error.php?code=403');
+            header('Location: /shopping/management/error.php?code=403');
             exit();
         }
     } else {
-        header('Location: ../error.php?code=401');
+        header('Location: /shopping/management/error.php?code=401');
         exit();
     }
 }
@@ -36,11 +36,11 @@ function checkIsActive($id)
     $user = $manager->getUserById($id);
     if ($user) {
         if ($user['is_active'] == 0) {
-            header('Location: ../error.php?code=403');
+            header('Location: /shopping/management/error.php?code=403');
             exit();
         }
     } else {
-        header('Location: ../error.php?code=401');
+        header('Location: /shopping/management/error.php?code=401');
         exit();
     }
 }
