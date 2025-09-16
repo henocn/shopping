@@ -27,6 +27,7 @@ if (!$product) {
 
 $characteristics = $productManager->getProductCharacteristics($productId);
 $videos = $productManager->getProductVideos($productId);
+$packs = $productManager->getProductPacks($productId);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -186,6 +187,50 @@ $videos = $productManager->getProductVideos($productId);
         </section>
     <?php endif; ?>
 
+    <!-- PACKS -->
+    <?php if (!empty($packs)): ?>
+        <section class="product-packs">
+            <div class="container">
+                <h2 class="section-title">Packs disponibles</h2>
+                <p class="section-subtitle">Choisissez le pack qui correspond le mieux à vos besoins</p>
+                
+                <div class="packs-grid">
+                    <?php foreach ($packs as $pack): ?>
+                        <div class="pack-card" data-pack-id="<?= $pack['id']; ?>" onclick="selectPack(<?= $pack['id']; ?>, <?= $pack['price_reduction']; ?>, <?= $pack['quantity']; ?>)">
+                            <div class="pack-header">
+                                <h3 class="pack-title"><?= htmlspecialchars($pack['titre']); ?></h3>
+                                <div class="pack-quantity">
+                                    <i class='bx bx-package'></i>
+                                    <?= $pack['quantity']; ?> unités
+                                </div>
+                            </div>
+                        
+                            
+                            <div class="pack-pricing">
+                                <div class="price-comparison">
+                                    <div class="price-normal">
+                                        <span class="price-label">Prix normal</span>
+                                        <span class="price-value"><?= number_format($pack['price_normal']); ?> FCFA</span>
+                                    </div>
+                                    <div class="price-reduction">
+                                        <span class="price-label">Prix pack</span>
+                                        <span class="price-value highlight"><?= number_format($pack['price_reduction']); ?> FCFA</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="savings">
+                                    <i class='bx bx-trending-down'></i>
+                                    <span>Économisez <?= number_format($pack['price_normal'] - $pack['price_reduction']); ?> FCFA</span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+    <?php endif; ?>
+
     <!-- VIDÉOS -->
     <?php if (!empty($videos)): ?>
         <section class="product-videos">
@@ -236,12 +281,42 @@ $videos = $productManager->getProductVideos($productId);
                     <form id="orderForm" action="management/orders/save.php" method="POST">
                         <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
 
-                        <input type="hidden" name="quantity" value="1">
-                        <input type="hidden" name="pack_id" value="5">
-                        <input type="hidden" name="unit_price" value="<?= $product['price']; ?>">
-                        <input type="hidden" name="total_price" value="15000">
+                        <input type="hidden" name="quantity" value="1" id="selectedQuantity">
+                        <input type="hidden" name="pack_id" value="" id="selectedPackId">
+                        <input type="hidden" name="unit_price" value="<?= $product['price']; ?>" id="selectedUnitPrice">
+                        <input type="hidden" name="total_price" value="<?= $product['price']; ?>" id="selectedTotalPrice">
                         <input type="hidden" name="client_country" value="<?= $product['country']; ?>">
                         <input type="hidden" name="manager_id" value="<?= $product['manager_id']; ?>">
+
+                        <!-- Sélection de pack -->
+                        <?php if (!empty($packs)): ?>
+                        <div class="form-group">
+                            <label class="form-label">Choisir un pack</label>
+                            <select class="form-control-custom" name="pack_selection" id="packSelection" onchange="updatePackSelection()">
+                                <option value="">Sélectionner un pack (optionnel)</option>
+                                <?php foreach ($packs as $pack): ?>
+                                    <option value="<?= $pack['id']; ?>" 
+                                            data-price="<?= $pack['price_reduction']; ?>" 
+                                            data-quantity="<?= $pack['quantity']; ?>"
+                                            data-title="<?= htmlspecialchars($pack['titre']); ?>">
+                                        <?= htmlspecialchars($pack['titre']); ?> - <?= $pack['quantity']; ?> unités - <?= number_format($pack['price_reduction']); ?> FCFA
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <?php endif; ?>
+
+                        <!-- Pack sélectionné -->
+                        <div class="selected-pack-info" id="selectedPackInfo" style="display: none;">
+                            <div class="pack-summary">
+                                <h4><i class='bx bx-package'></i> Pack sélectionné</h4>
+                                <div class="pack-details">
+                                    <span id="packTitle"></span>
+                                    <span id="packQuantity"></span>
+                                    <span id="packPrice"></span>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label class="form-label">Nom complet</label>
@@ -284,6 +359,101 @@ $videos = $productManager->getProductVideos($productId);
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="assets/js/product.js"></script>
     <script src="assets/js/theme.js"></script>
+    
+    <script>
+        // Gestion de la sélection des packs
+        function selectPack(packId, packPrice, quantity) {
+            // Retirer la sélection précédente
+            document.querySelectorAll('.pack-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Ajouter la sélection à la carte cliquée
+            event.currentTarget.classList.add('selected');
+            
+            // Mettre à jour les champs cachés
+            document.getElementById('selectedPackId').value = packId;
+            document.getElementById('selectedQuantity').value = quantity;
+            document.getElementById('selectedUnitPrice').value = packPrice;
+            document.getElementById('selectedTotalPrice').value = packPrice;
+            
+            // Afficher les informations du pack sélectionné
+            const packInfo = document.getElementById('selectedPackInfo');
+            const packTitle = document.getElementById('packTitle');
+            const packQuantity = document.getElementById('packQuantity');
+            const packPrice = document.getElementById('packPrice');
+            
+            const selectedCard = event.currentTarget;
+            const title = selectedCard.querySelector('.pack-title').textContent;
+            
+            packTitle.textContent = title;
+            packQuantity.textContent = quantity + ' unités';
+            packPrice.textContent = new Intl.NumberFormat('fr-FR').format(packPrice) + ' FCFA';
+            
+            packInfo.style.display = 'block';
+            
+            // Ouvrir automatiquement le modal de commande
+            openOrderForm();
+        }
+        
+        // Fonction pour ouvrir le formulaire de commande
+        function openOrderForm() {
+            const modal = new bootstrap.Modal(document.getElementById('orderModal'));
+            modal.show();
+        }
+        
+        // Fonction pour mettre à jour la sélection de pack via le dropdown
+        function updatePackSelection() {
+            const select = document.getElementById('packSelection');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (selectedOption.value === '') {
+                // Aucun pack sélectionné
+                document.getElementById('selectedPackId').value = '';
+                document.getElementById('selectedQuantity').value = '1';
+                document.getElementById('selectedUnitPrice').value = '<?= $product['price']; ?>';
+                document.getElementById('selectedTotalPrice').value = '<?= $product['price']; ?>';
+                document.getElementById('selectedPackInfo').style.display = 'none';
+                
+                // Retirer la sélection des cartes
+                document.querySelectorAll('.pack-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+            } else {
+                // Pack sélectionné
+                const packId = selectedOption.value;
+                const packPrice = selectedOption.dataset.price;
+                const packQuantity = selectedOption.dataset.quantity;
+                const packTitle = selectedOption.dataset.title;
+                
+                // Mettre à jour les champs cachés
+                document.getElementById('selectedPackId').value = packId;
+                document.getElementById('selectedQuantity').value = packQuantity;
+                document.getElementById('selectedUnitPrice').value = packPrice;
+                document.getElementById('selectedTotalPrice').value = packPrice;
+                
+                // Afficher les informations du pack sélectionné
+                const packInfo = document.getElementById('selectedPackInfo');
+                const packTitleElement = document.getElementById('packTitle');
+                const packQuantityElement = document.getElementById('packQuantity');
+                const packPriceElement = document.getElementById('packPrice');
+                
+                packTitleElement.textContent = packTitle;
+                packQuantityElement.textContent = packQuantity + ' unités';
+                packPriceElement.textContent = new Intl.NumberFormat('fr-FR').format(packPrice) + ' FCFA';
+                
+                packInfo.style.display = 'block';
+                
+                // Mettre à jour la sélection visuelle des cartes
+                document.querySelectorAll('.pack-card').forEach(card => {
+                    card.classList.remove('selected');
+                    if (card.dataset.packId === packId) {
+                        card.classList.add('selected');
+                    }
+                });
+            }
+        }
+    </script>
 
 </body>
 
