@@ -209,6 +209,12 @@ class Product
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    
+    // une fonction qui renvoi a un produit au hazar dans la base de donnée
+    public finction getRandomProduct(){
+        
+    }
 
 
     public function getProductCharacteristics($productId) {
