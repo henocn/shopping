@@ -36,9 +36,9 @@ $packs = $productManager->getProductPacks($productId);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($product['name']); ?></title>
-    <meta property="og:title" content="<?= htmlspecialchars($product['name']); ?>">
-    <meta property="og:description" content="<?= htmlspecialchars($product['description']); ?>">
-    <meta property="og:image" content="uploads/main/<?= $product['image']; ?>">
+    <meta name="title" property="og:title" content="<?= htmlspecialchars($product['name']); ?>">
+    <meta name="description" property="og:description" content="<?= htmlspecialchars($product['description']); ?>">
+    <meta name="image" property="og:image" content="uploads/main/<?= $product['image']; ?>">
 
     <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="./assets/css/product.css" rel="stylesheet">
@@ -225,10 +225,7 @@ $packs = $productManager->getProductPacks($productId);
                                         </div>
                                     </div>
 
-                                    <div class="savings">
-                                        <i class='bx bx-trending-down'></i>
-                                        <span>Économisez <?= number_format($pack['price_normal'] - $pack['price_reduction']); ?> FCFA</span>
-                                    </div>
+                                    
                                 </div>
                             </div>
 
