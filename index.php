@@ -288,13 +288,7 @@ $packs = $productManager->getProductPacks($productId);
                 <div class="modal-body custom-modal-body">
                     <form id="orderForm" action="management/orders/save.php" method="POST">
                         <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
-
-                        <input type="hidden" name="quantity" value="1" id="selectedQuantity">
                         <input type="hidden" name="pack_id" value="" id="selectedPackId">
-                        <input type="hidden" name="unit_price" value="<?= $product['price']; ?>" id="selectedUnitPrice">
-                        <input type="hidden" name="total_price" value="<?= $product['price']; ?>" id="selectedTotalPrice">
-                        <input type="hidden" name="client_country" value="<?= $product['country']; ?>">
-                        <input type="hidden" name="manager_id" value="<?= $product['manager_id']; ?>">
 
                         <!-- Sélection de pack -->
                         <?php if (!empty($packs)): ?>
@@ -371,27 +365,18 @@ $packs = $productManager->getProductPacks($productId);
     <script>
         // Gestion de la sélection des packs
         function selectPack(packId, packPrice, quantity) {
-            // Retirer la sélection précédente
             document.querySelectorAll('.pack-card').forEach(card => {
                 card.classList.remove('selected');
             });
 
-            // Ajouter la sélection à la carte cliquée
             event.currentTarget.classList.add('selected');
 
-            // Mettre à jour le dropdown
             const select = document.getElementById('packSelection');
             if (select) {
                 select.value = packId;
             }
-
-            // Mettre à jour les champs cachés
             document.getElementById('selectedPackId').value = packId;
-            document.getElementById('selectedQuantity').value = quantity;
-            document.getElementById('selectedUnitPrice').value = packPrice;
-            document.getElementById('selectedTotalPrice').value = packPrice;
 
-            // Afficher les informations du pack sélectionné
             const packInfo = document.getElementById('selectedPackInfo');
             const packTitle = document.getElementById('packTitle');
             const packQuantity = document.getElementById('packQuantity');
@@ -405,16 +390,15 @@ $packs = $productManager->getProductPacks($productId);
             packPriceElement.textContent = new Intl.NumberFormat('fr-FR').format(packPrice) + ' FCFA';
 
             packInfo.style.display = 'block';
-
-            // Ouvrir automatiquement le modal de commande
             openOrderForm();
         }
 
-        // Fonction pour ouvrir le formulaire de commande
         function openOrderForm() {
             const modal = new bootstrap.Modal(document.getElementById('orderModal'));
             modal.show();
         }
+
+
 
         // Fonction pour mettre à jour la sélection de pack via le dropdown
         function updatePackSelection() {
@@ -422,31 +406,21 @@ $packs = $productManager->getProductPacks($productId);
             const selectedOption = select.options[select.selectedIndex];
 
             if (selectedOption.value === '') {
-                // Aucun pack sélectionné
                 document.getElementById('selectedPackId').value = '';
-                document.getElementById('selectedQuantity').value = '1';
-                document.getElementById('selectedUnitPrice').value = '<?= $product['price']; ?>';
-                document.getElementById('selectedTotalPrice').value = '<?= $product['price']; ?>';
                 document.getElementById('selectedPackInfo').style.display = 'none';
-
-                // Retirer la sélection des cartes
+                
                 document.querySelectorAll('.pack-card').forEach(card => {
                     card.classList.remove('selected');
                 });
             } else {
-                // Pack sélectionné
+                
                 const packId = selectedOption.value;
                 const packPrice = selectedOption.dataset.price;
                 const packQuantity = selectedOption.dataset.quantity;
                 const packTitle = selectedOption.dataset.title;
 
-                // Mettre à jour les champs cachés
                 document.getElementById('selectedPackId').value = packId;
-                document.getElementById('selectedQuantity').value = packQuantity;
-                document.getElementById('selectedUnitPrice').value = packPrice;
-                document.getElementById('selectedTotalPrice').value = packPrice;
 
-                // Afficher les informations du pack sélectionné
                 const packInfo = document.getElementById('selectedPackInfo');
                 const packTitleElement = document.getElementById('packTitle');
                 const packQuantityElement = document.getElementById('packQuantity');
@@ -458,7 +432,6 @@ $packs = $productManager->getProductPacks($productId);
 
                 packInfo.style.display = 'block';
 
-                // Mettre à jour la sélection visuelle des cartes
                 document.querySelectorAll('.pack-card').forEach(card => {
                     card.classList.remove('selected');
                     if (card.dataset.packId === packId) {
