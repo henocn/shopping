@@ -19,22 +19,22 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav gap-2 mx-4">
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>" href="/shopping/management/dashboard.php">
+                    <a class="nav-link d-flex align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>" href="/management/dashboard.php">
                         <i class='bx bx-home'></i> Home
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo (strpos($_SERVER['PHP_SELF'], 'products') !== false) ? 'active' : ''; ?>" href="/shopping/management/products/index.php">
+                    <a class="nav-link <?php echo (strpos($_SERVER['PHP_SELF'], 'products') !== false) ? 'active' : ''; ?>" href="/management/products/index.php">
                         <i class='bx bx-box'></i> Products
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo (strpos($_SERVER['PHP_SELF'], 'orders') !== false) ? 'active' : ''; ?>" href="/shopping/management/orders/index.php">
+                    <a class="nav-link <?php echo (strpos($_SERVER['PHP_SELF'], 'orders') !== false) ? 'active' : ''; ?>" href="/management/orders/index.php">
                         <i class='bx bx-cart'></i> Orders
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo (strpos($_SERVER['PHP_SELF'], 'users') !== false) ? 'active' : ''; ?>" href="/shopping/management/users/index.php">
+                    <a class="nav-link <?php echo (strpos($_SERVER['PHP_SELF'], 'users') !== false) ? 'active' : ''; ?>" href="/management/users/index.php">
                         <i class='bx bx-user'></i> Users
                     </a>
                 </li>
@@ -43,8 +43,8 @@
 
         <!-- Actions -->
         <div class="d-flex align-items-center">
-            <a href="/shopping/management/users/change-pass.php" class="btn btn-login">Change Password</a>
-            <a href="/shopping/management/users/logout.php" class="btn btn-signup">Logout</a>
+            <a href="/management/users/change-pass.php" class="btn btn-login">Change Password</a>
+            <a href="/management/users/logout.php" class="btn btn-signup">Logout</a>
         </div>
     </div>
 </nav>

@@ -1,7 +1,7 @@
 <?php
 require_once("../../utils/middleware.php");
 
-verifyConnection("/shopping/management/login.php");
+verifyConnection("/management/login.php");
 
 ?>
 

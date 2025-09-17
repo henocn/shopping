@@ -104,8 +104,8 @@ if (isset($_POST['valider']) || isset($_GET['valider'])) {
             break;
 
         default:
-            header("Location: /shopping/error.php?code=400");
+            header("Location: /error.php?code=400");
     }
 } else {
-    header("Location: /shopping/error.php?code=400");
+    header("Location: /error.php?code=400");
 }

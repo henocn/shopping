@@ -2,7 +2,7 @@
 require '../../vendor/autoload.php';
 require '../../utils/middleware.php';
 
-verifyConnection("/shopping/management/orders/");
+verifyConnection("/management/orders/");
 checkIsActive($_SESSION['user_id']);
 
 use src\Connectbd;
