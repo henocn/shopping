@@ -27,6 +27,18 @@ class Pack
     }
 
 
+    public function getPackById($packId)
+    {
+        $sql = $this->bd->prepare('
+            SELECT * FROM `product_packs`
+            WHERE id = :id
+        ');
+        $sql->execute(['id' => $packId]);
+        $pack = $sql->fetch(PDO::FETCH_ASSOC);
+        return $pack;
+    }
+
+
     public function createPack($data)
     {
         $sql = $this->bd->prepare('

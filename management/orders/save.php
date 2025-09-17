@@ -11,10 +11,11 @@ use src\Pack;
 $cnx = Connectbd::getConnection();
 
 
-if (isset($_POST['valider']) || isset($_GET['valider'])) {
-    $connect = strtolower(htmlspecialchars($_POST['valider'] ?? $_GET['valider'] ?? ''));
-    $manager = new Product($cnx);
-    $order = new Order($cnx);
+if (isset($_POST['valider'])) {
+    $connect = strtolower(htmlspecialchars($_POST['valider']));
+    $productManager = new Product($cnx);
+    $packManager = new Pack($cnx);
+    $orderManager = new Order($cnx);
 
 
     switch ($connect) {
@@ -23,43 +24,35 @@ if (isset($_POST['valider']) || isset($_GET['valider'])) {
             if (
                 isset($_POST['product_id']) &&
                 isset($_POST['pack_id']) &&
-                isset($_POST['quantity']) &&
-                isset($_POST['unit_price']) &&
-                isset($_POST['total_price']) &&
                 isset($_POST['client_name']) &&
-                isset($_POST['client_country']) &&
-                isset($_POST['client_phone']) &&
-                isset($_POST['manager_id']) &&
-                isset($_POST['client_adress']) &&
-                (isset($_POST['client_note']) || empty($_POST['client_note']))
-            ) {
+                isset($_POST['client_phone']))
+            {
+
+                $packId = htmlspecialchars($_POST['pack_id']);
+                $productId = htmlspecialchars($_POST['product_id']);
+
+                $pack = $packManager->getPackById($packId);
+                $product = $productManager->getProducts($productId);
 
                 $data = [
-                    'product_id' => htmlspecialchars($_POST['product_id']),
-                    'pack_id' => htmlspecialchars($_POST['pack_id']),
-                    'quantity' => htmlspecialchars($_POST['quantity']),
-                    'unit_price' => htmlspecialchars($_POST['unit_price']),
-                    'total_price' => htmlspecialchars($_POST['total_price']),
+                    'product_id' => $productId,
+                    'pack_id' => $packId,
                     'client_name' => htmlspecialchars($_POST['client_name']),
-                    'client_country' => htmlspecialchars($_POST['client_country']),
+                    'client_country' => "TD",
                     'client_adress' => htmlspecialchars($_POST['client_adress']),
                     'client_phone' => htmlspecialchars($_POST['client_phone']),
-                    'manager_id' => htmlspecialchars($_POST['manager_id']),
                     'client_note' => htmlspecialchars($_POST['client_note']),
-                    'status' => 'processing',
-                    'action' => 'call'
+                    'unit_price' => $product['price'],
+                    'total_price' => $pack['price_reduction']
                 ];
-                try {
-                    if ($order->CreateOrder($data)) {
-                        echo json_encode(['success' => true, 'message' => 'Merci ! Votre commande a été enregistrée avec succès !']);
-                    } else {
-                        echo json_encode(['success' => false, 'message' => 'Échec enregistrement de votre commande']);
-                    }
-                } catch (Exception $e) {
-                    echo json_encode(['success' => false, 'message' => 'Erreur serveur : ' . $e->getMessage()]);
+                if ($orderManager->CreateOrder($data)) {
+                    header("Location : ../../index.php?id=". $productId . "&command=success");
+                } else {
+                    header("Location : ../../index.php?id=". $productId . "&command=error");
                 }
             }
             break;
+
         case 'update':
             if (isset($_POST['order_id'])) {
                 $data = [
@@ -72,7 +65,7 @@ if (isset($_POST['valider']) || isset($_GET['valider'])) {
                     'action'       => htmlspecialchars($_POST['action'] ?? 'move'),
                 ];
 
-                $order->updateOrder($data);
+                $orderManager->updateOrder($data);
 
                 if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'fetch') {
                     header('Content-Type: application/json');

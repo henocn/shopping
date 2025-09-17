@@ -334,9 +334,8 @@ $packs = $productManager->getProductPacks($productId);
 
                         <div class="form-group">
                             <label class="form-label">Note evantuelles</label>
-                            <textarea class="form-control-custom" name="client_note" rows="2" placeholder="Votre adresse complète"></textarea>
+                            <textarea class="form-control-custom" name="client_note" rows="2" placeholder="Note évantuelle"></textarea>
                         </div>
-                        <input type="hidden" name="manager_id" value="<?= $product['manager_id']; ?>">
                         <input type="hidden" name="valider" value="commander">
 
                         <div class="modal-footer-custom">
