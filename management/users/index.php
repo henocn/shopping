@@ -56,6 +56,13 @@ $users = $user->getAllUsers();
                         <form action="save.php" method="POST">
                             <div class="mb-3 position-relative">
                                 <label class="form-label" style="color: var(--purple);">
+                                    <i class='bx bx-user'></i> Nom et prénom
+                                </label>
+                                <input type="text" class="form-control" name="name" required
+                                    style="border-color: var(--purple); border-radius: 10px; padding-left: 35px;">
+                            </div>
+                            <div class="mb-3 position-relative">
+                                <label class="form-label" style="color: var(--purple);">
                                     <i class='bx bx-envelope'></i> Email
                                 </label>
                                 <input type="email" class="form-control" name="email" required
@@ -67,21 +74,8 @@ $users = $user->getAllUsers();
                                     <i class='bx bx-flag'></i> Pays
                                 </label>
                                 <select class="form-select" name="country" required style="border-color: var(--purple); border-radius: 10px;">
-                                    <option value="BJ">🇧🇯 Bénin</option>
-                                    <option value="BF">🇧🇫 Burkina Faso</option>
-                                    <option value="CV">🇨🇻 Cap-Vert</option>
-                                    <option value="CI">🇨🇮 Côte d'Ivoire</option>
-                                    <option value="GM">🇬🇲 Gambie</option>
-                                    <option value="GH">🇬🇭 Ghana</option>
-                                    <option value="GN">🇬🇳 Guinée</option>
-                                    <option value="GW">🇬🇼 Guinée-Bissau</option>
-                                    <option value="LR">🇱🇷 Libéria</option>
-                                    <option value="ML">🇲🇱 Mali</option>
-                                    <option value="NE">🇳🇪 Niger</option>
-                                    <option value="NG">🇳🇬 Nigeria</option>
-                                    <option value="SN">🇸🇳 Sénégal</option>
-                                    <option value="SL">🇸🇱 Sierra Leone</option>
-                                    <option value="TG" selected>🇹🇬 Togo</option>
+                                    <option value="GN" selected>🇬🇳 Guinée</option>
+                                    <option value="TD">🇹🇩 Tchad</option>
                                 </select>
                             </div>
 
@@ -112,9 +106,10 @@ $users = $user->getAllUsers();
                 <thead class="table-light">
                     <tr>
                         <th class="text-center" style="width: 5%;">Id</th>
-                        <th style="width: 35%;">Email</th>
-                        <th style="width: 15%;">Pays</th>
-                        <th class="text-center" style="width: 10%;">Status</th>
+                        <th style="width: 30%;">Email</th>
+                        <th style="width: 20%;">Nom & prénom</th>
+                        <th style="width: 5%;">Pays</th>
+                        <th class="text-center" style="width: 5%;">Status</th>
                         <th style="width: 15%;">Role</th>
                         <th class="text-center" style="width: 20%;">Actions</th>
                     </tr>
@@ -131,6 +126,7 @@ $users = $user->getAllUsers();
                                     <a href="mailto:<?php echo $user['email']; ?>" class="text-decoration-none" style="color: var(--purple);"><?php echo $user['email']; ?></a>
                                 </div>
                             </td>
+                            <td><?php echo $user['name']; ?></td>
                             <td><?php echo $user['country']; ?></td>
                             <td class="text-center"><?php echo $user['is_active'] == 1 ? '<i class="bx bxs-check-circle" style="color: green;"></i>' : '<i class="bx bxs-x-circle" style="color: red;"></i>'; ?></td>
                             <td>

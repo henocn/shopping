@@ -15,7 +15,7 @@ $cnx = Connectbd::getConnection();
 $product = new Product($cnx);
 
 $products = $product->getAllProducts();
-//var_dump($products);
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -50,7 +50,8 @@ $products = $product->getAllProducts();
                         <th>Image</th>
                         <th>Nom</th>
                         <th>Prix</th>
-                        <th>Quantité</th>
+                        <th>Manager</th>
+                        <th>Pays</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -67,12 +68,17 @@ $products = $product->getAllProducts();
                             </td>
                             <td><?php echo $product['name']; ?></td>
                             <td><?php echo $product['price']; ?> FCFA</td>
-                            <td><?php echo $product['quantity']; ?></td>
+                            <td><?php echo $product['country']; ?></td>
+                            <td><?php echo $product['manager_name']; ?></td>
                             <td style="position:relative;">
                                 <button type="button" class="action-btn context-menu-btn" data-id="<?php echo $product['product_id']; ?>">
                                     <i class='bx bx-dots-vertical-rounded'></i>
                                 </button>
                                 <div class="context-menu" id="contextMenu<?php echo $product['product_id']; ?>" style="display:none; position:absolute; right:0; top:40px; z-index:1000; min-width:180px; background:var(--paper); border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.12);">
+                                    <!-- for product sharing link copy using format dynamic-host-domaine-name/index.php?id=product_id -->
+                                    <a href="javascript:void(0);" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; text-decoration:none;" onclick="copyProductLink(<?php echo $product['product_id']; ?>)">
+                                        <i class='bx bx-link'></i> Share Product
+                                    </a>
                                     <a href="update.php?id=<?php echo $product['product_id']; ?>" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:var(--purple); text-decoration:none;">
                                         <i class='bx bx-edit'></i> Update Product
                                     </a>
@@ -100,6 +106,13 @@ $products = $product->getAllProducts();
 
     <script src="../../assets/js/bootstrap.bundle.min.js"></script>
     <script>
+        function copyProductLink(productId) {
+            const shareUrl = "<?php echo $_SERVER['HTTP_HOST']; ?>/index.php?id=" + productId;
+            navigator.clipboard.writeText(shareUrl);
+            showNotification("Lien copié dans le presse-papiers !", "success");
+        }
+
+
         function deleteProduct(productId) {
             if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
                 const form = document.createElement('form');

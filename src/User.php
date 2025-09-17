@@ -61,9 +61,17 @@ class User
 
     public function getAllUsers(): array
     {
-        $sql = $this->bd->prepare('SELECT `users`.`id`, `users`.`email`, `users`.`role`, `users`.`country`, `users`.`is_active`
+        $sql = $this->bd->prepare('SELECT `users`.`id`, `users`.`email`, `users`.`name`, `users`.`role`, `users`.`country`, `users`.`is_active`
             FROM `users`');
         $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    public function getUsersByRole($role): array
+    {
+        $sql = $this->bd->prepare('SELECT id, email, name, role, country, is_active FROM users WHERE role =:role');
+        $sql->execute(["role" => $role]);
         return $sql->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -71,12 +79,10 @@ class User
     public function email_exists($email): bool
     {
         $sql = $this->bd->prepare('SELECT COUNT(*) FROM users WHERE email = :email');
-        $sql->execute([
-            'email' => $email
-        ]);
-
+        $sql->execute(['email' => $email]);
         return $sql->fetchColumn() > 0;
     }
+    
 
     public function switchaccountStatus($id): bool
     {
@@ -125,20 +131,15 @@ class User
 
     public function create(array $data)
     {
-
-        $options = [
-            'cost' => 12,
-        ];
-        $password = password_hash($data['password'], PASSWORD_BCRYPT, $options);
-        $country = $data['country'];
-        $role = $data['role'];
-        $req = $this->bd->prepare("INSERT INTO users (email, country, password, role) VALUES (:email, :country, :password, :role)");
+        $password = password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 12]);
+        $req = $this->bd->prepare("INSERT INTO users (email, name, country, password, role) VALUES (:email, :name, :country, :password, :role)");
 
         if ($req->execute([
             'email' => $data['email'],
-            'country' => $country,
+            'name' => $data['name'],
+            'country' => $data['country'],
             'password' => $password,
-            'role' => $role
+            'role' =>  $data['role'],
         ])) {
             return true;
         } else {
@@ -154,4 +155,48 @@ class User
         return $sql->execute(['id' => $id]);
     }
 
+    public function changePassword($user_id, $current_password, $new_password)
+    {
+        $user = $this->getUserById($user_id);
+        
+        if (!$user) {
+            return [
+                "success" => false,
+                "message" => "user_not_found"
+            ];
+        }
+
+        if (!hash_equals($user['password'], crypt($current_password, $user['password']))) {
+            return [
+                "success" => false,
+                "message" => "current_password_wrong"
+            ];
+        }
+
+        if (hash_equals($user['password'], crypt($new_password, $user['password']))) {
+            return [
+                "success" => false,
+                "message" => "same_password"
+            ];
+        }
+
+        $hashed_new_password = password_hash($new_password, PASSWORD_BCRYPT, ['cost' => 12]);
+
+        $sql = $this->bd->prepare('UPDATE users SET password = :password WHERE id = :id');
+        
+        if ($sql->execute([
+            'password' => $hashed_new_password,
+            'id' => $user_id
+        ])) {
+            return [
+                "success" => true,
+                "message" => "password_changed"
+            ];
+        } else {
+            return [
+                "success" => false,
+                "message" => "update_failed"
+            ];
+        }
+    }
 }

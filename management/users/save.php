@@ -52,7 +52,11 @@ if (isset($_POST['validate'])) {
                     $_SESSION['country'] = $result['country'];
                     $_SESSION['is_active'] = $result['is_active'];
 
-                    header('Location: ' . ($redirect ?: "/shopping/management/dashboard.php"));
+                    if ($result['role'] == 1) {
+                        header('Location: ' . ($redirect ?: "/shopping/management/dashboard.php"));
+                        exit();
+                    }
+                    header('Location: ' . ($redirect ?: "/shopping/management/orders/"));
                 } else {
                     header('Location: login.php?error=' . $result['message'] . ($redirect ? '&redirect=' . $redirect : ''));
                 }
@@ -61,10 +65,10 @@ if (isset($_POST['validate'])) {
             }
             break;
 
-
         case 'ajouter':
             if (
                 !isset($_POST['email']) || empty(trim($_POST['email'])) ||
+                !isset($_POST['name']) || empty(trim($_POST['name'])) ||
                 !isset($_POST['country']) || empty(trim($_POST['country'])) ||
                 !isset($_POST['role'])
             ) {
@@ -72,6 +76,7 @@ if (isset($_POST['validate'])) {
             }
 
             $email = trim($_POST['email']);
+            $name = trim($_POST['name']);
             $role = trim($_POST['role']);
             $country = trim($_POST['country']);
 
@@ -82,6 +87,7 @@ if (isset($_POST['validate'])) {
 
             $data = [
                 'email' => $email,
+                'name' => $name,
                 'password' => "user1234",
                 'role' => $role,
                 'country' => $country
@@ -124,9 +130,39 @@ if (isset($_POST['validate'])) {
             } else {
                 redirect('index.php', "Données invalides pour la suppression de l'utilisateur.");
             }
+            break;
+
+        case 'change_password':
+            if (
+                isset($_POST['current_password']) && !empty($_POST['current_password']) &&
+                isset($_POST['new_password']) && !empty($_POST['new_password']) &&
+                isset($_POST['confirm_password']) && !empty($_POST['confirm_password']) &&
+                isset($_SESSION['user_id'])
+            ) {
+                $current_password = htmlspecialchars($_POST['current_password']);
+                $new_password = htmlspecialchars($_POST['new_password']);
+                $confirm_password = htmlspecialchars($_POST['confirm_password']);
+
+                if ($new_password !== $confirm_password) {
+                    header('Location: change-pass.php?error=passwords_not_match' . ($redirect ? '&redirect=' . $redirect : ''));
+                    exit();
+                }
+
+                $result = $manager->changePassword($_SESSION['user_id'], $current_password, $new_password);
+
+                if ($result["success"]) {
+                    header('Location: logout.php' . ($redirect ? '&redirect=' . $redirect : ''));
+                } else {
+                    header('Location: change-pass.php?error=' . $result['message'] . ($redirect ? '&redirect=' . $redirect : ''));
+                }
+            } else {
+                header('Location: change-pass.php?error=missing_fields');
+            }
+            break;
+
         default:
-            echo "On est pas bon";
+        header("Location: /shopping/error.php?code=400");
     }
 } else {
-    echo "Il manque le POST['connect']";
+    header("Location: /shopping/error.php?code=400");
 }

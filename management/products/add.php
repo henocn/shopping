@@ -6,6 +6,14 @@ verifyConnection("/shopping/management/products/add.php");
 checkAdminAccess($_SESSION['user_id']);
 checkIsActive($_SESSION['user_id']);
 
+use src\Connectbd;
+use src\User;
+
+$cnx = Connectbd::getConnection();
+$userManager = new User($cnx);
+$helpers = $userManager->getUsersByRole(0);
+
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -44,6 +52,9 @@ checkIsActive($_SESSION['user_id']);
                 <button type="button" class="floating-btn" onclick="toggleSection('videos')" title="Ajouter des vidéos">
                     <i class='bx bx-video-plus'></i>
                 </button>
+                <button type="button" class="floating-btn" onclick="toggleSection('packs')" title="Ajouter des packs">
+                    <i class='bx bx-package'></i>
+                </button>
             </div>
 
             <!-- Informations de base -->
@@ -63,9 +74,25 @@ checkIsActive($_SESSION['user_id']);
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            <i class='bx bx-box'></i> Quantité
+                            <i class='bx bx-flag'></i> Pays de vente
                         </label>
-                        <input type="number" class="form-control" name="quantity" required>
+                        <select class="form-select" name="country" required>
+                            <option value='' selected>------------</option>
+                            <option value="GN">🇬🇳 Guinée</option>
+                            <option value="TD">🇹🇩 Tchad</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-user'></i> Assistante de vente
+                        </label>
+                        <select class="form-select" name="manager_id" required>
+                            <option value='' selected>------------</option>
+                            <?php
+                            foreach ($helpers as $helper) { ?>
+                                <option value=<?= $helper['id'] ?>><?= $helper['name'] ?> (<?= $helper['country'] ?>)</option>
+                            <?php } ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
@@ -139,7 +166,7 @@ checkIsActive($_SESSION['user_id']);
             </div>
 
             <!-- Packs -->
-            <div class="card mb-4" id="packsSection" >
+            <div class="card mb-4" id="packsSection" style="display: none;">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Packs</h5>
                     <button type="button" class="btn-close" onclick="toggleSection('packs')"></button>
