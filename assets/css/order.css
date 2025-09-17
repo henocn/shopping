@@ -4,6 +4,11 @@
   --paper: #dcc5f5ff;
   --magenta: #f1ebf1ff;
   --purple: rgb(24, 4, 53);
+  --transition: all 0.3s ease;
+  --border-radius: 8px;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+  --primary-gradient: linear-gradient(135deg, var(--primary), var(--secondary));
 }
 
 .primary-color {
@@ -46,37 +51,39 @@
   background-color: var(--purple);
 }
 
+/* Navigation tabs avec vos couleurs */
 .nav-tabs {
   border-bottom: 2px solid var(--paper);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .nav-tabs .nav-link {
   border: none;
   border-bottom: 3px solid transparent;
-  background: var(--primary);
-  color: var(--primary);
+  background: var(--magenta);
+  color: var(--purple);
   font-weight: 500;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   transition: var(--transition);
   position: relative;
+  font-size: 0.9rem;
 }
 
 .nav-tabs .nav-link:hover:not(.active) {
-  border-color: #1e65ac;
-  background-color: var(--purple);
+  border-color: var(--secondary);
+  background-color: var(--paper);
   color: var(--purple);
 }
 
 .nav-tabs .nav-link.active {
   background: var(--primary-gradient);
   color: white !important;
-  border-bottom-color: #ffc107;
+  border-bottom-color: var(--secondary);
   font-weight: 600;
   box-shadow: var(--shadow-sm);
 }
 
-/* Amélioration des cartes de commandes */
+/* Cards optimisées - 4 par ligne */
 .order-card {
   border: none;
   box-shadow: var(--shadow-sm);
@@ -84,6 +91,9 @@
   border-radius: var(--border-radius);
   overflow: hidden;
   position: relative;
+  width: 100%; /* Prend toute la largeur du conteneur */
+  max-width: 280px; /* Plus petit pour 4 par ligne */
+  margin: 0 auto;
 }
 
 .order-card::before {
@@ -93,7 +103,7 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  background: #dee2e6;
+  background: var(--paper);
   transition: var(--transition);
 }
 
@@ -131,112 +141,264 @@
   background: #28a745;
 }
 
-/* Images produits */
+
+/* Images produits - taille réduite */
 .product-image {
-  width: 48px;
-  height: 48px;
+  width: 40px; /* Réduit de 48px à 40px */
+  height: 40px;
   object-fit: cover;
   border-radius: 6px;
-  border: 2px solid #f8f9fa;
+  border: 2px solid var(--magenta);
   transition: var(--transition);
 }
 
 .order-card:hover .product-image {
-  border-color: #007bff;
+  border-color: var(--primary);
 }
 
-/* Badges de statut */
-.status-badge {
+/* Card body - padding réduit */
+.order-card .card-body {
+  padding: 1rem !important; /* Réduit de 1.25rem à 1rem */
+}
+
+/* Textes - taille réduite */
+.order-card h6 {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.order-card p {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.order-card small {
   font-size: 0.75rem;
+}
+
+/* Badges de statut avec vos couleurs */
+.status-badge {
+  font-size: 0.7rem; /* Réduit */
   font-weight: 600;
   letter-spacing: 0.5px;
-  padding: 0.4em 0.8em;
+  padding: 0.3em 0.6em; /* Réduit */
   border-radius: 50px;
 }
 
-/* Boutons harmonisés */
+/* Badge colors personnalisés */
+.bg-warning {
+  background-color: var(--secondary) !important;
+}
+
+.bg-primary {
+  background-color: var(--primary) !important;
+}
+
+.bg-secondary {
+  background-color: var(--purple) !important;
+}
+
+.bg-info {
+  background-color: var(--secondary) !important;
+}
+
+.bg-dark {
+  background-color: var(--purple) !important;
+}
+
+.bg-success {
+  background-color: var(--primary) !important;
+}
+
+/* Boutons harmonisés avec vos couleurs */
 .btn-outline-primary {
-  border-color: #007bff;
-  color: #007bff;
+  border-color: var(--primary);
+  color: var(--primary);
   transition: var(--transition);
+  font-size: 0.85rem; /* Réduit */
+  padding: 0.5rem 1rem; /* Réduit */
 }
 
 .btn-outline-primary:hover {
   background: var(--primary-gradient);
-  border-color: #0056b3;
+  border-color: var(--secondary);
   color: white;
   transform: translateY(-1px);
 }
 
-/* Modales améliorées */
+.btn-primary {
+  background: var(--primary-gradient);
+  border-color: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--secondary);
+  border-color: var(--secondary);
+}
+
+/* Modales optimisées - beaucoup plus petites */
+.modal-dialog {
+  max-width: 500px; /* Drastiquement réduit de 800px à 500px */
+}
+
+.modal-dialog-lg {
+  max-width: 550px; /* Pour les modales lg */
+}
+
 .modal-header {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  border-bottom: 2px solid #dee2e6;
-  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--magenta), var(--paper));
+  border-bottom: 2px solid var(--paper);
+  padding: 0.5rem;
 }
 
 .modal-title {
-  color: #495057;
+  color: var(--purple);
   font-weight: 600;
+  font-size: 1rem; /* Plus petit */
 }
 
 .modal-body {
-  padding: 2rem;
+  padding: 1rem; /* Réduit de 1.5rem à 1rem */
+  font-size: 0.85rem; /* Texte plus petit */
 }
 
 .modal-footer {
-  border-top: 2px solid #dee2e6;
-  padding: 1.5rem;
-  background-color: #f8f9fa;
+  border-top: 2px solid var(--paper);
+  padding: 1rem; /* Réduit */
+  background-color: var(--magenta);
 }
 
-/* États vides */
+/* Form elements plus compacts dans les modales */
+.modal-body .form-control,
+.modal-body .form-select {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem; /* Plus petit */
+}
+
+.modal-body .form-label {
+  color: var(--purple);
+  font-size: 0.8rem; /* Plus petit */
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+/* Section headers dans les modales - plus compacts */
+.modal-body h6.text-muted {
+  color: var(--primary) !important;
+  font-size: 0.9rem; /* Plus petit */
+  border-bottom: 1px solid var(--paper);
+  padding-bottom: 0.3rem;
+  margin-bottom: 0.8rem !important;
+}
+
+/* Réduction des marges dans les modales */
+.modal-body .mb-3 {
+  margin-bottom: 0.8rem !important;
+}
+
+.modal-body .mb-4 {
+  margin-bottom: 1rem !important;
+}
+
+/* Boutons plus petits dans les modales */
+.modal-footer .btn {
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+}
+
+/* Form-control-plaintext plus compact */
+.form-control-plaintext {
+  font-size: 0.8rem;
+  color: var(--purple);
+  background-color: var(--magenta);
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem; /* Plus petit */
+  margin: 0;
+}
+
+/* Textarea plus petite */
+.modal-body textarea.form-control {
+  font-size: 0.8rem;
+  min-height: 60px; /* Plus petit */
+}
+
+/* États vides avec vos couleurs */
 .empty-state {
   text-align: center;
-  padding: 3rem 1rem;
-  color: #6c757d;
-  background: #f8f9fa;
+  padding: 2rem 1rem; /* Réduit */
+  color: var(--purple);
+  background: var(--magenta);
   border-radius: var(--border-radius);
-  border: 1px dashed #dee2e6;
+  border: 1px dashed var(--paper);
 }
 
 .empty-state i {
-  font-size: 3rem;
+  font-size: 2.5rem; /* Réduit */
   margin-bottom: 1rem;
-  opacity: 0.5;
+  opacity: 0.7;
+  color: var(--primary);
 }
 
-
-/* Formulaires */
+/* Formulaires avec vos couleurs */
 .form-control,
 .form-select {
   border-radius: 6px;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--paper);
   transition: var(--transition);
+  font-size: 0.9rem; /* Réduit */
 }
 
 .form-control:focus,
 .form-select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(206, 133, 87, 0.25);
 }
 
-/* Fallback pour les icônes en cas de chargement lent */
-.bx:before {
-  font-family: "boxicons", Arial, sans-serif;
+/* Form control plaintext */
+.form-control-plaintext {
+  font-size: 0.9rem;
+  color: var(--purple);
+  background-color: var(--magenta);
+  border-radius: 4px;
+  padding: 0.5rem;
 }
 
-.bx-edit-alt:before {
-  content: "✏️";
-}
-.bx-trash:before {
-  content: "🗑️";
-}
-.bx-info-circle:before {
-  content: "ℹ️";
+/* Notes du client */
+.form-control-plaintext.bg-light {
+  background-color: var(--paper) !important;
 }
 
-/* Responsive design amélioré */
+/* Texte des prix */
+.text-success {
+  color: var(--primary) !important;
+}
+
+.text-primary {
+  color: var(--secondary) !important;
+}
+
+/* Grille pour 4 cards par ligne */
+.row.g-3 .col-12.col-md-6.col-xl-4 {
+  flex: 0 0 25%; /* Force 4 colonnes par ligne sur desktop */
+  max-width: 25%;
+}
+
+@media (min-width: 992px) {
+  .row.g-3 .col-12.col-md-6.col-xl-4 {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+}
+
+@media (max-width: 991px) {
+  .row.g-3 .col-12.col-md-6.col-xl-4 {
+    flex: 0 0 50%; /* 2 par ligne sur tablette */
+    max-width: 50%;
+  }
+}
+
+/* Responsive design optimisé */
 @media (max-width: 768px) {
   .nav-tabs {
     flex-wrap: wrap;
@@ -246,27 +408,32 @@
   .nav-tabs .nav-link {
     flex: 1;
     text-align: center;
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
     margin-bottom: 0.25rem;
   }
 
-  .page-header {
-    text-align: center;
-    padding: 1.5rem;
-  }
-
-  .orders-counter {
-    margin-top: 1rem;
-    display: inline-block;
+  .order-card {
+    max-width: 100%;
   }
 
   .modal-dialog {
-    margin: 1rem;
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
   }
 
   .modal-body {
-    padding: 1.5rem;
+    padding: 0.8rem;
+  }
+
+  .modal-header,
+  .modal-footer {
+    padding: 0.8rem;
+  }
+  
+  .row.g-3 .col-12.col-md-6.col-xl-4 {
+    flex: 0 0 100%; /* 1 par ligne sur mobile */
+    max-width: 100%;
   }
 }
 
@@ -279,5 +446,8 @@
   .btn-outline-primary {
     width: 100%;
     justify-content: center;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
   }
+
 }

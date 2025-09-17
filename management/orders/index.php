@@ -32,11 +32,9 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
     <link rel="preload" href="https://unpkg.com/boxicons@2.1.4/fonts/boxicons.woff2" as="font" type="font/woff2" crossorigin>
     <link href="../../assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../assets/css/index.css" rel="stylesheet">
-    <link href="../../assets/css/orders.css" rel="stylesheet">
     <link href="../../assets/css/navbar.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="../../assets/css/order.css" rel="stylesheet">
-    <!--<link rel="stylesheet" href="../../assets/css/index.css">-->
 </head>
 
 <body>
@@ -130,8 +128,8 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                 ?>
                                 <div class="col-12 col-md-6 col-xl-4" id="order-card-<?= $order['order_id'] ?>" data-status="<?= htmlspecialchars($order['status']) ?>" data-action="<?= htmlspecialchars($order['action'] ?? '') ?>">
                                     <div class="card h-100 order-card">
-                                        <div class="card-body p-3">
-                                            <div class="d-flex align-items-start mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-start">
                                                 <img src="../../uploads/main/<?= !empty($order['product_image']) ? htmlspecialchars($order['product_image']) : 'default.jpg' ?>"
                                                     alt="<?= htmlspecialchars($order['product_name']) ?>"
                                                     class="product-image me-3"

@@ -52,11 +52,7 @@ if (isset($_POST['validate'])) {
                     $_SESSION['country'] = $result['country'];
                     $_SESSION['is_active'] = $result['is_active'];
 
-                    if ($result['role'] == 1) {
-                        header('Location: ' . ($redirect ?: "/management/dashboard.php"));
-                        exit();
-                    }
-                    header('Location: ' . ($redirect ?: "/management/orders/"));
+                    header('Location: ' . ($redirect ?: "/management/dashboard.php"));
                 } else {
                     header('Location: login.php?error=' . $result['message'] . ($redirect ? '&redirect=' . $redirect : ''));
                 }
@@ -161,8 +157,8 @@ if (isset($_POST['validate'])) {
             break;
 
         default:
-        header("Location: /error.php?code=400");
+        header("Location: /shopping/error.php?code=400");
     }
 } else {
-    header("Location: /error.php?code=400");
+    header("Location: /shopping/error.php?code=400");
 }
