@@ -25,8 +25,8 @@ if (isset($_POST['valider'])) {
                 isset($_POST['product_id']) &&
                 isset($_POST['pack_id']) &&
                 isset($_POST['client_name']) &&
-                isset($_POST['client_phone']))
-            {
+                isset($_POST['client_phone'])
+            ) {
 
                 $packId = htmlspecialchars($_POST['pack_id']);
                 $productId = htmlspecialchars($_POST['product_id']);
@@ -46,12 +46,12 @@ if (isset($_POST['valider'])) {
                     'total_price' => $pack['price_reduction'],
                     'quantity' => $pack['quantity']
                 ];
-    
+
                 if ($orderManager->CreateOrder($data)) {
-                    //header("Location : ../../index.php?id=". $productId . "&command=success");
+                    header("Location: ../../index.php?id=" . $productId . "&command=success");
                     echo "success";
                 } else {
-                    //header("Location : ../../index.php?id=". $productId . "&command=error");
+                    header("Location: ../../index.php?id=" . $productId . "&command=error");
                     echo "error";
                 }
             }
