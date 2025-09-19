@@ -42,9 +42,9 @@ http_response_code($error_code);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Erreur <?= $error_code ?> - <?= $current_error['title'] ?></title>
-  <link href="/shopping/assets/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/shopping/assets/css/index.css" rel="stylesheet">
-  <link href="/shopping/assets/css/login.css" rel="stylesheet">
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/index.css" rel="stylesheet">
+  <link href="assets/css/login.css" rel="stylesheet">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
     .error-code {

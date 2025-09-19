@@ -614,6 +614,6 @@ switch ($action) {
         break;
 
     default:
-        header("Location: /shopping/error.php?code=400");
+        header("Location: /error.php?code=400");
         exit;
 }

@@ -2,7 +2,7 @@
 require '../../vendor/autoload.php';
 require '../../utils/middleware.php';
 
-verifyConnection("/shopping/management/orders/");
+verifyConnection("/management/orders/");
 checkIsActive($_SESSION['user_id']);
 
 use src\Connectbd;
@@ -32,11 +32,9 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
     <link rel="preload" href="https://unpkg.com/boxicons@2.1.4/fonts/boxicons.woff2" as="font" type="font/woff2" crossorigin>
     <link href="../../assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../assets/css/index.css" rel="stylesheet">
-    <link href="../../assets/css/orders.css" rel="stylesheet">
     <link href="../../assets/css/navbar.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="../../assets/css/order.css" rel="stylesheet">
-    <!--<link rel="stylesheet" href="../../assets/css/index.css">-->
 </head>
 
 <body>
@@ -130,8 +128,8 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                 ?>
                                 <div class="col-12 col-md-6 col-xl-4" id="order-card-<?= $order['order_id'] ?>" data-status="<?= htmlspecialchars($order['status']) ?>" data-action="<?= htmlspecialchars($order['action'] ?? '') ?>">
                                     <div class="card h-100 order-card">
-                                        <div class="card-body p-3">
-                                            <div class="d-flex align-items-start mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-start">
                                                 <img src="../../uploads/main/<?= !empty($order['product_image']) ? htmlspecialchars($order['product_image']) : 'default.jpg' ?>"
                                                     alt="<?= htmlspecialchars($order['product_name']) ?>"
                                                     class="product-image me-3"
@@ -148,7 +146,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                         <i class='bx bx-user me-1'></i><?= htmlspecialchars($order['client_name']) ?>
                                                     </small>
                                                     <small class="text-muted d-block">
-                                                        <i class='bx bx-map me-1'></i><?= htmlspecialchars($order['client_country']) ?>
+                                                        <i class="fa-solid fa-copy"></i><p id="code" onclick="copier()"><?= htmlspecialchars($order['client_phone']) ?></p>
                                                     </small>
                                                 </div>
                                             </div>
@@ -157,10 +155,6 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                 <div class="text-center">
                                                     <small class="text-muted d-block">Quantité</small>
                                                     <span class="fw-bold"><?= (int)$order['quantity'] ?></span>
-                                                </div>
-                                                <div class="text-center">
-                                                    <small class="text-muted d-block">Prix unitaire</small>
-                                                    <span class="fw-bold text-success"><?= number_format($order['unit_price'] ?? 0, 0, ',', ' ') ?> FCFA</span>
                                                 </div>
                                                 <div class="text-center">
                                                     <small class="text-muted d-block">Total</small>
@@ -551,6 +545,18 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
 
     <script src="../../assets/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/order.js"></script>
+    <script>
+        function copier() {
+            let texte = document.getElementById("code").innerText;
+            navigator.clipboard.writeText(texte)
+                .then(() => {
+                    alert("Copié ✅ : " + texte);
+                })
+                .catch(err => {
+                    alert("Erreur ❌ : " + err);
+                });
+        }
+    </script>
 
 </body>
 

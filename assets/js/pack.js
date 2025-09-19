@@ -26,6 +26,33 @@ function selectPack(packId, packPrice, quantity) {
     new Intl.NumberFormat("fr-FR").format(packPrice) + " FCFA";
 
   packInfo.style.display = "block";
+
+  // TRACKING - Sélection de pack
+  if (typeof trackEvent !== 'undefined') {
+    trackEvent('PackSelected', {
+      content_ids: [packId.toString()],
+      content_name: title,
+      value: packPrice,
+      currency: 'XOF',
+      quantity: quantity,
+      pack_type: 'product_bundle'
+    });
+
+    // Événement AddToCart pour les campagnes e-commerce
+    trackEvent('AddToCart', {
+      content_ids: [packId.toString()],
+      content_name: title,
+      value: packPrice,
+      currency: 'XOF',
+      content_type: 'product',
+      contents: [{
+        id: packId,
+        quantity: quantity,
+        item_price: packPrice
+      }]
+    });
+  }
+
   openOrderForm();
 }
 
@@ -65,6 +92,18 @@ function updatePackSelection() {
       new Intl.NumberFormat("fr-FR").format(packPrice) + " FCFA";
 
     packInfo.style.display = "block";
+
+    // TRACKING - Sélection de pack via dropdown
+    if (typeof trackEvent !== 'undefined') {
+      trackEvent('PackSelectedDropdown', {
+        content_ids: [packId],
+        content_name: packTitle,
+        value: parseInt(packPrice),
+        currency: 'XOF',
+        quantity: parseInt(packQuantity),
+        selection_method: 'dropdown'
+      });
+    }
 
     document.querySelectorAll(".pack-card").forEach((card) => {
       card.classList.remove("selected");

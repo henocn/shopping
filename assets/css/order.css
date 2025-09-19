@@ -4,6 +4,11 @@
   --paper: #dcc5f5ff;
   --magenta: #f1ebf1ff;
   --purple: rgb(24, 4, 53);
+  --transition: all 0.3s ease;
+  --border-radius: 8px;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+  --primary-gradient: linear-gradient(135deg, var(--primary), var(--secondary));
 }
 
 .primary-color {
@@ -46,37 +51,39 @@
   background-color: var(--purple);
 }
 
+/* Navigation tabs avec vos couleurs */
 .nav-tabs {
   border-bottom: 2px solid var(--paper);
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
 }
 
 .nav-tabs .nav-link {
   border: none;
   border-bottom: 3px solid transparent;
-  background: var(--primary);
-  color: var(--primary);
+  background: var(--magenta);
+  color: var(--purple);
   font-weight: 500;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   transition: var(--transition);
   position: relative;
+  font-size: 0.9rem;
 }
 
 .nav-tabs .nav-link:hover:not(.active) {
-  border-color: #1e65ac;
-  background-color: var(--purple);
+  border-color: var(--secondary);
+  background-color: var(--paper);
   color: var(--purple);
 }
 
 .nav-tabs .nav-link.active {
   background: var(--primary-gradient);
   color: white !important;
-  border-bottom-color: #ffc107;
-  font-weight: 600;
+  border-bottom-color: var(--secondary);
+  font-weight: 500;
   box-shadow: var(--shadow-sm);
 }
 
-/* Amélioration des cartes de commandes */
+/* Cards optimisées - 4 par ligne avec espacement harmonieux */
 .order-card {
   border: none;
   box-shadow: var(--shadow-sm);
@@ -84,6 +91,9 @@
   border-radius: var(--border-radius);
   overflow: hidden;
   position: relative;
+  width: 100%; 
+  max-width: 280px; /* Légèrement plus large pour un meilleur équilibre */
+  margin: 0 auto;
 }
 
 .order-card::before {
@@ -92,8 +102,8 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
-  background: #dee2e6;
+  width: 2px;
+  background: var(--paper);
   transition: var(--transition);
 }
 
@@ -104,139 +114,325 @@
 
 /* Couleurs des cartes par statut */
 .order-card[data-status="processing"]::before {
-  background: #ffc107;
+  background: #ffc107; /* Même couleur que bg-warning */
 }
 .order-card[data-status="validated"]::before {
-  background: #28a745;
+  background: #28a745; /* Même couleur que bg-success */
 }
 .order-card[data-status="canceled"]::before {
-  background: #6c757d;
+  background: #6c757d; /* Même couleur que bg-secondary */
 }
 .order-card[data-status="rejected"]::before {
-  background: #dc3545;
+  background: #dc3545; /* Même couleur que bg-danger */
 }
 
 /* Couleurs des cartes par action */
 .order-card[data-action="remind"]::before {
-  background: #17a2b8;
+  background: #17a2b8; /* Même couleur que bg-info */
 }
 .order-card[data-action="call"]::before {
-  background: #343a40;
+  background: #343a40; /* Même couleur que bg-dark */
 }
 .order-card[data-action="unreachable"]::before {
-  background: #f8f9fa;
-  border-right: 1px solid #dee2e6;
+  background: #ffc107; /* Même couleur que bg-warning */
 }
 .order-card[data-action="done"]::before {
-  background: #28a745;
+  background: #28a745; /* Même couleur que bg-success */
 }
 
-/* Images produits */
+
+/* Images produits - taille optimisée */
 .product-image {
-  width: 48px;
-  height: 48px;
+  width: 45px; /* Taille équilibrée */
+  height: 45px;
   object-fit: cover;
   border-radius: 6px;
-  border: 2px solid #f8f9fa;
+  border: 2px solid var(--magenta);
   transition: var(--transition);
 }
 
 .order-card:hover .product-image {
-  border-color: #007bff;
+  border-color: var(--primary);
 }
 
-/* Badges de statut */
+/* Card body - padding équilibré */
+.order-card .card-body {
+  padding: 1.15rem !important; /* Espacement confortable */
+}
+
+/* Textes - tailles harmonisées */
+.order-card h6 {
+  font-size: 1rem; /* Taille lisible */
+  margin-bottom: 0.5rem;
+}
+
+.order-card p {
+  font-size: 0.9rem; /* Taille lisible */
+  margin-bottom: 0.5rem;
+}
+
+.order-card small {
+  font-size: 0.8rem; /* Taille lisible pour les petits textes */
+}
+
+/* Badges de statut harmonisés */
 .status-badge {
-  font-size: 0.75rem;
+  font-size: 0.75rem; /* Taille équilibrée */
   font-weight: 600;
   letter-spacing: 0.5px;
-  padding: 0.4em 0.8em;
+  padding: 0.35em 0.7em; /* Espacement confortable */
   border-radius: 50px;
 }
 
-/* Boutons harmonisés */
+/* Badge colors personnalisés - priorité maximale */
+.status-badge.bg-warning,
+.badge.bg-warning {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+}
+
+.status-badge.bg-primary,
+.badge.bg-primary {
+  background-color: var(--primary) !important;
+  color: white !important;
+}
+
+.status-badge.bg-secondary,
+.badge.bg-secondary {
+  background-color: #6c757d !important;
+  color: white !important;
+}
+
+.status-badge.bg-danger,
+.badge.bg-danger {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+.status-badge.bg-info,
+.badge.bg-info {
+  background-color: #17a2b8 !important;
+  color: white !important;
+}
+
+.status-badge.bg-dark,
+.badge.bg-dark {
+  background-color: #343a40 !important;
+  color: white !important;
+}
+
+.status-badge.bg-light,
+.badge.bg-light {
+  background-color: #f8f9fa !important;
+  color: #000 !important;
+  border: 1px solid #dee2e6 !important;
+}
+
+.status-badge.bg-success,
+.badge.bg-success {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+
+/* Force la couleur des badges avec une spécificité plus élevée */
+.order-card .status-badge.badge[class*="bg-"] {
+  color: white !important;
+}
+
+.order-card .status-badge.badge.bg-warning,
+.order-card .status-badge.badge.bg-light {
+  color: #000 !important;
+}
+
+/* Boutons harmonisés avec vos couleurs */
 .btn-outline-primary {
-  border-color: #007bff;
-  color: #007bff;
+  border-color: var(--primary);
+  color: var(--primary);
   transition: var(--transition);
+  font-size: 0.75rem; /* Taille plus petite */
+  padding: 0.4rem 0.8rem; /* Padding réduit */
 }
 
 .btn-outline-primary:hover {
   background: var(--primary-gradient);
-  border-color: #0056b3;
+  border-color: var(--secondary);
   color: white;
   transform: translateY(-1px);
 }
 
-/* Modales améliorées */
+.btn-primary {
+  background: var(--primary-gradient);
+  border-color: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--secondary);
+  border-color: var(--secondary);
+}
+
+/* Modales harmonisées - taille équilibrée */
+.modal-dialog {
+  max-width: 650px; /* Taille plus équilibrée pour la lisibilité */
+}
+
+.modal-dialog-lg {
+  max-width: 750px; /* Pour les modales lg */
+}
+
 .modal-header {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  border-bottom: 2px solid #dee2e6;
-  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--magenta), var(--paper));
+  border-bottom: 1.5px solid var(--paper);
+  padding: 1rem; /* Padding normal pour un bon espacement */
 }
 
 .modal-title {
-  color: #495057;
-  font-weight: 600;
+  color: var(--purple);
+  font-weight: 500;
+  font-size: 1.1rem; /* Taille lisible */
 }
 
 .modal-body {
-  padding: 2rem;
+  padding: 1.25rem; /* Espacement confortable */
+  font-size: 0.9rem; /* Texte lisible */
 }
 
 .modal-footer {
-  border-top: 2px solid #dee2e6;
-  padding: 1.5rem;
-  background-color: #f8f9fa;
+  border-top: 2px solid var(--paper);
+  padding: 1rem; 
+  background-color: var(--magenta);
 }
 
-/* États vides */
+/* Form elements harmonisés dans les modales */
+.modal-body .form-control,
+.modal-body .form-select {
+  font-size: 0.9rem; /* Taille lisible */
+  padding: 0.5rem 0.75rem; /* Espacement confortable */
+}
+
+.modal-body .form-label {
+  color: var(--purple);
+  font-size: 0.9rem; /* Taille lisible */
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Section headers dans les modales - lisibles */
+.modal-body h6.text-muted {
+  color: var(--primary) !important;
+  font-size: 1rem; /* Taille lisible */
+  border-bottom: 1px solid var(--paper);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem !important;
+}
+
+/* Marges équilibrées dans les modales */
+.modal-body .mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+.modal-body .mb-4 {
+  margin-bottom: 1.25rem !important;
+}
+
+/* Boutons harmonisés dans les modales */
+.modal-footer .btn {
+  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+}
+
+/* Form-control-plaintext lisible */
+.form-control-plaintext {
+  font-size: 0.9rem;
+  color: var(--purple);
+  background-color: var(--magenta);
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem; /* Espacement confortable */
+  margin: 0;
+}
+
+/* Textarea bien dimensionnée */
+.modal-body textarea.form-control {
+  font-size: 0.9rem;
+  min-height: 80px; /* Hauteur pratique */
+}
+
+/* États vides avec vos couleurs */
 .empty-state {
   text-align: center;
-  padding: 3rem 1rem;
-  color: #6c757d;
-  background: #f8f9fa;
+  padding: 1rem 0.5rem; /* Réduit */
+  color: var(--purple);
+  background: var(--magenta);
   border-radius: var(--border-radius);
-  border: 1px dashed #dee2e6;
+  border: 1px dashed var(--paper);
 }
 
 .empty-state i {
-  font-size: 3rem;
+  font-size: 2.5rem; /* Réduit */
   margin-bottom: 1rem;
-  opacity: 0.5;
+  opacity: 0.7;
+  color: var(--primary);
 }
 
-
-/* Formulaires */
+/* Formulaires harmonisés */
 .form-control,
 .form-select {
   border-radius: 6px;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--paper);
   transition: var(--transition);
+  font-size: 0.9rem; /* Taille lisible */
 }
 
 .form-control:focus,
 .form-select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(206, 133, 87, 0.25);
 }
 
-/* Fallback pour les icônes en cas de chargement lent */
-.bx:before {
-  font-family: "boxicons", Arial, sans-serif;
+/* Form control plaintext harmonisé */
+.form-control-plaintext {
+  font-size: 0.9rem;
+  color: var(--purple);
+  background-color: var(--magenta);
+  border-radius: 4px;
+  padding: 0.5rem;
 }
 
-.bx-edit-alt:before {
-  content: "✏️";
-}
-.bx-trash:before {
-  content: "🗑️";
-}
-.bx-info-circle:before {
-  content: "ℹ️";
+/* Notes du client */
+.form-control-plaintext.bg-light {
+  background-color: var(--paper) !important;
 }
 
-/* Responsive design amélioré */
+/* Texte des prix */
+.text-success {
+  color: var(--primary) !important;
+}
+
+.text-primary {
+  color: var(--secondary) !important;
+}
+
+/* Grille pour 4 cards par ligne */
+.row.g-3 .col-12.col-md-6.col-xl-4 {
+  flex: 0 0 25%; /* Force 4 colonnes par ligne sur desktop */
+  max-width: 25%;
+}
+
+@media (min-width: 992px) {
+  .row.g-3 .col-12.col-md-6.col-xl-4 {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+}
+
+@media (max-width: 991px) {
+  .row.g-3 .col-12.col-md-6.col-xl-4 {
+    flex: 0 0 50%; /* 2 par ligne sur tablette */
+    max-width: 50%;
+  }
+}
+
+/* Responsive design optimisé */
 @media (max-width: 768px) {
   .nav-tabs {
     flex-wrap: wrap;
@@ -246,27 +442,32 @@
   .nav-tabs .nav-link {
     flex: 1;
     text-align: center;
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
     margin-bottom: 0.25rem;
   }
 
-  .page-header {
-    text-align: center;
-    padding: 1.5rem;
-  }
-
-  .orders-counter {
-    margin-top: 1rem;
-    display: inline-block;
+  .order-card {
+    max-width: 100%;
   }
 
   .modal-dialog {
-    margin: 1rem;
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
   }
 
   .modal-body {
-    padding: 1.5rem;
+    padding: 0.8rem;
+  }
+
+  .modal-header,
+  .modal-footer {
+    padding: 0.8rem;
+  }
+  
+  .row.g-3 .col-12.col-md-6.col-xl-4 {
+    flex: 0 0 100%; /* 1 par ligne sur mobile */
+    max-width: 100%;
   }
 }
 
@@ -279,5 +480,8 @@
   .btn-outline-primary {
     width: 100%;
     justify-content: center;
+    font-size: 0.7rem; /* Plus petit sur mobile */
+    padding: 0.35rem 0.7rem; /* Padding encore plus réduit sur mobile */
   }
+
 }
