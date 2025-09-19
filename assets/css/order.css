@@ -54,7 +54,7 @@
 /* Navigation tabs avec vos couleurs */
 .nav-tabs {
   border-bottom: 2px solid var(--paper);
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .nav-tabs .nav-link {
@@ -79,11 +79,11 @@
   background: var(--primary-gradient);
   color: white !important;
   border-bottom-color: var(--secondary);
-  font-weight: 600;
+  font-weight: 500;
   box-shadow: var(--shadow-sm);
 }
 
-/* Cards optimisées - 4 par ligne */
+/* Cards optimisées - 4 par ligne avec espacement harmonieux */
 .order-card {
   border: none;
   box-shadow: var(--shadow-sm);
@@ -91,8 +91,8 @@
   border-radius: var(--border-radius);
   overflow: hidden;
   position: relative;
-  width: 100%; /* Prend toute la largeur du conteneur */
-  max-width: 280px; /* Plus petit pour 4 par ligne */
+  width: 100%; 
+  max-width: 280px; /* Légèrement plus large pour un meilleur équilibre */
   margin: 0 auto;
 }
 
@@ -102,7 +102,7 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
+  width: 2px;
   background: var(--paper);
   transition: var(--transition);
 }
@@ -114,38 +114,37 @@
 
 /* Couleurs des cartes par statut */
 .order-card[data-status="processing"]::before {
-  background: #ffc107;
+  background: #ffc107; /* Même couleur que bg-warning */
 }
 .order-card[data-status="validated"]::before {
-  background: #28a745;
+  background: #28a745; /* Même couleur que bg-success */
 }
 .order-card[data-status="canceled"]::before {
-  background: #6c757d;
+  background: #6c757d; /* Même couleur que bg-secondary */
 }
 .order-card[data-status="rejected"]::before {
-  background: #dc3545;
+  background: #dc3545; /* Même couleur que bg-danger */
 }
 
 /* Couleurs des cartes par action */
 .order-card[data-action="remind"]::before {
-  background: #17a2b8;
+  background: #17a2b8; /* Même couleur que bg-info */
 }
 .order-card[data-action="call"]::before {
-  background: #343a40;
+  background: #343a40; /* Même couleur que bg-dark */
 }
 .order-card[data-action="unreachable"]::before {
-  background: #f8f9fa;
-  border-right: 1px solid #dee2e6;
+  background: #ffc107; /* Même couleur que bg-warning */
 }
 .order-card[data-action="done"]::before {
-  background: #28a745;
+  background: #28a745; /* Même couleur que bg-success */
 }
 
 
-/* Images produits - taille réduite */
+/* Images produits - taille optimisée */
 .product-image {
-  width: 40px; /* Réduit de 48px à 40px */
-  height: 40px;
+  width: 45px; /* Taille équilibrée */
+  height: 45px;
   object-fit: cover;
   border-radius: 6px;
   border: 2px solid var(--magenta);
@@ -156,58 +155,93 @@
   border-color: var(--primary);
 }
 
-/* Card body - padding réduit */
+/* Card body - padding équilibré */
 .order-card .card-body {
-  padding: 1rem !important; /* Réduit de 1.25rem à 1rem */
+  padding: 1.15rem !important; /* Espacement confortable */
 }
 
-/* Textes - taille réduite */
+/* Textes - tailles harmonisées */
 .order-card h6 {
-  font-size: 0.95rem;
+  font-size: 1rem; /* Taille lisible */
   margin-bottom: 0.5rem;
 }
 
 .order-card p {
-  font-size: 0.85rem;
+  font-size: 0.9rem; /* Taille lisible */
   margin-bottom: 0.5rem;
 }
 
 .order-card small {
-  font-size: 0.75rem;
+  font-size: 0.8rem; /* Taille lisible pour les petits textes */
 }
 
-/* Badges de statut avec vos couleurs */
+/* Badges de statut harmonisés */
 .status-badge {
-  font-size: 0.7rem; /* Réduit */
+  font-size: 0.75rem; /* Taille équilibrée */
   font-weight: 600;
   letter-spacing: 0.5px;
-  padding: 0.3em 0.6em; /* Réduit */
+  padding: 0.35em 0.7em; /* Espacement confortable */
   border-radius: 50px;
 }
 
-/* Badge colors personnalisés */
-.bg-warning {
-  background-color: var(--secondary) !important;
+/* Badge colors personnalisés - priorité maximale */
+.status-badge.bg-warning,
+.badge.bg-warning {
+  background-color: #ffc107 !important;
+  color: #000 !important;
 }
 
-.bg-primary {
+.status-badge.bg-primary,
+.badge.bg-primary {
   background-color: var(--primary) !important;
+  color: white !important;
 }
 
-.bg-secondary {
-  background-color: var(--purple) !important;
+.status-badge.bg-secondary,
+.badge.bg-secondary {
+  background-color: #6c757d !important;
+  color: white !important;
 }
 
-.bg-info {
-  background-color: var(--secondary) !important;
+.status-badge.bg-danger,
+.badge.bg-danger {
+  background-color: #dc3545 !important;
+  color: white !important;
 }
 
-.bg-dark {
-  background-color: var(--purple) !important;
+.status-badge.bg-info,
+.badge.bg-info {
+  background-color: #17a2b8 !important;
+  color: white !important;
 }
 
-.bg-success {
-  background-color: var(--primary) !important;
+.status-badge.bg-dark,
+.badge.bg-dark {
+  background-color: #343a40 !important;
+  color: white !important;
+}
+
+.status-badge.bg-light,
+.badge.bg-light {
+  background-color: #f8f9fa !important;
+  color: #000 !important;
+  border: 1px solid #dee2e6 !important;
+}
+
+.status-badge.bg-success,
+.badge.bg-success {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+
+/* Force la couleur des badges avec une spécificité plus élevée */
+.order-card .status-badge.badge[class*="bg-"] {
+  color: white !important;
+}
+
+.order-card .status-badge.badge.bg-warning,
+.order-card .status-badge.badge.bg-light {
+  color: #000 !important;
 }
 
 /* Boutons harmonisés avec vos couleurs */
@@ -215,8 +249,8 @@
   border-color: var(--primary);
   color: var(--primary);
   transition: var(--transition);
-  font-size: 0.85rem; /* Réduit */
-  padding: 0.5rem 1rem; /* Réduit */
+  font-size: 0.75rem; /* Taille plus petite */
+  padding: 0.4rem 0.8rem; /* Padding réduit */
 }
 
 .btn-outline-primary:hover {
@@ -237,96 +271,96 @@
   border-color: var(--secondary);
 }
 
-/* Modales optimisées - beaucoup plus petites */
+/* Modales harmonisées - taille équilibrée */
 .modal-dialog {
-  max-width: 500px; /* Drastiquement réduit de 800px à 500px */
+  max-width: 650px; /* Taille plus équilibrée pour la lisibilité */
 }
 
 .modal-dialog-lg {
-  max-width: 550px; /* Pour les modales lg */
+  max-width: 750px; /* Pour les modales lg */
 }
 
 .modal-header {
   background: linear-gradient(135deg, var(--magenta), var(--paper));
-  border-bottom: 2px solid var(--paper);
-  padding: 0.5rem;
+  border-bottom: 1.5px solid var(--paper);
+  padding: 1rem; /* Padding normal pour un bon espacement */
 }
 
 .modal-title {
   color: var(--purple);
-  font-weight: 600;
-  font-size: 1rem; /* Plus petit */
+  font-weight: 500;
+  font-size: 1.1rem; /* Taille lisible */
 }
 
 .modal-body {
-  padding: 1rem; /* Réduit de 1.5rem à 1rem */
-  font-size: 0.85rem; /* Texte plus petit */
+  padding: 1.25rem; /* Espacement confortable */
+  font-size: 0.9rem; /* Texte lisible */
 }
 
 .modal-footer {
   border-top: 2px solid var(--paper);
-  padding: 1rem; /* Réduit */
+  padding: 1rem; 
   background-color: var(--magenta);
 }
 
-/* Form elements plus compacts dans les modales */
+/* Form elements harmonisés dans les modales */
 .modal-body .form-control,
 .modal-body .form-select {
-  font-size: 0.8rem;
-  padding: 0.4rem 0.8rem; /* Plus petit */
+  font-size: 0.9rem; /* Taille lisible */
+  padding: 0.5rem 0.75rem; /* Espacement confortable */
 }
 
 .modal-body .form-label {
   color: var(--purple);
-  font-size: 0.8rem; /* Plus petit */
-  font-weight: 600;
-  margin-bottom: 0.3rem;
+  font-size: 0.9rem; /* Taille lisible */
+  font-weight: 500;
+  margin-bottom: 0.5rem;
 }
 
-/* Section headers dans les modales - plus compacts */
+/* Section headers dans les modales - lisibles */
 .modal-body h6.text-muted {
   color: var(--primary) !important;
-  font-size: 0.9rem; /* Plus petit */
+  font-size: 1rem; /* Taille lisible */
   border-bottom: 1px solid var(--paper);
-  padding-bottom: 0.3rem;
-  margin-bottom: 0.8rem !important;
-}
-
-/* Réduction des marges dans les modales */
-.modal-body .mb-3 {
-  margin-bottom: 0.8rem !important;
-}
-
-.modal-body .mb-4 {
+  padding-bottom: 0.5rem;
   margin-bottom: 1rem !important;
 }
 
-/* Boutons plus petits dans les modales */
-.modal-footer .btn {
-  font-size: 0.8rem;
-  padding: 0.5rem 1rem;
+/* Marges équilibrées dans les modales */
+.modal-body .mb-3 {
+  margin-bottom: 1rem !important;
 }
 
-/* Form-control-plaintext plus compact */
+.modal-body .mb-4 {
+  margin-bottom: 1.25rem !important;
+}
+
+/* Boutons harmonisés dans les modales */
+.modal-footer .btn {
+  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+}
+
+/* Form-control-plaintext lisible */
 .form-control-plaintext {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--purple);
   background-color: var(--magenta);
   border-radius: 4px;
-  padding: 0.4rem 0.6rem; /* Plus petit */
+  padding: 0.5rem 0.75rem; /* Espacement confortable */
   margin: 0;
 }
 
-/* Textarea plus petite */
+/* Textarea bien dimensionnée */
 .modal-body textarea.form-control {
-  font-size: 0.8rem;
-  min-height: 60px; /* Plus petit */
+  font-size: 0.9rem;
+  min-height: 80px; /* Hauteur pratique */
 }
 
 /* États vides avec vos couleurs */
 .empty-state {
   text-align: center;
-  padding: 2rem 1rem; /* Réduit */
+  padding: 1rem 0.5rem; /* Réduit */
   color: var(--purple);
   background: var(--magenta);
   border-radius: var(--border-radius);
@@ -340,13 +374,13 @@
   color: var(--primary);
 }
 
-/* Formulaires avec vos couleurs */
+/* Formulaires harmonisés */
 .form-control,
 .form-select {
   border-radius: 6px;
   border: 1px solid var(--paper);
   transition: var(--transition);
-  font-size: 0.9rem; /* Réduit */
+  font-size: 0.9rem; /* Taille lisible */
 }
 
 .form-control:focus,
@@ -355,7 +389,7 @@
   box-shadow: 0 0 0 0.2rem rgba(206, 133, 87, 0.25);
 }
 
-/* Form control plaintext */
+/* Form control plaintext harmonisé */
 .form-control-plaintext {
   font-size: 0.9rem;
   color: var(--purple);
@@ -446,8 +480,8 @@
   .btn-outline-primary {
     width: 100%;
     justify-content: center;
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
+    font-size: 0.7rem; /* Plus petit sur mobile */
+    padding: 0.35rem 0.7rem; /* Padding encore plus réduit sur mobile */
   }
 
 }
