@@ -35,24 +35,24 @@ if (isset($_POST['valider'])) {
                 $product = $productManager->getProducts($productId);
 
                 $data = [
-                    'product_id' => $productId,
-                    'pack_id' => $packId,
-                    'client_name' => htmlspecialchars($_POST['client_name']),
+                    'product_id'    => $productId,
+                    'pack_id'       => $packId,
+                    'client_name'   => htmlspecialchars($_POST['client_name']),
                     'client_country' => "TD",
                     'client_adress' => htmlspecialchars($_POST['client_adress']),
-                    'client_phone' => htmlspecialchars($_POST['client_phone']),
-                    'client_note' => htmlspecialchars($_POST['client_note']),
-                    'unit_price' => $product['price'],
-                    'total_price' => $pack['price_reduction'],
-                    'quantity' => $pack['quantity']
+                    'client_phone'  => htmlspecialchars($_POST['client_phone']),
+                    'client_note'   => htmlspecialchars($_POST['client_note']),
+                    'unit_price'    => $product['price'],
+                    'total_price'   => !empty($pack['price_reduction']) ? $pack['price_reduction'] : $product['price'],
+                    'quantity'      => !empty($pack['quantity']) ? $pack['quantity'] : 1,
                 ];
+
+
 
                 if ($orderManager->CreateOrder($data)) {
                     header("Location: ../../index.php?id=" . $productId . "&command=success");
-                    echo "success";
                 } else {
                     header("Location: ../../index.php?id=" . $productId . "&command=error");
-                    echo "error";
                 }
             }
             break;

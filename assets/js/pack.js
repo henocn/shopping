@@ -27,7 +27,6 @@ function selectPack(packId, packPrice, quantity) {
 
   packInfo.style.display = "block";
 
-  // TRACKING - Sélection de pack
   if (typeof trackEvent !== 'undefined') {
     trackEvent('PackSelected', {
       content_ids: [packId.toString()],
@@ -38,18 +37,12 @@ function selectPack(packId, packPrice, quantity) {
       pack_type: 'product_bundle'
     });
 
-    // Événement AddToCart pour les campagnes e-commerce
-    trackEvent('AddToCart', {
+    trackEvent('ViewContent', {
       content_ids: [packId.toString()],
       content_name: title,
       value: packPrice,
       currency: 'XOF',
-      content_type: 'product',
-      contents: [{
-        id: packId,
-        quantity: quantity,
-        item_price: packPrice
-      }]
+      content_type: 'product'
     });
   }
 
@@ -93,7 +86,6 @@ function updatePackSelection() {
 
     packInfo.style.display = "block";
 
-    // TRACKING - Sélection de pack via dropdown
     if (typeof trackEvent !== 'undefined') {
       trackEvent('PackSelectedDropdown', {
         content_ids: [packId],

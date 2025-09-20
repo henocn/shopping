@@ -71,7 +71,7 @@ function showNotification(message, type = "info") {
 
 document.addEventListener("DOMContentLoaded", function () {
   updateOrdersCount();
-  console.log("Gestion des commandes initialisée");
+
 });
 
 window.updateOrder = updateOrder;

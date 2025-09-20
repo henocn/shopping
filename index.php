@@ -33,31 +33,6 @@ $packs = $productManager->getProductPacks($productId);
 <html lang="fr">
 
 <head>
-    <!-- Meta Pixel Code -->
-    <script>
-        ! function(f, b, e, v, n, t, s) {
-            if (f.fbq) return;
-            n = f.fbq = function() {
-                n.callMethod ?
-                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-            };
-            if (!f._fbq) f._fbq = n;
-            n.push = n;
-            n.loaded = !0;
-            n.version = '2.0';
-            n.queue = [];
-            t = b.createElement(e);
-            t.async = !0;
-            t.src = v;
-            s = b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t, s)
-        }(window, document, 'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '1087210050149446');
-        fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1087210050149446&ev=PageView&noscript=1" /></noscript>
-    <!-- End Meta Pixel Code -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($product['name']); ?></title>
@@ -380,19 +355,12 @@ $packs = $productManager->getProductPacks($productId);
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="assets/js/tracking-manager.js"></script>
+    <script src="assets/js/tracking-manager.js" defer></script>
     <script src="assets/js/product.js"></script>
     <script src="assets/js/theme.js"></script>
     <script src="assets/js/pack.js"></script>
     <script>
-        // UTILISATION DU TRACKING MANAGER POUR UN CODE PLUS PROPRE
         document.addEventListener('DOMContentLoaded', function() {
-
-            // ========================================
-            // 1. TRACKING VISITE DU SITE
-            // ========================================
-
-            // Événement personnalisé pour une visite "qualifiée" (plus de 10 secondes)
             setTimeout(function() {
                 trackEvent('QualifiedVisit', {
                     content_ids: ['<?= $product['id']; ?>'],
@@ -400,12 +368,7 @@ $packs = $productManager->getProductPacks($productId);
                     value: <?= $product['price']; ?>,
                     currency: 'XOF'
                 });
-            }, 10000); // 10 secondes
-
-
-            // ========================================
-            // 2. TRACKING FORMULAIRE ABANDONNÉ
-            // ========================================
+            }, 10000);
 
             const orderForm = document.getElementById('orderForm');
             const orderModal = document.getElementById('orderModal');
@@ -415,10 +378,7 @@ $packs = $productManager->getProductPacks($productId);
             let abandonTimer = null;
 
             if (orderForm) {
-                // Détecter quand l'utilisateur commence à remplir le formulaire
                 const formFields = orderForm.querySelectorAll('input[type="text"], input[type="tel"], textarea, select');
-
-                // Tracking progression du formulaire
                 let fieldsCompleted = 0;
                 const totalFields = formFields.length;
 
@@ -428,7 +388,6 @@ $packs = $productManager->getProductPacks($productId);
                             formStarted = true;
                             formStartTime = Date.now();
 
-                            // Événement Facebook standard
                             trackEvent('InitiateCheckout', {
                                 content_ids: ['<?= $product['id']; ?>'],
                                 content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
@@ -437,7 +396,6 @@ $packs = $productManager->getProductPacks($productId);
                                 content_type: 'product'
                             });
 
-                            // Événement personnalisé
                             trackEvent('FormStarted', {
                                 content_ids: ['<?= $product['id']; ?>'],
                                 content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
@@ -445,7 +403,6 @@ $packs = $productManager->getProductPacks($productId);
                                 currency: 'XOF'
                             });
 
-                            // Timer pour détecter abandon après 5 minutes d'inactivité
                             abandonTimer = setTimeout(function() {
                                 if (formStarted && !formSubmitted) {
                                     trackEvent('FormInactive', {
@@ -456,10 +413,9 @@ $packs = $productManager->getProductPacks($productId);
                                         time_spent: Math.round((Date.now() - formStartTime) / 1000)
                                     });
                                 }
-                            }, 300000); // 5 minutes
+                            }, 300000);
                         }
 
-                        // Tracking progression du formulaire
                         if (this.value.length > 2) {
                             const currentFieldsCompleted = Array.from(formFields).filter(f => f.value.length > 2).length;
                             
@@ -467,7 +423,6 @@ $packs = $productManager->getProductPacks($productId);
                                 fieldsCompleted = currentFieldsCompleted;
                                 const progressPercent = Math.round((fieldsCompleted / totalFields) * 100);
                                 
-                                // Événements de progression
                                 if (progressPercent === 25) {
                                     trackEvent('FormProgress25', {
                                         content_ids: ['<?= $product['id']; ?>'],
@@ -504,7 +459,6 @@ $packs = $productManager->getProductPacks($productId);
                             }
                         }
                         
-                        // Reset timer on activity
                         if (abandonTimer) {
                             clearTimeout(abandonTimer);
                             abandonTimer = setTimeout(function() {
@@ -517,11 +471,10 @@ $packs = $productManager->getProductPacks($productId);
                                         time_spent: Math.round((Date.now() - formStartTime) / 1000)
                                     });
                                 }
-                            }, 300000); // 5 minutes
+                            }, 300000);
                         }
                     });
 
-                    // Tracking focus sur les champs
                     field.addEventListener('focus', function() {
                         trackEvent('FormFieldFocus', {
                             content_ids: ['<?= $product['id']; ?>'],
@@ -537,7 +490,6 @@ $packs = $productManager->getProductPacks($productId);
                 // Détecter la fermeture du modal = formulaire abandonné
                 if (orderModal) {
                     orderModal.addEventListener('hidden.bs.modal', function() {
-                        // Si le formulaire a été commencé mais pas soumis
                         if (formStarted && !formSubmitted) {
                             const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
                             
@@ -553,7 +505,6 @@ $packs = $productManager->getProductPacks($productId);
                     });
                 }
 
-                // Détecter abandon par navigation
                 window.addEventListener('beforeunload', function() {
                     if (formStarted && !formSubmitted) {
                         const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
@@ -569,15 +520,9 @@ $packs = $productManager->getProductPacks($productId);
                     }
                 });
 
-
-                // ========================================
-                // 3. TRACKING COMMANDE PASSÉE (ACHAT)
-                // ========================================
-
                 orderForm.addEventListener('submit', function(e) {
                     formSubmitted = true;
 
-                    // Événement Purchase (standard Facebook)
                     trackEvent('Purchase', {
                         content_ids: ['<?= $product['id']; ?>'],
                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
@@ -587,7 +532,6 @@ $packs = $productManager->getProductPacks($productId);
                         num_items: 1
                     });
 
-                    // Événement Lead (pour campagnes de leads)
                     trackEvent('Lead', {
                         content_ids: ['<?= $product['id']; ?>'],
                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
@@ -595,7 +539,6 @@ $packs = $productManager->getProductPacks($productId);
                         currency: 'XOF'
                     });
 
-                    // Événement personnalisé
                     trackEvent('OrderCompleted', {
                         content_ids: ['<?= $product['id']; ?>'],
                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
@@ -606,11 +549,7 @@ $packs = $productManager->getProductPacks($productId);
             }
         });
 
-        // ========================================
-        // FONCTION POUR OUVRIR LE FORMULAIRE
-        // ========================================
         function openOrderForm() {
-            // Track le clic sur "Commander"
             trackEvent('ClickedOrderButton', {
                 content_ids: ['<?= $product['id']; ?>'],
                 content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
@@ -618,7 +557,6 @@ $packs = $productManager->getProductPacks($productId);
                 currency: 'XOF'
             });
 
-            // Ouvrir le modal
             var modal = new bootstrap.Modal(document.getElementById('orderModal'));
             modal.show();
         }
