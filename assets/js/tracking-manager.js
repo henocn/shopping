@@ -3,7 +3,7 @@ class TrackingManager {
         this.config = {
             facebook: {
                 enabled: true,
-                pixels: ['1087210050149446'],
+                pixels: ['1087210050149446','1373481401089526'],
                 timeout: 5000
             },
             googleAnalytics: {
@@ -38,27 +38,48 @@ class TrackingManager {
 
     async initFacebook() {
         try {
-            if (!window.fbq) {
-                window.fbq = function() {
-                    window.fbq.queue = window.fbq.queue || [];
-                    window.fbq.queue.push(arguments);
-                };
-                window.fbq.queue = [];
-                window.fbq.loaded = true;
-                window.fbq.version = '2.0';
+            // Éviter la double initialisation
+            if (window.fbEventsInitialized) {
+                return;
             }
-            this.config.facebook.pixels.forEach(pixelId => fbq('init', pixelId));
+            window.fbEventsInitialized = true;
+
+            // Snippet officiel Meta Pixel pour éviter les conflits de versions
+            !(function(f,b,e,v,n,t,s){
+                if(f.fbq) return; n=f.fbq=function(){ n.callMethod ?
+                    n.callMethod.apply(n,arguments) : n.queue.push(arguments) };
+                if(!f._fbq) f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
+                n.queue=[]; t=b.createElement(e); t.async=!0; t.src=v;
+                s=b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t,s);
+            })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+
+            // Alias de compatibilité
+            window._fbq = window._fbq || window.fbq;
+
+            // Initialiser seulement les pixels non initialisés
+            if (!window.fbInitializedPixels) window.fbInitializedPixels = [];
+            this.config.facebook.pixels.forEach(pixelId => {
+                if (!window.fbInitializedPixels.includes(pixelId)) {
+                    fbq('init', pixelId);
+                    window.fbInitializedPixels.push(pixelId);
+                }
+            });
+
             fbq('track', 'PageView');
-            this.addFacebookFallbackImages();
-            this.loadFacebookScript();
             this.scriptsLoaded.facebook = true;
         } catch (error) {
-            this.addFacebookFallbackImages();
+            // Pas de fallback immédiat ici; les événements utiliseront l'image si fbq indisponible
         }
     }
 
     loadFacebookScript() {
         try {
+            // Éviter de charger le script plusieurs fois
+            if (document.querySelector('script[src*="fbevents.js"]') || window.fbScriptLoaded) {
+                return;
+            }
+            window.fbScriptLoaded = true;
+
             const script = document.createElement('script');
             script.async = true;
             script.src = 'https://connect.facebook.net/en_US/fbevents.js';
@@ -99,15 +120,17 @@ class TrackingManager {
     trackFacebook(eventName, eventData) {
         if (!this.config.facebook.enabled) return;
         try {
-            if (typeof fbq === 'function') {
+            if (typeof fbq === 'function' && fbq.callMethod) {
                 const standardEvents = ['Purchase', 'Lead', 'InitiateCheckout', 'ViewContent', 'CompleteRegistration'];
                 if (standardEvents.includes(eventName)) {
                     fbq('track', eventName, eventData);
                 } else {
                     fbq('trackCustom', eventName, eventData);
                 }
+            } else {
+                // Fallback via image uniquement si fbq indisponible
+                this.trackFacebookViaImage(eventName, eventData);
             }
-            this.trackFacebookViaImage(eventName, eventData);
         } catch (error) {
             this.trackFacebookViaImage(eventName, eventData);
         }
@@ -141,7 +164,17 @@ class TrackingManager {
     addFacebookPixel(pixelId) {
         if (!this.config.facebook.pixels.includes(pixelId)) {
             this.config.facebook.pixels.push(pixelId);
-            if (typeof fbq === 'function') fbq('init', pixelId);
+            
+            // Initialiser seulement si pas déjà fait
+            if (typeof fbq === 'function') {
+                if (!window.fbInitializedPixels) {
+                    window.fbInitializedPixels = [];
+                }
+                if (!window.fbInitializedPixels.includes(pixelId)) {
+                    fbq('init', pixelId);
+                    window.fbInitializedPixels.push(pixelId);
+                }
+            }
         }
     }
 
@@ -151,7 +184,16 @@ class TrackingManager {
     }
 }
 
-window.trackingManager = new TrackingManager();
-window.trackEvent = function(eventName, eventData = {}, platforms = ['facebook']) {
-    window.trackingManager.track(eventName, eventData, platforms);
-};
+// Créer l'instance TrackingManager seulement si elle n'existe pas déjà
+if (!window.trackingManager) {
+    window.trackingManager = new TrackingManager();
+}
+
+// Fonction globale pour tracking
+if (!window.trackEvent) {
+    window.trackEvent = function(eventName, eventData = {}, platforms = ['facebook']) {
+        if (window.trackingManager) {
+            window.trackingManager.track(eventName, eventData, platforms);
+        }
+    };
+}

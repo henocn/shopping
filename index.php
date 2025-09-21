@@ -388,14 +388,6 @@ $packs = $productManager->getProductPacks($productId);
                             formStarted = true;
                             formStartTime = Date.now();
 
-                            trackEvent('InitiateCheckout', {
-                                content_ids: ['<?= $product['id']; ?>'],
-                                content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                value: <?= $product['price']; ?>,
-                                currency: 'XOF',
-                                content_type: 'product'
-                            });
-
                             trackEvent('FormStarted', {
                                 content_ids: ['<?= $product['id']; ?>'],
                                 content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
@@ -523,38 +515,54 @@ $packs = $productManager->getProductPacks($productId);
                 orderForm.addEventListener('submit', function(e) {
                     formSubmitted = true;
 
-                    trackEvent('Purchase', {
-                        content_ids: ['<?= $product['id']; ?>'],
-                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                        value: <?= $product['price']; ?>,
-                        currency: 'XOF',
-                        content_type: 'product',
-                        num_items: 1
-                    });
+                    // Déterminer si un pack est sélectionné et calculer dynamiquement la valeur
+                    var packIdInput = document.getElementById('selectedPackId');
+                    var packSelect = document.getElementById('packSelection');
+                    var selectedPackId = packIdInput ? (packIdInput.value || '') : '';
+                    var purchasePayload = { currency: 'XOF' };
 
-                    trackEvent('Lead', {
-                        content_ids: ['<?= $product['id']; ?>'],
-                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                        value: <?= $product['price']; ?>,
-                        currency: 'XOF'
-                    });
+                    if (selectedPackId && packSelect) {
+                        // Retrouver l'option correspondant au pack sélectionné
+                        var option = Array.from(packSelect.options).find(function(opt){ return opt.value === selectedPackId; });
+                        if (option) {
+                            var packPrice = parseInt(option.dataset.price, 10) || 0;
+                            var packQty = parseInt(option.dataset.quantity, 10) || 1;
 
-                    trackEvent('OrderCompleted', {
-                        content_ids: ['<?= $product['id']; ?>'],
-                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                        value: <?= $product['price']; ?>,
-                        currency: 'XOF'
-                    });
+                            purchasePayload.content_ids = [selectedPackId];
+                            purchasePayload.content_type = 'product';
+                            purchasePayload.contents = [{ id: selectedPackId, quantity: packQty, item_price: packPrice }];
+                            purchasePayload.num_items = packQty; // total d'unités dans le pack
+                            purchasePayload.value = packPrice;
+                        }
+                    }
+
+                    if (!purchasePayload.content_ids) {
+                        // Pas de pack: utiliser le produit simple
+                        purchasePayload.content_ids = ['<?= $product['id']; ?>'];
+                        purchasePayload.content_type = 'product';
+                        purchasePayload.contents = [{ id: '<?= $product['id']; ?>', quantity: 1, item_price: <?= $product['price']; ?> }];
+                        purchasePayload.num_items = 1;
+                        purchasePayload.value = <?= $product['price']; ?>;
+                    }
+
+                    // Envoyer uniquement l'événement Purchase (conseillé par Facebook)
+                    trackEvent('Purchase', purchasePayload);
                 });
             }
         });
 
         function openOrderForm() {
-            trackEvent('ClickedOrderButton', {
+            // InitiateCheckout au clic sur bouton Commander (specs Facebook)
+            trackEvent('InitiateCheckout', {
                 content_ids: ['<?= $product['id']; ?>'],
-                content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                value: <?= $product['price']; ?>,
-                currency: 'XOF'
+                contents: [{
+                    'id': '<?= $product['id']; ?>',
+                    'quantity': 1,
+                    'item_price': <?= $product['price']; ?>
+                }],
+                currency: 'XOF',
+                num_items: 1,
+                value: <?= $product['price']; ?>
             });
 
             var modal = new bootstrap.Modal(document.getElementById('orderModal'));

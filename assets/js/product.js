@@ -211,24 +211,31 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 3000);
   }
 
-  // ========== Modal commande amélioré ==========
+  // ========== Modal commande: ouverture et accessibilité ==========
   window.openOrderForm = function () {
-    const orderModal = new bootstrap.Modal(
-      document.getElementById("orderModal")
-    );
+    const orderModalEl = document.getElementById('orderModal');
+    const orderModal = new bootstrap.Modal(orderModalEl);
     orderModal.show();
-
-    // Animation d'entrée du modal
-    const modalContent = document.querySelector("#orderModal .modal-content");
-    modalContent.style.transform = "scale(0.8)";
-    modalContent.style.opacity = "0";
-
-    setTimeout(() => {
-      modalContent.style.transition = "all 0.3s ease";
-      modalContent.style.transform = "scale(1)";
-      modalContent.style.opacity = "1";
-    }, 100);
   };
+
+  // Appliquer l'animation quand le modal est effectivement affiché
+  const orderModalEl = document.getElementById('orderModal');
+  if (orderModalEl) {
+    orderModalEl.addEventListener('shown.bs.modal', function () {
+      const modalContent = orderModalEl.querySelector('.modal-content');
+      if (!modalContent) return;
+      modalContent.style.transform = 'scale(0.8)';
+      modalContent.style.opacity = '0';
+      // Forcer un reflow pour que la transition s'applique proprement
+      // eslint-disable-next-line no-unused-expressions
+      modalContent.offsetHeight;
+      setTimeout(() => {
+        modalContent.style.transition = 'all 0.3s ease';
+        modalContent.style.transform = 'scale(1)';
+        modalContent.style.opacity = '1';
+      }, 50);
+    });
+  }
 
   
 

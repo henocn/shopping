@@ -28,6 +28,18 @@ function selectPack(packId, packPrice, quantity) {
   packInfo.style.display = "block";
 
   if (typeof trackEvent !== 'undefined') {
+    trackEvent('ViewContent', {
+      content_ids: [packId.toString()],
+      content_type: 'product',
+      contents: [{
+        'id': packId.toString(),
+        'quantity': quantity,
+        'item_price': packPrice
+      }],
+      currency: 'XOF',
+      value: packPrice
+    });
+
     trackEvent('PackSelected', {
       content_ids: [packId.toString()],
       content_name: title,
@@ -36,21 +48,18 @@ function selectPack(packId, packPrice, quantity) {
       quantity: quantity,
       pack_type: 'product_bundle'
     });
-
-    trackEvent('ViewContent', {
-      content_ids: [packId.toString()],
-      content_name: title,
-      value: packPrice,
-      currency: 'XOF',
-      content_type: 'product'
-    });
   }
 
   openOrderForm();
 }
 
+// Ouverture du formulaire de commande via la fonction globale si disponible
 function openOrderForm() {
-  const modal = new bootstrap.Modal(document.getElementById("orderModal"));
+  if (typeof window.openOrderForm === 'function') {
+    window.openOrderForm();
+    return;
+  }
+  const modal = new bootstrap.Modal(document.getElementById('orderModal'));
   modal.show();
 }
 
