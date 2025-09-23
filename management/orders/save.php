@@ -24,6 +24,7 @@ if (isset($_POST['valider'])) {
             if (
                 isset($_POST['product_id']) &&
                 isset($_POST['client_name']) &&
+                isset($_POST['client_country']) &&
                 isset($_POST['client_phone'])
             ) {
 
@@ -41,7 +42,7 @@ if (isset($_POST['valider'])) {
                     'product_id'    => $productId,
                     'pack_id'       => $packId,
                     'client_name'   => htmlspecialchars($_POST['client_name']),
-                    'client_country' => "TD",
+                    'client_country' => htmlspecialchars($_POST['client_country']),
                     'client_adress' => htmlspecialchars($_POST['client_adress']),
                     'client_phone'  => htmlspecialchars($_POST['client_phone']),
                     'client_note'   => htmlspecialchars($_POST['client_note']),
@@ -53,9 +54,11 @@ if (isset($_POST['valider'])) {
 
 
                 if ($orderManager->CreateOrder($data)) {
-                    header("Location: ../../index.php?id=" . $productId . "&command=success");
+                    $_SESSION['order_message'] = "Votre commande a été passée avec succès. Nous vous contacterons bientôt.";
+                    header("Location: ../../index.php?id=" . $productId);
                 } else {
-                    header("Location: ../../index.php?id=" . $productId . "&command=error");
+                    $_SESSION['order_message'] = "Une erreur est survenue lors de la passation de votre commande. Veuillez réessayer.";
+                    header("Location: ../../index.php?id=" . $productId);
                 }
             }
             break;

@@ -1,4 +1,5 @@
 <?php
+session_start();
 require 'vendor/autoload.php';
 
 use src\Connectbd;
@@ -13,6 +14,11 @@ if (!isset($_GET['id'])) {
     $productId = intval($product['product_id']);
 } else {
     $productId = intval($_GET['id']);
+}
+
+if (isset($_SESSION['order_message'])) {
+    $order_message = $_SESSION['order_message'];
+    unset($_SESSION['order_message']);
 }
 
 
@@ -265,6 +271,18 @@ $packs = $productManager->getProductPacks($productId);
     <button class="fixed-order-btn" onclick="openOrderForm()">
         <i class='bx bx-cart'></i> Commander
     </button>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
+        <div id="liveToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="toastMessage" class="toast-body">
+                    <?= isset($order_message) ? htmlspecialchars($order_message) : ''; ?>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- MODAL COMMANDE -->
     <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
