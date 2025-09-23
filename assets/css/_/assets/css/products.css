@@ -1,0 +1,104 @@
+/* list of products */
+.table-container {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.table > :not(caption) > * > * {
+    padding: 1rem;
+}
+
+.product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.table-container .table tr.status-active td {
+    background: rgba(159, 216, 176, 0.192);
+}
+
+.table-container .table tr.status-inactive td {
+    background: rgba(255, 154, 154, 0.185);
+}
+
+.table-container .table tr.status-active:hover td {
+    background: rgba(159, 216, 176, 0.301);
+    cursor: pointer;
+}
+
+.table-container .table tr.status-inactive:hover td {
+    background: rgba(255, 154, 154, 0.24);
+    cursor: pointer;
+}
+
+.action-btn {
+    background: transparent;
+    border: none;
+    color: var(--purple);
+    font-size: 1.5rem;
+    padding: 0.25rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    background: var(--paper);
+}
+
+.modal-content {
+    border-radius: 15px;
+    border: none;
+}
+
+.modal-header {
+    background: var(--purple);
+    color: white;
+    border-radius: 15px 15px 0 0;
+}
+
+.modal-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+
+.btn-update {
+    background: var(--paper);
+    color: var(--purple);
+}
+
+.btn-update:hover {
+    background: var(--secondary);
+    color: white;
+}
+
+.btn-disable {
+    background: #fff5e6;
+    color: #ff9800;
+}
+
+.btn-disable:hover {
+    background: #ff9800;
+    color: white;
+}
+
+.btn-delete {
+    background: #ffe6e6;
+    color: #dc3545;
+}
+
+.btn-delete:hover {
+    background: #dc3545;
+    color: white;
+}
