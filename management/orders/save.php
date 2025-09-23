@@ -23,15 +23,18 @@ if (isset($_POST['valider'])) {
         case 'commander':
             if (
                 isset($_POST['product_id']) &&
-                isset($_POST['pack_id']) &&
                 isset($_POST['client_name']) &&
                 isset($_POST['client_phone'])
             ) {
 
-                $packId = htmlspecialchars($_POST['pack_id']);
+                $packId = !empty($_POST['pack_id']) ? htmlspecialchars($_POST['pack_id']) : null;
                 $productId = htmlspecialchars($_POST['product_id']);
 
-                $pack = $packManager->getPackById($packId);
+                if($packId != null) {
+                    $pack = $packManager->getPackById($packId);
+                }
+
+                //$pack = $packManager->getPackById($packId);
                 $product = $productManager->getProducts($productId);
 
                 $data = [

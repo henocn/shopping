@@ -368,7 +368,7 @@ $packs = $productManager->getProductPacks($productId);
                     value: <?= $product['price']; ?>,
                     currency: 'XOF'
                 });
-            }, 10000);
+            }, 5000);
 
             const orderForm = document.getElementById('orderForm');
             const orderModal = document.getElementById('orderModal');
