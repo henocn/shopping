@@ -41,7 +41,7 @@ if (isset($_POST['valider'])) {
                 $data = [
                     'product_id'    => $productId,
                     'pack_id'       => $packId,
-                    'client_name'   => htmlspecialchars($_POST['client_name']),
+                    'client_name'   => $_POST['client_name'],
                     'client_country' => htmlspecialchars($_POST['client_country']),
                     'client_adress' => htmlspecialchars($_POST['client_adress']),
                     'client_phone'  => htmlspecialchars($_POST['client_phone']),
