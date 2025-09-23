@@ -322,9 +322,16 @@ $packs = $productManager->getProductPacks($productId);
                             <input type="text" class="form-control-custom" name="client_name" placeholder="Votre nom complet" required>
                         </div>
 
+                        <!-- Téléphone avec pays -->
                         <div class="form-group">
                             <label class="form-label">Téléphone</label>
-                            <input type="tel" class="form-control-custom" name="client_phone" placeholder="Votre numéro de téléphone" required>
+                            <div style="display: flex; gap: 5px;">
+                                <select class="form-control-custom" name="client_country" style="width: 30%;" required>
+                                    <option value="TD" data-length="8">🇹🇩 +235</option>
+                                    <option value="GN" data-length="9">🇬🇳 +224</option>
+                                </select>
+                                <input type="tel" name="client_phone" class="form-control-custom" placeholder="Numéro sans indicatif" required style="width: 70%;">
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -410,11 +417,11 @@ $packs = $productManager->getProductPacks($productId);
 
                         if (this.value.length > 2) {
                             const currentFieldsCompleted = Array.from(formFields).filter(f => f.value.length > 2).length;
-                            
+
                             if (currentFieldsCompleted > fieldsCompleted) {
                                 fieldsCompleted = currentFieldsCompleted;
                                 const progressPercent = Math.round((fieldsCompleted / totalFields) * 100);
-                                
+
                                 if (progressPercent === 25) {
                                     trackEvent('FormProgress25', {
                                         content_ids: ['<?= $product['id']; ?>'],
@@ -450,7 +457,7 @@ $packs = $productManager->getProductPacks($productId);
                                 }
                             }
                         }
-                        
+
                         if (abandonTimer) {
                             clearTimeout(abandonTimer);
                             abandonTimer = setTimeout(function() {
@@ -484,7 +491,7 @@ $packs = $productManager->getProductPacks($productId);
                     orderModal.addEventListener('hidden.bs.modal', function() {
                         if (formStarted && !formSubmitted) {
                             const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
-                            
+
                             trackEvent('FormAbandoned', {
                                 content_ids: ['<?= $product['id']; ?>'],
                                 content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
@@ -500,7 +507,7 @@ $packs = $productManager->getProductPacks($productId);
                 window.addEventListener('beforeunload', function() {
                     if (formStarted && !formSubmitted) {
                         const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
-                        
+
                         trackEvent('FormAbandoned', {
                             content_ids: ['<?= $product['id']; ?>'],
                             content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
@@ -519,18 +526,26 @@ $packs = $productManager->getProductPacks($productId);
                     var packIdInput = document.getElementById('selectedPackId');
                     var packSelect = document.getElementById('packSelection');
                     var selectedPackId = packIdInput ? (packIdInput.value || '') : '';
-                    var purchasePayload = { currency: 'XOF' };
+                    var purchasePayload = {
+                        currency: 'XOF'
+                    };
 
                     if (selectedPackId && packSelect) {
                         // Retrouver l'option correspondant au pack sélectionné
-                        var option = Array.from(packSelect.options).find(function(opt){ return opt.value === selectedPackId; });
+                        var option = Array.from(packSelect.options).find(function(opt) {
+                            return opt.value === selectedPackId;
+                        });
                         if (option) {
                             var packPrice = parseInt(option.dataset.price, 10) || 0;
                             var packQty = parseInt(option.dataset.quantity, 10) || 1;
 
                             purchasePayload.content_ids = [selectedPackId];
                             purchasePayload.content_type = 'product';
-                            purchasePayload.contents = [{ id: selectedPackId, quantity: packQty, item_price: packPrice }];
+                            purchasePayload.contents = [{
+                                id: selectedPackId,
+                                quantity: packQty,
+                                item_price: packPrice
+                            }];
                             purchasePayload.num_items = packQty; // total d'unités dans le pack
                             purchasePayload.value = packPrice;
                         }
@@ -540,7 +555,11 @@ $packs = $productManager->getProductPacks($productId);
                         // Pas de pack: utiliser le produit simple
                         purchasePayload.content_ids = ['<?= $product['id']; ?>'];
                         purchasePayload.content_type = 'product';
-                        purchasePayload.contents = [{ id: '<?= $product['id']; ?>', quantity: 1, item_price: <?= $product['price']; ?> }];
+                        purchasePayload.contents = [{
+                            id: '<?= $product['id']; ?>',
+                            quantity: 1,
+                            item_price: <?= $product['price']; ?>
+                        }];
                         purchasePayload.num_items = 1;
                         purchasePayload.value = <?= $product['price']; ?>;
                     }
