@@ -27,8 +27,19 @@ function selectPack(packId, packPrice, quantity) {
 
   packInfo.style.display = "block";
 
-  // TRACKING - Sélection de pack
   if (typeof trackEvent !== 'undefined') {
+    trackEvent('ViewContent', {
+      content_ids: [packId.toString()],
+      content_type: 'product',
+      contents: [{
+        'id': packId.toString(),
+        'quantity': quantity,
+        'item_price': packPrice
+      }],
+      currency: 'XOF',
+      value: packPrice
+    });
+
     trackEvent('PackSelected', {
       content_ids: [packId.toString()],
       content_name: title,
@@ -37,27 +48,18 @@ function selectPack(packId, packPrice, quantity) {
       quantity: quantity,
       pack_type: 'product_bundle'
     });
-
-    // Événement AddToCart pour les campagnes e-commerce
-    trackEvent('AddToCart', {
-      content_ids: [packId.toString()],
-      content_name: title,
-      value: packPrice,
-      currency: 'XOF',
-      content_type: 'product',
-      contents: [{
-        id: packId,
-        quantity: quantity,
-        item_price: packPrice
-      }]
-    });
   }
 
   openOrderForm();
 }
 
+// Ouverture du formulaire de commande via la fonction globale si disponible
 function openOrderForm() {
-  const modal = new bootstrap.Modal(document.getElementById("orderModal"));
+  if (typeof window.openOrderForm === 'function') {
+    window.openOrderForm();
+    return;
+  }
+  const modal = new bootstrap.Modal(document.getElementById('orderModal'));
   modal.show();
 }
 
@@ -93,7 +95,6 @@ function updatePackSelection() {
 
     packInfo.style.display = "block";
 
-    // TRACKING - Sélection de pack via dropdown
     if (typeof trackEvent !== 'undefined') {
       trackEvent('PackSelectedDropdown', {
         content_ids: [packId],

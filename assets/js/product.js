@@ -211,26 +211,31 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 3000);
   }
 
-  // ========== Modal commande amélioré ==========
+  // ========== Modal commande: ouverture et accessibilité ==========
   window.openOrderForm = function () {
-    const orderModal = new bootstrap.Modal(
-      document.getElementById("orderModal")
-    );
+    const orderModalEl = document.getElementById("orderModal");
+    const orderModal = new bootstrap.Modal(orderModalEl);
     orderModal.show();
-
-    // Animation d'entrée du modal
-    const modalContent = document.querySelector("#orderModal .modal-content");
-    modalContent.style.transform = "scale(0.8)";
-    modalContent.style.opacity = "0";
-
-    setTimeout(() => {
-      modalContent.style.transition = "all 0.3s ease";
-      modalContent.style.transform = "scale(1)";
-      modalContent.style.opacity = "1";
-    }, 100);
   };
 
-  
+  // Appliquer l'animation quand le modal est effectivement affiché
+  const orderModalEl = document.getElementById("orderModal");
+  if (orderModalEl) {
+    orderModalEl.addEventListener("shown.bs.modal", function () {
+      const modalContent = orderModalEl.querySelector(".modal-content");
+      if (!modalContent) return;
+      modalContent.style.transform = "scale(0.8)";
+      modalContent.style.opacity = "0";
+      // Forcer un reflow pour que la transition s'applique proprement
+      // eslint-disable-next-line no-unused-expressions
+      modalContent.offsetHeight;
+      setTimeout(() => {
+        modalContent.style.transition = "all 0.3s ease";
+        modalContent.style.transform = "scale(1)";
+        modalContent.style.opacity = "1";
+      }, 50);
+    });
+  }
 
   // ========== Animations d'entrée ==========
   function animateOnScroll() {
@@ -301,3 +306,41 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+  const toastEl = document.getElementById("liveToast");
+  const toastBody = document.getElementById("toastMessage");
+
+  const message = toastBody.textContent.trim();
+
+  if (message !== "") {
+    toastEl.className = "toast align-items-center text-white border-0";
+
+    if (/succès|success/i.test(message)) {
+      toastEl.classList.add("bg-success");
+    } else {
+      toastEl.classList.add("bg-danger");
+    }
+
+    const toast = new bootstrap.Toast(toastEl, { delay: 8000 });
+    toast.show();
+  }
+});
+
+function showToast(message, type = "success") {
+  const toastEl = document.getElementById("liveToast");
+  const toastBody = document.getElementById("toastMessage");
+
+  toastBody.textContent = message;
+
+  toastEl.className = "toast align-items-center text-white border-0";
+
+  if (type === "success") {
+    toastEl.classList.add("bg-success");
+  } else {
+    toastEl.classList.add("bg-danger");
+  }
+
+  const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+  toast.show();
+}

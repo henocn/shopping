@@ -473,14 +473,14 @@
 
 @media (max-width: 576px) {
   .order-card .d-flex {
-    flex-direction: column;
-    gap: 0.5rem;
+    flex-direction: row;
+    gap: 0.1rem;
   }
 
   .btn-outline-primary {
     width: 100%;
     justify-content: center;
-    font-size: 0.7rem; /* Plus petit sur mobile */
+    font-size: 0.5rem; /* Plus petit sur mobile */
     padding: 0.35rem 0.7rem; /* Padding encore plus réduit sur mobile */
   }
 

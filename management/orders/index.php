@@ -369,7 +369,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                         <i class='bx bx-user me-1'></i><?= htmlspecialchars($order['client_name']) ?>
                                                     </small>
                                                     <small class="text-muted d-block">
-                                                        <i class='bx bx-map me-1'></i><?= htmlspecialchars($order['client_country']) ?>
+                                                        <i class="fa-solid fa-copy"></i><p id="code" onclick="copier()"><?= htmlspecialchars($order['client_phone']) ?></p>
                                                     </small>
                                                 </div>
                                             </div>
@@ -378,10 +378,6 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                 <div class="text-center">
                                                     <small class="text-muted d-block">Quantité</small>
                                                     <span class="fw-bold"><?= (int)$order['quantity'] ?></span>
-                                                </div>
-                                                <div class="text-center">
-                                                    <small class="text-muted d-block">Prix unitaire</small>
-                                                    <span class="fw-bold text-success"><?= number_format($order['unit_price'] ?? 0, 0, ',', ' ') ?> FCFA</span>
                                                 </div>
                                                 <div class="text-center">
                                                     <small class="text-muted d-block">Total</small>

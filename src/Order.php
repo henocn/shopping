@@ -47,7 +47,7 @@ class Order
             'pack_id'        => (int)($data['pack_id'] ?? 0),
             'unit_price'     => (int)($data['unit_price'] ?? 0),
             'total_price'    => (int)($data['total_price'] ?? 0),
-            'quantity'       => (int)($data['quantity'] ?? 1), // ✅ ajouté ici
+            'quantity'       => (int)($data['quantity'] ?? 1),
             'client_name'    => $data['client_name'] ?? '',
             'client_country' => $data['client_country'],
             'client_adress'  => $data['client_adress'] ?? '',

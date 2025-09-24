@@ -1,4 +1,5 @@
 <?php
+session_start();
 require 'vendor/autoload.php';
 
 use src\Connectbd;
@@ -13,6 +14,11 @@ if (!isset($_GET['id'])) {
     $productId = intval($product['product_id']);
 } else {
     $productId = intval($_GET['id']);
+}
+
+if (isset($_SESSION['order_message'])) {
+    $order_message = $_SESSION['order_message'];
+    unset($_SESSION['order_message']);
 }
 
 
@@ -33,37 +39,24 @@ $packs = $productManager->getProductPacks($productId);
 <html lang="fr">
 
 <head>
-    <!-- Meta Pixel Code -->
-    <script>
-        ! function(f, b, e, v, n, t, s) {
-            if (f.fbq) return;
-            n = f.fbq = function() {
-                n.callMethod ?
-                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-            };
-            if (!f._fbq) f._fbq = n;
-            n.push = n;
-            n.loaded = !0;
-            n.version = '2.0';
-            n.queue = [];
-            t = b.createElement(e);
-            t.async = !0;
-            t.src = v;
-            s = b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t, s)
-        }(window, document, 'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '1087210050149446');
-        fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1087210050149446&ev=PageView&noscript=1" /></noscript>
-    <!-- End Meta Pixel Code -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($product['name']); ?></title>
-    <meta name="title" property="og:title" content="<?= htmlspecialchars($product['name']); ?>">
-    <meta name="description" property="og:description" content="<?= htmlspecialchars($product['description']); ?>">
-    <meta name="image" property="og:image" content="uploads/main/<?= $product['image']; ?>">
+
+    <meta property="og:title" content="<?= htmlspecialchars($product['name']); ?>" />
+    <meta property="og:description" content="<?= htmlspecialchars(substr(strip_tags($product['description']), 0, 150)); ?>..." />
+    <meta property="og:image" content="https://luxemarket.click/uploads/main/<?= $product['image']; ?>" />
+    <meta property="og:url" content="https://luxemarket.click/product.php?id=<?= $product['id']; ?>" />
+    <meta property="og:type" content="product" />
+    <meta property="og:site_name" content="LuxeMarket" />
+    <meta property="og:locale" content="fr_FR" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="<?= htmlspecialchars($product['name']); ?>" />
+    <meta name="twitter:description" content="<?= htmlspecialchars(substr(strip_tags($product['description']), 0, 150)); ?>..." />
+    <meta name="twitter:image" content="https://luxemarket.click/uploads/main/<?= $product['image']; ?>" />
+    <meta name="twitter:site" content="@LuxeMarket" />
 
     <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="./assets/css/product.css" rel="stylesheet">
@@ -291,6 +284,18 @@ $packs = $productManager->getProductPacks($productId);
         <i class='bx bx-cart'></i> Commander
     </button>
 
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
+        <div id="liveToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="toastMessage" class="toast-body">
+                    <?= isset($order_message) ? htmlspecialchars($order_message) : ''; ?>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+
     <!-- MODAL COMMANDE -->
     <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -347,9 +352,16 @@ $packs = $productManager->getProductPacks($productId);
                             <input type="text" class="form-control-custom" name="client_name" placeholder="Votre nom complet" required>
                         </div>
 
+                        <!-- Téléphone avec pays -->
                         <div class="form-group">
                             <label class="form-label">Téléphone</label>
-                            <input type="tel" class="form-control-custom" name="client_phone" placeholder="Votre numéro de téléphone" required>
+                            <div style="display: flex; gap: 5px;">
+                                <select class="form-control-custom" name="client_country" style="width: 30%;" required>
+                                    <option value="TD" data-length="8">🇹🇩 +235</option>
+                                    <option value="GN" data-length="9">🇬🇳 +224</option>
+                                </select>
+                                <input type="tel" name="client_phone" class="form-control-custom" placeholder="Numéro sans indicatif" required style="width: 70%;">
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -380,19 +392,12 @@ $packs = $productManager->getProductPacks($productId);
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="assets/js/tracking-manager.js"></script>
+    <script src="assets/js/tracking-manager.js" defer></script>
     <script src="assets/js/product.js"></script>
     <script src="assets/js/theme.js"></script>
     <script src="assets/js/pack.js"></script>
     <script>
-        // UTILISATION DU TRACKING MANAGER POUR UN CODE PLUS PROPRE
         document.addEventListener('DOMContentLoaded', function() {
-
-            // ========================================
-            // 1. TRACKING VISITE DU SITE
-            // ========================================
-
-            // Événement personnalisé pour une visite "qualifiée" (plus de 10 secondes)
             setTimeout(function() {
                 trackEvent('QualifiedVisit', {
                     content_ids: ['<?= $product['id']; ?>'],
@@ -400,12 +405,7 @@ $packs = $productManager->getProductPacks($productId);
                     value: <?= $product['price']; ?>,
                     currency: 'XOF'
                 });
-            }, 10000); // 10 secondes
-
-
-            // ========================================
-            // 2. TRACKING FORMULAIRE ABANDONNÉ
-            // ========================================
+            }, 5000);
 
             const orderForm = document.getElementById('orderForm');
             const orderModal = document.getElementById('orderModal');
@@ -415,10 +415,7 @@ $packs = $productManager->getProductPacks($productId);
             let abandonTimer = null;
 
             if (orderForm) {
-                // Détecter quand l'utilisateur commence à remplir le formulaire
                 const formFields = orderForm.querySelectorAll('input[type="text"], input[type="tel"], textarea, select');
-
-                // Tracking progression du formulaire
                 let fieldsCompleted = 0;
                 const totalFields = formFields.length;
 
@@ -428,16 +425,6 @@ $packs = $productManager->getProductPacks($productId);
                             formStarted = true;
                             formStartTime = Date.now();
 
-                            // Événement Facebook standard
-                            trackEvent('InitiateCheckout', {
-                                content_ids: ['<?= $product['id']; ?>'],
-                                content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                value: <?= $product['price']; ?>,
-                                currency: 'XOF',
-                                content_type: 'product'
-                            });
-
-                            // Événement personnalisé
                             trackEvent('FormStarted', {
                                 content_ids: ['<?= $product['id']; ?>'],
                                 content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
@@ -445,7 +432,6 @@ $packs = $productManager->getProductPacks($productId);
                                 currency: 'XOF'
                             });
 
-                            // Timer pour détecter abandon après 5 minutes d'inactivité
                             abandonTimer = setTimeout(function() {
                                 if (formStarted && !formSubmitted) {
                                     trackEvent('FormInactive', {
@@ -456,18 +442,16 @@ $packs = $productManager->getProductPacks($productId);
                                         time_spent: Math.round((Date.now() - formStartTime) / 1000)
                                     });
                                 }
-                            }, 300000); // 5 minutes
+                            }, 300000);
                         }
 
-                        // Tracking progression du formulaire
                         if (this.value.length > 2) {
                             const currentFieldsCompleted = Array.from(formFields).filter(f => f.value.length > 2).length;
-                            
+
                             if (currentFieldsCompleted > fieldsCompleted) {
                                 fieldsCompleted = currentFieldsCompleted;
                                 const progressPercent = Math.round((fieldsCompleted / totalFields) * 100);
-                                
-                                // Événements de progression
+
                                 if (progressPercent === 25) {
                                     trackEvent('FormProgress25', {
                                         content_ids: ['<?= $product['id']; ?>'],
@@ -503,8 +487,7 @@ $packs = $productManager->getProductPacks($productId);
                                 }
                             }
                         }
-                        
-                        // Reset timer on activity
+
                         if (abandonTimer) {
                             clearTimeout(abandonTimer);
                             abandonTimer = setTimeout(function() {
@@ -517,11 +500,10 @@ $packs = $productManager->getProductPacks($productId);
                                         time_spent: Math.round((Date.now() - formStartTime) / 1000)
                                     });
                                 }
-                            }, 300000); // 5 minutes
+                            }, 300000);
                         }
                     });
 
-                    // Tracking focus sur les champs
                     field.addEventListener('focus', function() {
                         trackEvent('FormFieldFocus', {
                             content_ids: ['<?= $product['id']; ?>'],
@@ -537,10 +519,9 @@ $packs = $productManager->getProductPacks($productId);
                 // Détecter la fermeture du modal = formulaire abandonné
                 if (orderModal) {
                     orderModal.addEventListener('hidden.bs.modal', function() {
-                        // Si le formulaire a été commencé mais pas soumis
                         if (formStarted && !formSubmitted) {
                             const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
-                            
+
                             trackEvent('FormAbandoned', {
                                 content_ids: ['<?= $product['id']; ?>'],
                                 content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
@@ -553,11 +534,10 @@ $packs = $productManager->getProductPacks($productId);
                     });
                 }
 
-                // Détecter abandon par navigation
                 window.addEventListener('beforeunload', function() {
                     if (formStarted && !formSubmitted) {
                         const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
-                        
+
                         trackEvent('FormAbandoned', {
                             content_ids: ['<?= $product['id']; ?>'],
                             content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
@@ -569,56 +549,71 @@ $packs = $productManager->getProductPacks($productId);
                     }
                 });
 
-
-                // ========================================
-                // 3. TRACKING COMMANDE PASSÉE (ACHAT)
-                // ========================================
-
                 orderForm.addEventListener('submit', function(e) {
                     formSubmitted = true;
 
-                    // Événement Purchase (standard Facebook)
-                    trackEvent('Purchase', {
-                        content_ids: ['<?= $product['id']; ?>'],
-                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                        value: <?= $product['price']; ?>,
-                        currency: 'XOF',
-                        content_type: 'product',
-                        num_items: 1
-                    });
-
-                    // Événement Lead (pour campagnes de leads)
-                    trackEvent('Lead', {
-                        content_ids: ['<?= $product['id']; ?>'],
-                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                        value: <?= $product['price']; ?>,
+                    // Déterminer si un pack est sélectionné et calculer dynamiquement la valeur
+                    var packIdInput = document.getElementById('selectedPackId');
+                    var packSelect = document.getElementById('packSelection');
+                    var selectedPackId = packIdInput ? (packIdInput.value || '') : '';
+                    var purchasePayload = {
                         currency: 'XOF'
-                    });
+                    };
 
-                    // Événement personnalisé
-                    trackEvent('OrderCompleted', {
-                        content_ids: ['<?= $product['id']; ?>'],
-                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                        value: <?= $product['price']; ?>,
-                        currency: 'XOF'
-                    });
+                    if (selectedPackId && packSelect) {
+                        // Retrouver l'option correspondant au pack sélectionné
+                        var option = Array.from(packSelect.options).find(function(opt) {
+                            return opt.value === selectedPackId;
+                        });
+                        if (option) {
+                            var packPrice = parseInt(option.dataset.price, 10) || 0;
+                            var packQty = parseInt(option.dataset.quantity, 10) || 1;
+
+                            purchasePayload.content_ids = [selectedPackId];
+                            purchasePayload.content_type = 'product';
+                            purchasePayload.contents = [{
+                                id: selectedPackId,
+                                quantity: packQty,
+                                item_price: packPrice
+                            }];
+                            purchasePayload.num_items = packQty; // total d'unités dans le pack
+                            purchasePayload.value = packPrice;
+                        }
+                    }
+
+                    if (!purchasePayload.content_ids) {
+                        // Pas de pack: utiliser le produit simple
+                        purchasePayload.content_ids = ['<?= $product['id']; ?>'];
+                        purchasePayload.content_type = 'product';
+                        purchasePayload.contents = [{
+                            id: '<?= $product['id']; ?>',
+                            quantity: 1,
+                            item_price: <?= $product['price']; ?>
+                        }];
+                        purchasePayload.num_items = 1;
+                        purchasePayload.value = <?= $product['price']; ?>;
+                    }
+
+                    // Envoyer uniquement l'événement Purchase (conseillé par Facebook)
+                    trackEvent('Purchase', purchasePayload);
                 });
             }
         });
 
-        // ========================================
-        // FONCTION POUR OUVRIR LE FORMULAIRE
-        // ========================================
         function openOrderForm() {
-            // Track le clic sur "Commander"
-            trackEvent('ClickedOrderButton', {
+            // InitiateCheckout au clic sur bouton Commander (specs Facebook)
+            trackEvent('InitiateCheckout', {
                 content_ids: ['<?= $product['id']; ?>'],
-                content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                value: <?= $product['price']; ?>,
-                currency: 'XOF'
+                contents: [{
+                    'id': '<?= $product['id']; ?>',
+                    'quantity': 1,
+                    'item_price': <?= $product['price']; ?>
+                }],
+                currency: 'XOF',
+                num_items: 1,
+                value: <?= $product['price']; ?>
             });
 
-            // Ouvrir le modal
             var modal = new bootstrap.Modal(document.getElementById('orderModal'));
             modal.show();
         }

@@ -1,247 +1,199 @@
-/**
- * GESTIONNAIRE DE TRACKING MULTI-PLATEFORMES
- * Permet d'ajouter facilement plusieurs pixels Facebook, Google Analytics, TikTok, etc.
- */
-
 class TrackingManager {
-    constructor() {
-        this.pixels = [];
-        this.isInitialized = false;
+    constructor(config = {}) {
+        this.config = {
+            facebook: {
+                enabled: true,
+                pixels: ['1087210050149446','1373481401089526'],
+                timeout: 5000
+            },
+            googleAnalytics: {
+                enabled: false,
+                trackingId: null
+            },
+            tiktok: {
+                enabled: false,
+                pixelId: null
+            },
+            debug: false,
+            ...config
+        };
+        this.isReady = false;
+        this.eventQueue = [];
+        this.scriptsLoaded = { facebook: false, googleAnalytics: false, tiktok: false };
+        this.init();
     }
 
-    /**
-     * Ajouter un nouveau pixel Facebook
-     * @param {string} pixelId - ID du pixel Facebook
-     * @param {string} name - Nom du pixel (pour identification)
-     */
-    addFacebookPixel(pixelId, name = 'default') {
-        this.pixels.push({
-            type: 'facebook',
-            id: pixelId,
-            name: name,
-            initialized: false
-        });
-        return this;
-    }
-
-    /**
-     * Ajouter Google Analytics
-     * @param {string} trackingId - ID de tracking GA
-     * @param {string} name - Nom du tracker
-     */
-    addGoogleAnalytics(trackingId, name = 'default') {
-        this.pixels.push({
-            type: 'google_analytics',
-            id: trackingId,
-            name: name,
-            initialized: false
-        });
-        return this;
-    }
-
-    /**
-     * Ajouter TikTok Pixel
-     * @param {string} pixelId - ID du pixel TikTok
-     * @param {string} name - Nom du pixel
-     */
-    addTikTokPixel(pixelId, name = 'default') {
-        this.pixels.push({
-            type: 'tiktok',
-            id: pixelId,
-            name: name,
-            initialized: false
-        });
-        return this;
-    }
-
-    /**
-     * Initialiser tous les pixels
-     */
-    initialize() {
-        this.pixels.forEach(pixel => {
-            switch (pixel.type) {
-                case 'facebook':
-                    this.initFacebookPixel(pixel);
-                    break;
-                case 'google_analytics':
-                    this.initGoogleAnalytics(pixel);
-                    break;
-                case 'tiktok':
-                    this.initTikTokPixel(pixel);
-                    break;
-            }
-        });
-        this.isInitialized = true;
-        return this;
-    }
-
-    /**
-     * Initialiser un pixel Facebook
-     */
-    initFacebookPixel(pixel) {
-        if (pixel.initialized) return;
-
-        // Créer une instance fbq pour ce pixel
-        const fbqName = pixel.name === 'default' ? 'fbq' : `fbq_${pixel.name}`;
-        
-        if (!window[fbqName]) {
-            !function(f,b,e,v,n,t,s) {
-                if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-                n.queue=[];t=b.createElement(e);t.async=!0;
-                t.src=v;s=b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t,s)
-            }(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
+    async init() {
+        try {
+            if (this.config.facebook.enabled) await this.initFacebook();
+            if (this.config.googleAnalytics.enabled) await this.initGoogleAnalytics();
+            if (this.config.tiktok.enabled) await this.initTikTok();
+            this.isReady = true;
+            this.processQueue();
+        } catch (error) {
+            this.isReady = true;
+            this.processQueue();
         }
-
-        // Initialiser le pixel
-        fbq('init', pixel.id);
-        fbq('track', 'PageView');
-
-        pixel.initialized = true;
-        console.log(`Facebook Pixel ${pixel.name} (${pixel.id}) initialisé`);
     }
 
-    /**
-     * Initialiser Google Analytics
-     */
-    initGoogleAnalytics(pixel) {
-        if (pixel.initialized) return;
+    async initFacebook() {
+        try {
+            // Éviter la double initialisation
+            if (window.fbEventsInitialized) {
+                return;
+            }
+            window.fbEventsInitialized = true;
 
-        // Charger gtag
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = `https://www.googletagmanager.com/gtag/js?id=${pixel.id}`;
-        document.head.appendChild(script);
+            // Snippet officiel Meta Pixel pour éviter les conflits de versions
+            !(function(f,b,e,v,n,t,s){
+                if(f.fbq) return; n=f.fbq=function(){ n.callMethod ?
+                    n.callMethod.apply(n,arguments) : n.queue.push(arguments) };
+                if(!f._fbq) f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
+                n.queue=[]; t=b.createElement(e); t.async=!0; t.src=v;
+                s=b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t,s);
+            })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', pixel.id);
+            // Alias de compatibilité
+            window._fbq = window._fbq || window.fbq;
 
-        pixel.initialized = true;
-        console.log(`Google Analytics ${pixel.name} (${pixel.id}) initialisé`);
+            // Initialiser seulement les pixels non initialisés
+            if (!window.fbInitializedPixels) window.fbInitializedPixels = [];
+            this.config.facebook.pixels.forEach(pixelId => {
+                if (!window.fbInitializedPixels.includes(pixelId)) {
+                    fbq('init', pixelId);
+                    window.fbInitializedPixels.push(pixelId);
+                }
+            });
+
+            fbq('track', 'PageView');
+            this.scriptsLoaded.facebook = true;
+        } catch (error) {
+            // Pas de fallback immédiat ici; les événements utiliseront l'image si fbq indisponible
+        }
     }
 
-    /**
-     * Initialiser TikTok Pixel
-     */
-    initTikTokPixel(pixel) {
-        if (pixel.initialized) return;
+    loadFacebookScript() {
+        try {
+            // Éviter de charger le script plusieurs fois
+            if (document.querySelector('script[src*="fbevents.js"]') || window.fbScriptLoaded) {
+                return;
+            }
+            window.fbScriptLoaded = true;
 
-        !function (w, d, t) {
-            w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
-        }(window, document, 'ttq');
-
-        ttq.load(pixel.id);
-        ttq.page();
-
-        pixel.initialized = true;
-        console.log(`TikTok Pixel ${pixel.name} (${pixel.id}) initialisé`);
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://connect.facebook.net/en_US/fbevents.js';
+            const timeout = setTimeout(() => {}, this.config.facebook.timeout);
+            script.onload = () => clearTimeout(timeout);
+            script.onerror = () => clearTimeout(timeout);
+            const firstScript = document.getElementsByTagName('script')[0];
+            if (firstScript && firstScript.parentNode) {
+                firstScript.parentNode.insertBefore(script, firstScript);
+            }
+        } catch (error) {}
     }
 
-    /**
-     * Envoyer un événement à tous les pixels configurés
-     */
-    track(eventName, eventData = {}) {
-        if (!this.isInitialized) {
-            console.warn('TrackingManager pas encore initialisé');
+    addFacebookFallbackImages() {
+        this.config.facebook.pixels.forEach(pixelId => {
+            const noscript = document.createElement('noscript');
+            noscript.innerHTML = '<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=' + pixelId + '&ev=PageView&noscript=1" />';
+            document.head.appendChild(noscript);
+        });
+    }
+
+    track(eventName, eventData = {}, platforms = ['facebook']) {
+        if (!this.isReady) {
+            this.eventQueue.push({ eventName, eventData, platforms });
             return;
         }
-
-        this.pixels.forEach(pixel => {
-            if (!pixel.initialized) return;
-
-            switch (pixel.type) {
-                case 'facebook':
-                    this.trackFacebook(eventName, eventData, pixel);
-                    break;
-                case 'google_analytics':
-                    this.trackGoogleAnalytics(eventName, eventData, pixel);
-                    break;
-                case 'tiktok':
-                    this.trackTikTok(eventName, eventData, pixel);
-                    break;
-            }
+        platforms.forEach(platform => {
+            try {
+                switch (platform) {
+                    case 'facebook': this.trackFacebook(eventName, eventData); break;
+                    case 'googleAnalytics': this.trackGoogleAnalytics(eventName, eventData); break;
+                    case 'tiktok': this.trackTikTok(eventName, eventData); break;
+                }
+            } catch (error) {}
         });
     }
 
-    /**
-     * Tracking Facebook
-     */
-    trackFacebook(eventName, eventData, pixel) {
-        const standardEvents = ['Purchase', 'Lead', 'InitiateCheckout', 'AddToCart', 'ViewContent'];
-        
-        if (standardEvents.includes(eventName)) {
-            fbq('track', eventName, eventData);
-        } else {
-            fbq('trackCustom', eventName, eventData);
-        }
-    }
-
-    /**
-     * Tracking Google Analytics
-     */
-    trackGoogleAnalytics(eventName, eventData, pixel) {
-        if (typeof gtag !== 'undefined') {
-            gtag('event', eventName, {
-                ...eventData,
-                send_to: pixel.id
-            });
-        }
-    }
-
-    /**
-     * Tracking TikTok
-     */
-    trackTikTok(eventName, eventData, pixel) {
-        if (typeof ttq !== 'undefined') {
-            const tiktokEvents = ['ClickButton', 'Contact', 'SubmitForm', 'CompleteRegistration', 'CompletePayment'];
-            
-            if (tiktokEvents.includes(eventName)) {
-                ttq.track(eventName, eventData);
+    trackFacebook(eventName, eventData) {
+        if (!this.config.facebook.enabled) return;
+        try {
+            if (typeof fbq === 'function' && fbq.callMethod) {
+                const standardEvents = ['Purchase', 'Lead', 'InitiateCheckout', 'ViewContent', 'CompleteRegistration'];
+                if (standardEvents.includes(eventName)) {
+                    fbq('track', eventName, eventData);
+                } else {
+                    fbq('trackCustom', eventName, eventData);
+                }
             } else {
-                // Événement personnalisé
-                ttq.track('ClickButton', {
-                    ...eventData,
-                    custom_event: eventName
+                // Fallback via image uniquement si fbq indisponible
+                this.trackFacebookViaImage(eventName, eventData);
+            }
+        } catch (error) {
+            this.trackFacebookViaImage(eventName, eventData);
+        }
+    }
+
+    trackFacebookViaImage(eventName, eventData) {
+        this.config.facebook.pixels.forEach(pixelId => {
+            try {
+                const params = new URLSearchParams({
+                    id: pixelId,
+                    ev: eventName,
+                    noscript: '1',
+                    t: Date.now()
                 });
+                if (eventData.value) params.append('cd[value]', eventData.value);
+                if (eventData.currency) params.append('cd[currency]', eventData.currency);
+                if (eventData.content_ids) params.append('cd[content_ids]', JSON.stringify(eventData.content_ids));
+                const img = new Image();
+                img.src = 'https://www.facebook.com/tr?' + params.toString();
+            } catch (error) {}
+        });
+    }
+
+    processQueue() {
+        while (this.eventQueue.length > 0) {
+            const event = this.eventQueue.shift();
+            this.track(event.eventName, event.eventData, event.platforms);
+        }
+    }
+
+    addFacebookPixel(pixelId) {
+        if (!this.config.facebook.pixels.includes(pixelId)) {
+            this.config.facebook.pixels.push(pixelId);
+            
+            // Initialiser seulement si pas déjà fait
+            if (typeof fbq === 'function') {
+                if (!window.fbInitializedPixels) {
+                    window.fbInitializedPixels = [];
+                }
+                if (!window.fbInitializedPixels.includes(pixelId)) {
+                    fbq('init', pixelId);
+                    window.fbInitializedPixels.push(pixelId);
+                }
             }
         }
     }
 
-    /**
-     * Obtenir la liste des pixels configurés
-     */
-    getPixels() {
-        return this.pixels;
-    }
-
-    /**
-     * Supprimer un pixel
-     */
-    removePixel(name) {
-        this.pixels = this.pixels.filter(pixel => pixel.name !== name);
-        return this;
+    removeFacebookPixel(pixelId) {
+        const index = this.config.facebook.pixels.indexOf(pixelId);
+        if (index > -1) this.config.facebook.pixels.splice(index, 1);
     }
 }
 
-// Instance globale
-window.trackingManager = new TrackingManager();
+// Créer l'instance TrackingManager seulement si elle n'existe pas déjà
+if (!window.trackingManager) {
+    window.trackingManager = new TrackingManager();
+}
 
-// Configuration par défaut - vous pouvez ajouter autant de pixels que vous voulez
-window.trackingManager
-    .addFacebookPixel('1087210050149446', 'main') // Votre pixel principal
-    // .addFacebookPixel('123456789', 'secondary')    // Pixel secondaire
-    // .addGoogleAnalytics('G-XXXXXXXXXX', 'main')   // Google Analytics
-    // .addTikTokPixel('XXXXXXXXXX', 'main')         // TikTok Pixel
-    .initialize();
-
-// Fonction d'aide pour l'utilisation simple
-window.trackEvent = function(eventName, eventData = {}) {
-    window.trackingManager.track(eventName, eventData);
-};
-
-console.log('TrackingManager initialisé avec les pixels:', window.trackingManager.getPixels());
+// Fonction globale pour tracking
+if (!window.trackEvent) {
+    window.trackEvent = function(eventName, eventData = {}, platforms = ['facebook']) {
+        if (window.trackingManager) {
+            window.trackingManager.track(eventName, eventData, platforms);
+        }
+    };
+}
