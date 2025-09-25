@@ -108,12 +108,12 @@ $packs = $productManager->getProductPacks($productId);
         <div class="container">
             <div class="intro-content">
                 <h2 class="intro-title">LUXEMARKET</h2>
-                <p class="intro-description">
+                <!--<p class="intro-description">
                     Découvrez l'excellence du shopping en ligne avec LUXEMARKET.
                     Nous vous proposons une sélection premium de produits de qualité,
                     soigneusement choisis pour répondre à vos besoins les plus exigeants.
                     Une expérience d'achat unique, sécurisée et personnalisée.
-                </p>
+                </p>-->
                 <button class="btn-intro" onclick="openOrderForm()">
                     <i class='bx bx-shopping-bag'></i>
                     Commander maintenant
@@ -170,7 +170,7 @@ $packs = $productManager->getProductPacks($productId);
         </div>
 
         <!-- Boutons de partage social -->
-        <div class="social-sharing">
+        <!--<div class="social-sharing">
             <h3>Partager ce produit :</h3>
             <button class="share-btn share-facebook" onclick="shareProduct('facebook')">
                 <i class='bx bxl-facebook'></i>
@@ -184,7 +184,7 @@ $packs = $productManager->getProductPacks($productId);
             <button class="share-btn share-copy" onclick="copyLink()">
                 <i class='bx bx-link'></i>
             </button>
-        </div>
+        </div>-->
     </section>
 
     <!-- CARACTÉRISTIQUES -->
@@ -233,13 +233,11 @@ $packs = $productManager->getProductPacks($productId);
 
                                 <div class="pack-pricing">
                                     <div class="price-comparison">
-                                        <div class="price-normal">
-                                            <span class="price-label">Prix normal</span>
-                                            <span class="price-value"><?= number_format($pack['price_normal']); ?> FCFA</span>
-                                        </div>
                                         <div class="price-reduction">
-                                            <span class="price-label">Prix pack</span>
                                             <span class="price-value highlight"><?= number_format($pack['price_reduction']); ?> FCFA</span>
+                                        </div>
+                                        <div class="price-normal">
+                                            <span class="price-value"><?= number_format($pack['price_normal']); ?> FCFA</span>
                                         </div>
                                     </div>
 
