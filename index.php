@@ -66,7 +66,6 @@ $packs = $productManager->getProductPacks($productId);
     <!-- Vibrant.js -->
     <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"></script>
 
-    <style id="dynamicStyles"></style>
 </head>
 
 <body>
@@ -392,7 +391,7 @@ $packs = $productManager->getProductPacks($productId);
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="assets/js/tracking-manager.js" defer></script>
     <script src="assets/js/product.js"></script>
-    <script src="assets/js/theme.js"></script>
+    <!-- <script src="assets/js/theme.js"></script> -->
     <script src="assets/js/pack.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

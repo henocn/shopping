@@ -558,7 +558,7 @@ html {
 ================================ */
 .product-features {
   background: var(--white);
-  padding: 4rem 2rem;
+  padding: 1rem 1rem;
   position: relative;
 }
 
@@ -593,7 +593,7 @@ html {
 
 .feature-card {
   background: var(--white);
-  padding: 2.5rem;
+  padding: 1.5rem;
   border-radius: var(--border-radius-lg);
   text-align: center;
   box-shadow: 0 10px 30px var(--shadow);
@@ -625,8 +625,8 @@ html {
 }
 
 .feature-card img {
-  max-height: 100px;
-  margin-bottom: 1.5rem;
+  max-height: 225px;
+  margin-bottom: 0.8rem;
   border-radius: var(--border-radius);
   transition: var(--transition);
 }
