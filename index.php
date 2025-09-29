@@ -62,10 +62,6 @@ $packs = $productManager->getProductPacks($productId);
     <link href="./assets/css/product.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" rel="stylesheet">
-
-    <!-- Vibrant.js -->
-    <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"></script>
-
 </head>
 
 <body>
@@ -107,12 +103,6 @@ $packs = $productManager->getProductPacks($productId);
         <div class="container">
             <div class="intro-content">
                 <h2 class="intro-title">LUXEMARKET</h2>
-                <!--<p class="intro-description">
-                    Découvrez l'excellence du shopping en ligne avec LUXEMARKET.
-                    Nous vous proposons une sélection premium de produits de qualité,
-                    soigneusement choisis pour répondre à vos besoins les plus exigeants.
-                    Une expérience d'achat unique, sécurisée et personnalisée.
-                </p>-->
                 <button class="btn-intro" onclick="openOrderForm()">
                     <i class='bx bx-shopping-bag'></i>
                     Commander maintenant
@@ -168,22 +158,6 @@ $packs = $productManager->getProductPacks($productId);
             <?= $product['description']; ?>
         </div>
 
-        <!-- Boutons de partage social -->
-        <!--<div class="social-sharing">
-            <h3>Partager ce produit :</h3>
-            <button class="share-btn share-facebook" onclick="shareProduct('facebook')">
-                <i class='bx bxl-facebook'></i>
-            </button>
-            <button class="share-btn share-twitter" onclick="shareProduct('twitter')">
-                <i class='bx bxl-twitter'></i>
-            </button>
-            <button class="share-btn share-whatsapp" onclick="shareProduct('whatsapp')">
-                <i class='bx bxl-whatsapp'></i>
-            </button>
-            <button class="share-btn share-copy" onclick="copyLink()">
-                <i class='bx bx-link'></i>
-            </button>
-        </div>-->
     </section>
 
     <!-- CARACTÉRISTIQUES -->
@@ -389,6 +363,7 @@ $packs = $productManager->getProductPacks($productId);
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script src="assets/js/tracking-manager.js" defer></script>
     <script src="assets/js/product.js"></script>
     <!-- <script src="assets/js/theme.js"></script> -->
