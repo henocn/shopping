@@ -86,7 +86,7 @@ if (isset($_POST['valider'])) {
                 }
 
                 $message = urlencode("Le statut de la commande a été mis à jour avec succès.");
-                header("Location: index1.php?message=" . $message);
+                header("Location: index.php?message=" . $message);
                 exit;
             } else {
                 if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'fetch') {
@@ -99,7 +99,7 @@ if (isset($_POST['valider'])) {
                 }
 
                 $message = urlencode("Données manquantes pour mettre à jour le statut de la commande.");
-                header("Location: index1.php?message=" . $message);
+                header("Location: index.php?message=" . $message);
                 exit;
             }
             break;
