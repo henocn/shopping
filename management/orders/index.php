@@ -163,7 +163,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                   <div class="tab-pane fade" id="pane-remind" role="tabpanel">
                         <div class="row mt-3">
                               <div class="col-12">
-                                    <h4>Commandes à rappeler (<?= count($groupedOrders['remind']) ?>)</h4>
+                                    <h6>Commandes à rappeler (<?= count($groupedOrders['remind']) ?>)</h6>
                                     <?php if (empty($groupedOrders['remind'])): ?>
                                           <p class="text-muted">Aucune commande à rappeler.</p>
                                     <?php else: ?>
@@ -212,7 +212,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                   <div class="tab-pane fade" id="pane-processing" role="tabpanel">
                         <div class="row mt-3">
                               <div class="col-12">
-                                    <h4>Commandes programmées (<?= count($groupedOrders['processing']) ?>)</h4>
+                                    <h6>Commandes programmées (<?= count($groupedOrders['processing']) ?>)</h6>
                                     <?php if (empty($groupedOrders['processing'])): ?>
                                           <p class="text-muted">Aucune commande programmée.</p>
                                     <?php else: ?>
@@ -263,7 +263,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                   <div class="tab-pane fade" id="pane-delivered" role="tabpanel">
                         <div class="row mt-3">
                               <div class="col-12">
-                                    <h4>Commandes livrées aujourd'hui (<?= count($groupedOrders['delivered']) ?>)</h4>
+                                    <h6>Commandes livrées aujourd'hui (<?= count($groupedOrders['delivered']) ?>)</h6>
                                     <?php if (empty($groupedOrders['delivered'])): ?>
                                           <p class="text-muted">Aucune commande livrée aujourd'hui.</p>
                                     <?php else: ?>
