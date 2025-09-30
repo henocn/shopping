@@ -53,20 +53,20 @@
 
 /* Navigation tabs avec vos couleurs */
 .nav-tabs {
-  border-bottom: 2px solid var(--paper);
-  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--paper);
+  margin-bottom: 0.2rem;
 }
 
 .nav-tabs .nav-link {
   border: none;
-  border-bottom: 3px solid transparent;
+  border-bottom: 1px solid transparent;
   background: var(--magenta);
   color: var(--purple);
   font-weight: 500;
-  padding: 0.75rem 1rem;
+  padding: 0.2rem 0.5rem;
   transition: var(--transition);
   position: relative;
-  font-size: 0.9rem;
+  font-size: 0.7rem;
 }
 
 .nav-tabs .nav-link:hover:not(.active) {
@@ -112,33 +112,7 @@
   box-shadow: var(--shadow-md);
 }
 
-/* Couleurs des cartes par statut */
-.order-card[data-status="processing"]::before {
-  background: #ffc107; /* Même couleur que bg-warning */
-}
-.order-card[data-status="validated"]::before {
-  background: #28a745; /* Même couleur que bg-success */
-}
-.order-card[data-status="canceled"]::before {
-  background: #6c757d; /* Même couleur que bg-secondary */
-}
-.order-card[data-status="rejected"]::before {
-  background: #dc3545; /* Même couleur que bg-danger */
-}
 
-/* Couleurs des cartes par action */
-.order-card[data-action="remind"]::before {
-  background: #17a2b8; /* Même couleur que bg-info */
-}
-.order-card[data-action="call"]::before {
-  background: #343a40; /* Même couleur que bg-dark */
-}
-.order-card[data-action="unreachable"]::before {
-  background: #ffc107; /* Même couleur que bg-warning */
-}
-.order-card[data-action="done"]::before {
-  background: #28a745; /* Même couleur que bg-success */
-}
 
 
 /* Images produits - taille optimisée */
@@ -441,10 +415,10 @@
 
   .nav-tabs .nav-link {
     flex: 1;
-    text-align: center;
-    padding: 0.6rem 0.8rem;
-    font-size: 0.8rem;
-    margin-bottom: 0.25rem;
+    /*text-align: center;*/
+    padding: 0.2rem 0.4rem;
+    font-size: 0.6rem;
+    margin-bottom: 0.1rem;
   }
 
   .order-card {

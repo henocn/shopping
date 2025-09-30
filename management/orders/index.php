@@ -38,26 +38,11 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
       <link href="../../assets/css/navbar.css" rel="stylesheet">
       <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
       <link href="../../assets/css/order.css" rel="stylesheet">
-      <style>
-            .newsat-unreachable {
-                  background-color: #15ac38ff !important;
-                  /* Vert clair */
-                  color: #155724 !important;
-            }
-
-            /* Compatibilité table-striped */
-            .table-striped>tbody>tr.newsat-processing {
-                  background-color: #15ac38ff !important;
-                  /* Vert clair */
-                  color: #155724 !important;
-            }
-      </style>
 </head>
 
 <body>
 
       <?php include '../../includes/navbar.php'; ?>
-
 
       <main class="container-fluid my-4">
 
@@ -70,7 +55,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                   </li>
                   <li class="nav-item" role="presentation">
                         <button class="nav-link" id="tab-remind" data-bs-toggle="tab" data-bs-target="#pane-remind" type="button" role="tab">
-                              <i class='bx bx-bell me-2'></i>Rappeler
+                              <i class='bx bx-bell me-1'></i>Rappeler
                         </button>
                   </li>
                   <li class="nav-item" role="presentation">
@@ -108,7 +93,6 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                               case 'processing':
                                     $groupedOrders['processing'][] = $o;
                                     break;
-                                    // Masquer les autres valeurs de newstat (y compris deliver)
                         }
                   }
             }
@@ -129,27 +113,26 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                           <p class="text-muted">Aucune commande à traiter.</p>
                                     <?php else: ?>
                                           <div class="table-responsive">
-                                                <table class="table table-striped">
+                                                <table class="table">
                                                       <thead>
                                                             <tr>
-                                                                  <th>ID</th>
-                                                                  <th>Client</th>
-                                                                  <th>Numéro</th>
-                                                                  <th>Pays</th>
-                                                                  <th>Notes</th>
-                                                                  <th>Produit</th>
-                                                                  <th>Quantité</th>
-                                                                  <th>Prix Unitaire</th>
-                                                                  <th>Prix Total</th>
-                                                                  <th>Memo</th>
-                                                                  <th>Acts</th>
+                                                                  <th scope="col">ID</th>
+                                                                  <th scope="col">Client</th>
+                                                                  <th scope="col">Numéro</th>
+                                                                  <th scope="col">Pays</th>
+                                                                  <th scope="col">Notes</th>
+                                                                  <th scope="col">Produit</th>
+                                                                  <th scope="col">Quantité</th>
+                                                                  <th scope="col">Prix_Unitaire</th>
+                                                                  <th scope="col">Prix_Total</th>
+                                                                  <th scope="col">Mes_Notes</th>
+                                                                  <th scope="col">Actions</th>
                                                             </tr>
                                                       </thead>
                                                       <tbody>
                                                             <?php foreach ($groupedOrders['to-process'] as $order): ?>
-
-                                                                  <tr class="<?php echo $order['newstat'] == 'unreachable' ? 'table table-danger table-striped' : ''; ?>">
-                                                                        <td>#<?= $order['order_id'] ?></td>
+                                                                  <tr class="<?php echo $order['newstat'] == 'unreachable' ? 'table-danger' : ''; ?>">
+                                                                        <td>#<?= htmlspecialchars($order['order_id']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_name']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_phone']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_country']) ?></td>
@@ -160,7 +143,9 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                         <td><?= number_format($order['total_price'], 0, ',', ' ') ?> FCFA</td>
                                                                         <td><?= htmlspecialchars($order['manager_note'] ?? '') ?></td>
                                                                         <td>
-                                                                              <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#orderModal<?= (int)$order['order_id'] ?>">
+                                                                              <button class="btn btn-outline-primary btn-sm" type="button"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#orderModal<?= (int)$order['order_id'] ?>">
                                                                                     <i class='bx bx-edit'></i>
                                                                               </button>
                                                                         </td>
@@ -192,8 +177,8 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                   <th>Pays</th>
                                                                   <th>Produit</th>
                                                                   <th>Quantité</th>
-                                                                  <th>Prix Total</th>
-                                                                  <th>Memo</th>
+                                                                  <th>Prix_Total</th>
+                                                                  <th>Mes_Notes</th>
                                                                   <th>Actions</th>
                                                             </tr>
                                                       </thead>
@@ -254,7 +239,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                         <td><?= htmlspecialchars($order['client_phone']) ?></td>
                                                                         <td><?= htmlspecialchars($order['product_name']) ?></td>
                                                                         <td><?= $order['quantity'] ?></td>
-                                                                        <td><?= number_format($order['total_price'], 2) ?> €</td>
+                                                                        <td><?= number_format($order['total_price'], 2) ?> FCFA</td>
                                                                         <td>
                                                                               <span class="badge bg-primary"><?= $order['newstat'] ?></span>
                                                                         </td>
@@ -302,7 +287,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                         <td><?= htmlspecialchars($order['client_name']) ?></td>
                                                                         <td><?= htmlspecialchars($order['product_name']) ?></td>
                                                                         <td><?= $order['quantity'] ?></td>
-                                                                        <td><?= number_format($order['total_price'], 2) ?> €</td>
+                                                                        <td><?= number_format($order['total_price'], 2) ?> FCFA</td>
                                                                         <td>
                                                                               <span class="badge bg-success">Livré</span>
                                                                         </td>

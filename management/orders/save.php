@@ -85,7 +85,7 @@ if (isset($_POST['valider'])) {
                     exit;
                 }
 
-                $message = urlencode("Le statut de la commande a été mis à jour avec succès.");
+                $message = urlencode(" commande a été mis à jour avec succès.");
                 header("Location: index.php?message=" . $message);
                 exit;
             } else {
