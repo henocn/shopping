@@ -37,9 +37,9 @@ class Order
     {
         $req = $this->bd->prepare("
         INSERT INTO orders 
-        (product_id, pack_id, unit_price, total_price, quantity, client_name, client_country, client_adress, client_phone, client_note, newstat) 
+        (product_id, pack_id, unit_price, total_price, quantity, client_name, client_country, client_adress, client_phone, client_note, manager_id, newstat) 
         VALUES 
-        (:product_id, :pack_id, :unit_price, :total_price, :quantity, :client_name, :client_country, :client_adress, :client_phone, :client_note, :newstat)
+        (:product_id, :pack_id, :unit_price, :total_price, :quantity, :client_name, :client_country, :client_adress, :client_phone, :client_note,:manager_id, :newstat)
     ");
 
         $req->execute([
@@ -53,6 +53,7 @@ class Order
             'client_adress'  => $data['client_adress'] ?? '',
             'client_phone'   => $data['client_phone'] ?? '',
             'client_note'    => $data['client_note'] ?? null,
+            'manager_id'     => (int)($data['manager_id'] ?? 0),
             'newstat'         => 'new',
         ]);
         return true;
@@ -60,31 +61,30 @@ class Order
 
     public function getAllOrders()
     {
-        $sql = "
-            SELECT 
-                orders.id AS order_id,
-                orders.product_id,
-                orders.pack_id,
-                orders.quantity,
-                orders.unit_price,
-                orders.total_price,
-                orders.client_name,
-                orders.client_country,
-                orders.client_phone,
-                orders.client_adress,
-                orders.client_note,
-                orders.manager_note,
-                orders.newstat,
-                orders.created_at,
-                orders.updated_at,
-                COALESCE(products.name, 'Produit supprimé') AS product_name,
-                COALESCE(products.image, '') AS product_image,
-                COALESCE(product_packs.titre, '') AS pack_name,
-                CASE WHEN orders.quantity > 0 THEN ROUND(orders.total_price / orders.quantity, 2) ELSE orders.total_price END AS unit_price
-            FROM orders
-            LEFT JOIN products ON products.id = orders.product_id
-            LEFT JOIN product_packs ON product_packs.id = orders.pack_id
-            ORDER BY orders.id DESC
+        $sql = "SELECT
+    orders.id AS order_id,
+    orders.product_id,
+    orders.pack_id,
+    orders.quantity,
+    orders.total_price,
+    orders.client_name,
+    orders.client_country,
+    orders.client_phone,
+    orders.client_adress,
+    orders.client_note,
+    orders.manager_note,
+    orders.newstat,
+    orders.created_at,
+    orders.updated_at,
+    COALESCE(MAX(products.name), 'Produit supprimé') AS product_name,
+    COALESCE(MAX(products.image), '') AS product_image,
+    COALESCE(MAX(product_packs.titre), '') AS pack_name
+FROM orders
+LEFT JOIN products ON products.id = orders.product_id
+LEFT JOIN product_packs ON product_packs.id = orders.pack_id
+GROUP BY orders.id
+ORDER BY orders.id DESC;
+
         ";
 
         $req = $this->bd->prepare($sql);
@@ -116,30 +116,34 @@ class Order
     public function getOrdersByUserId($userId)
     {
         $sql = "
-            SELECT 
-                orders.id AS order_id,
-                orders.product_id,
-                orders.pack_id,
-                orders.quantity,
-                orders.unit_price,
-                orders.total_price,
-                orders.client_name,
-                orders.client_country,
-                orders.client_phone,
-                orders.client_adress,
-                orders.client_note,
-                orders.manager_note,
-                orders.newstat,
-                orders.created_at,
-                orders.updated_at,
-                COALESCE(products.name, 'Produit supprimé') AS product_name,
-                COALESCE(products.image, '') AS product_image,
-                COALESCE(product_packs.titre, '') AS pack_name,
-                CASE WHEN orders.quantity > 0 THEN ROUND(orders.total_price / orders.quantity, 2) ELSE orders.total_price END AS unit_price
-            FROM orders
-            LEFT JOIN products ON products.id = orders.product_id
-            LEFT JOIN product_packs ON product_packs.id = orders.pack_id
-            ORDER BY orders.id DESC
+            SELECT
+    o.id AS order_id,
+    o.product_id,
+    o.pack_id,
+    o.quantity,
+    o.unit_price,
+    o.total_price,
+    o.client_name,
+    o.client_country,
+    o.client_phone,
+    o.client_adress,
+    o.client_note,
+    o.manager_note,
+    o.newstat,
+    o.created_at,
+    o.updated_at,
+    COALESCE(MAX(p.name), 'Produit supprimé') AS product_name,
+    COALESCE(MAX(p.image), '') AS product_image,
+    COALESCE(MAX(pp.titre), '') AS pack_name
+FROM orders o
+LEFT JOIN products p ON p.id = o.product_id
+LEFT JOIN product_packs pp ON pp.id = o.pack_id
+GROUP BY 
+    o.id, o.product_id, o.pack_id, o.quantity, o.unit_price, o.total_price,
+    o.client_name, o.client_country, o.client_phone, o.client_adress,
+    o.client_note, o.manager_note, o.newstat, o.created_at, o.updated_at
+ORDER BY o.id DESC;
+
         ";
 
         $req = $this->bd->prepare($sql);

@@ -49,6 +49,7 @@ if (isset($_POST['valider'])) {
                     'unit_price'    => $product['price'],
                     'total_price'   => !empty($pack['price_reduction']) ? $pack['price_reduction'] : $product['price'],
                     'quantity'      => !empty($pack['quantity']) ? $pack['quantity'] : 1,
+                    'manager_id'   => $product['manager_id'],
                 ];
 
 
