@@ -20,7 +20,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
             $deliveredToday = $orderManager->getOrdersToDay();
       } else {
             $orders = $orderManager->getOrdersByUserId((int)$_SESSION['user_id']);
-            $deliveredToday = $orderManager->getOrdersToDay();
+            $deliveredToday = $orderManager->getOrdersToDayByUserId((int)$_SESSION['user_id']);
       }
 }
 ?>
@@ -287,7 +287,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                         <td><?= htmlspecialchars($order['client_name']) ?></td>
                                                                         <td><?= htmlspecialchars($order['product_name']) ?></td>
                                                                         <td><?= $order['quantity'] ?></td>
-                                                                        <td><?= number_format($order['total_price'], 2) ?> FCFA</td>
+                                                                        <td><?= number_format($order['total_price']) ?> FCFA</td>
                                                                         <td>
                                                                               <span class="badge bg-success">Livré</span>
                                                                         </td>

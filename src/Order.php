@@ -14,7 +14,6 @@ class Order
         $this->bd = $bd;
     }
 
-    //ok
     public function getTotalOrders()
     {
         $query = "SELECT COUNT(*) as total FROM orders";
@@ -114,42 +113,43 @@ ORDER BY orders.id DESC;
     }
 
     public function getOrdersByUserId($userId)
-    {
-        $sql = "
-            SELECT
-    o.id AS order_id,
-    o.product_id,
-    o.pack_id,
-    o.quantity,
-    o.unit_price,
-    o.total_price,
-    o.client_name,
-    o.client_country,
-    o.client_phone,
-    o.client_adress,
-    o.client_note,
-    o.manager_note,
-    o.newstat,
-    o.created_at,
-    o.updated_at,
-    COALESCE(MAX(p.name), 'Produit supprimé') AS product_name,
-    COALESCE(MAX(p.image), '') AS product_image,
-    COALESCE(MAX(pp.titre), '') AS pack_name
-FROM orders o
-LEFT JOIN products p ON p.id = o.product_id
-LEFT JOIN product_packs pp ON pp.id = o.pack_id
-GROUP BY 
-    o.id, o.product_id, o.pack_id, o.quantity, o.unit_price, o.total_price,
-    o.client_name, o.client_country, o.client_phone, o.client_adress,
-    o.client_note, o.manager_note, o.newstat, o.created_at, o.updated_at
-ORDER BY o.id DESC;
+{
+    $sql = "
+        SELECT
+            o.id AS order_id,
+            o.product_id,
+            o.pack_id,
+            o.quantity,
+            o.unit_price,
+            o.total_price,
+            o.client_name,
+            o.client_country,
+            o.client_phone,
+            o.client_adress,
+            o.client_note,
+            o.manager_note,
+            o.manager_id,
+            o.newstat,
+            o.created_at,
+            o.updated_at,
+            COALESCE(MAX(p.name), 'Produit supprimé') AS product_name,
+            COALESCE(MAX(p.image), '') AS product_image,
+            COALESCE(MAX(pp.titre), '') AS pack_name
+        FROM orders o
+        LEFT JOIN products p ON p.id = o.product_id
+        LEFT JOIN product_packs pp ON pp.id = o.pack_id
+        WHERE o.manager_id = :manager_id
+        GROUP BY 
+            o.id, o.product_id, o.pack_id, o.quantity, o.unit_price, o.total_price,
+            o.client_name, o.client_country, o.client_phone, o.client_adress,
+            o.client_note, o.manager_note, o.manager_id, o.newstat, o.created_at, o.updated_at
+        ORDER BY o.id DESC;
+    ";
 
-        ";
-
-        $req = $this->bd->prepare($sql);
-        $req->execute();
-        return $req->fetchAll(PDO::FETCH_ASSOC);
-    }
+    $req = $this->bd->prepare($sql);
+    $req->execute(['manager_id' => $userId]);
+    return $req->fetchAll(PDO::FETCH_ASSOC);
+}
 
     public function deleteOrder($id)
     {
@@ -189,6 +189,42 @@ ORDER BY o.id DESC;
 
         $req = $this->bd->prepare($sql);
         $req->execute();
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    public function getOrdersToDayByUserId($userId)
+    {
+        $sql = "
+        SELECT 
+            orders.id AS order_id,
+            orders.quantity,
+            orders.total_price,
+            orders.client_name,
+            orders.client_country,
+            orders.client_phone,
+            orders.client_adress,
+            orders.manager_id,
+            orders.newstat,
+            orders.updated_at,
+            COALESCE(products.name, 'Produit supprimé') AS product_name,
+            COALESCE(products.image, '') AS product_image,
+            CASE 
+                WHEN orders.quantity > 0 
+                THEN ROUND(orders.total_price / orders.quantity, 2) 
+                ELSE orders.total_price 
+            END AS unit_price
+        FROM orders
+        LEFT JOIN products ON products.id = orders.product_id
+        WHERE orders.updated_at >= CURDATE()
+          AND orders.updated_at < CURDATE() + INTERVAL 1 DAY
+          AND orders.newstat = 'deliver'
+          AND orders.manager_id = :manager_id
+        ORDER BY orders.id DESC
+    ";
+
+        $req = $this->bd->prepare($sql);
+        $req->execute(['manager_id' => $userId]);
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 }
