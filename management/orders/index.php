@@ -127,6 +127,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                   <th scope="col">Prix_Total</th>
                                                                   <th scope="col">Mes_Notes</th>
                                                                   <th scope="col">Actions</th>
+                                                                  <th scope="col">Passer le</th>
                                                             </tr>
                                                       </thead>
                                                       <tbody>
@@ -149,6 +150,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                                     <i class='bx bx-edit'></i>
                                                                               </button>
                                                                         </td>
+                                                                        <td><?= date('d/m/Y à H:i', strtotime($order['created_at'])) ?></td>
                                                                   </tr>
                                                             <?php endforeach; ?>
                                                       </tbody>

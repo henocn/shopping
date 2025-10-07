@@ -65,6 +65,7 @@ class Order
     orders.product_id,
     orders.pack_id,
     orders.quantity,
+    orders.unit_price,
     orders.total_price,
     orders.client_name,
     orders.client_country,
