@@ -102,7 +102,10 @@ switch ($action) {
             // Création du produit principal
             $productData = [
                 'name' => htmlspecialchars($_POST['name']),
-                'price' => floatval($_POST['price']),
+                'purchase_price' => floatval($_POST['purchase_price']),
+                'selling_price' => floatval($_POST['selling_price']),
+                'shipping_price' => floatval($_POST['shipping_price']),
+                'quantity' => intval($_POST['quantity']),
                 'image' => $mainImageName,
                 'description' => $_POST['description'],
                 'status' => 1,
@@ -310,7 +313,10 @@ switch ($action) {
                 // Mise à jour du produit principal
                 $productData = [
                     'name' => htmlspecialchars($_POST['name']),
-                    'price' => floatval($_POST['price']),
+                    'purchase_price' => floatval($_POST['purchase_price']),
+                    'selling_price' => floatval($_POST['selling_price']),
+                    'shipping_price' => floatval($_POST['shipping_price']),
+                    'quantity' => intval($_POST['quantity']),
                     'image' => $mainImageName,
                     'description' => $_POST['description'],
                     'carousel1' => $carouselImages[0],

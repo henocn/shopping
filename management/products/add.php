@@ -68,9 +68,27 @@ $helpers = $userManager->getUsersByRole(0);
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            <i class='bx bx-dollar'></i> Prix
+                            <i class='bx bx-dollar'></i> Prix d'achat
                         </label>
-                        <input type="number" class="form-control" name="price" required>
+                        <input type="number" class="form-control" name="purchase_price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-dollar'></i> Prix de vente
+                        </label>
+                        <input type="number" class="form-control" name="selling_price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-dollar'></i> Livraison
+                        </label>
+                        <input type="number" class="form-control" name="shipping_price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-package'></i> Quantité
+                        </label>
+                        <input type="number" class="form-control" name="quantity" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
