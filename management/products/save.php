@@ -195,7 +195,7 @@ switch ($action) {
                                 'image'            => $packImage,
                                 'quantity'         => (int)($_POST['pack_quantity'][$key] ?? 0),
                                 'price_reduction'  => (int)($_POST['pack_price_reduction'][$key] ?? 0),
-                                'price_normal'     => (int)($_POST['pack_price'][$key] ?? 0)
+                                'price_normal'     => ($_POST['selling_price'] ? ($_POST['selling_price'] * (int)($_POST['pack_quantity'][$key] ?? 0)) : 0)
                             ];
 
                             $manager->createPacks($packData);
@@ -531,7 +531,7 @@ switch ($action) {
                         $packTitre        = $_POST['existing_pack_titre'][$index] ?? '';
                         $packQuantity     = (int)($_POST['existing_pack_quantity'][$index] ?? 0);
                         $packReduction    = (int)($_POST['existing_pack_price_reduction'][$index] ?? 0);
-                        $packNormal       = (int)($_POST['existing_pack_price_normal'][$index] ?? 0);
+                        $packNormal       = $_POST['selling_price'] ? ($_POST['selling_price'] * (int)($_POST['existing_pack_quantity'][$index] ?? 0)) : 0;
                         $packImage        = $_POST['existing_pack_image'][$index] ?? '';
 
                         // Suppression d’image si demandé
