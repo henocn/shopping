@@ -209,7 +209,7 @@ class Product
 
     public function getAllProducts()
     {
-        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`price`, `products`.`image`, `products`.`description`, `products`.`status`, `products`.`country`, `users`.`name` AS `manager_name`
+        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`selling_price`, `products`.`image`, `products`.`description`, `products`.`status`, `products`.`country`, `users`.`name` AS `manager_name`
         FROM `products` INNER JOIN `users` ON `products`.`manager_id` = `users`.`id` ORDER BY `products`.`id` DESC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -218,7 +218,7 @@ class Product
     
     // une fonction qui renvoi a un produit au hazar dans la base de donnée
     public function getRandomProduct(){
-        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`price`, `products`.`image`, `products`.`description`, `products`.`status`, `products`.`country`, `users`.`name` AS `manager_name`
+        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`selling_price`, `products`.`image`, `products`.`description`, `products`.`status`, `products`.`country`, `users`.`name` AS `manager_name`
         FROM products INNER JOIN users ON products.manager_id = users.id ORDER BY RAND() LIMIT 1");
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);

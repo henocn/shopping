@@ -67,7 +67,7 @@ $products = $product->getAllProducts();
                                     class="product-image">
                             </td>
                             <td><?php echo $product['name']; ?></td>
-                            <td><?php echo $product['price']; ?> FCFA</td>
+                            <td><?php echo $product['selling_price']; ?> FCFA</td>
                             <td><?php echo $product['manager_name']; ?></td>
                             <td><?php echo $product['country']; ?></td>
                             <td style="position:relative;">

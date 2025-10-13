@@ -100,13 +100,31 @@ $packs = $productInfo['packs'];
                         <label class="form-label">
                             <i class='bx bx-purchase-tag'></i> Nom du produit
                         </label>
-                        <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($product['name']) ?>" required>
+                        <input type="text" class="form-control" name="name" value="<?= $product['name'] ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            <i class='bx bx-dollar'></i> Prix
+                            <i class='bx bx-dollar'></i> Prix d'achat
                         </label>
-                        <input type="number" class="form-control" name="price" value="<?= $product['price'] ?>" required>
+                        <input type="number" class="form-control" name="purchase_price" value="<?= $product['purchase_price'] ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-dollar'></i> Prix de vente
+                        </label>
+                        <input type="number" class="form-control" name="selling_price" value="<?= $product['selling_price'] ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-dollar'></i> Livraison
+                        </label>
+                        <input type="number" class="form-control" name="shipping_price" value="<?= $product['shipping_price'] ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-package'></i> Quantité
+                        </label>
+                        <input type="number" class="form-control" name="quantity" value="<?= $product['quantity'] ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
