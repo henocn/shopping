@@ -173,29 +173,28 @@ switch ($action) {
 
                 // Traitement des Packs
                 // Vérifier si au moins un pack est envoyé
-                if (isset($_POST['pack_titre'])) {
-                    foreach ($_POST['pack_titre'] as $key => $title) {
-                        if (!empty($title)) {
-                            $packImage = '';
+                if (isset($_POST['pack_name'])) {
+                    foreach ($_POST['pack_name'] as $key => $name) {
+                        if (!empty($name)) {
+                            $image = '';
                             if (
                                 isset($_FILES['pack_image']['tmp_name'][$key]) &&
                                 $_FILES['pack_image']['error'][$key] === UPLOAD_ERR_OK
                             ) {
 
-                                $packImage = time() . '_' . basename($_FILES['pack_image']['name'][$key]);
+                                $image = time() . '_' . basename($_FILES['pack_image']['tmp_name'][$key]);
                                 move_uploaded_file(
                                     $_FILES['pack_image']['tmp_name'][$key],
-                                    $uploadDirs['packs'] . $packImage
+                                    $uploadDirs['packs'] . $image
                                 );
                             }
 
                             $packData = [
                                 'product_id'       => $productId,
-                                'titre'            => htmlspecialchars($titre ?? ''),
-                                'image'            => $packImage,
-                                'quantity'         => (int)($_POST['pack_quantity'][$key] ?? 0),
-                                'price_reduction'  => (int)($_POST['pack_price_reduction'][$key] ?? 0),
-                                'price_normal'     => ($_POST['selling_price'] ? ($_POST['selling_price'] * (int)($_POST['pack_quantity'][$key] ?? 0)) : 0)
+                                'pack_name'             => htmlspecialchars($name ?? ''),
+                                'pack_image'            => $image,
+                                'pack_quantity'         => (int)($_POST['pack_quantity'][$key] ?? 0),
+                                'pack_price'            => (int)($_POST['pack_price'][$key] ?? 0),
                             ];
 
                             $manager->createPacks($packData);
@@ -528,7 +527,7 @@ switch ($action) {
                         }
 
                         // Récupérer les valeurs envoyées
-                        $packTitre        = $_POST['existing_pack_titre'][$index] ?? '';
+                        $packTitre        = $_POST['existing_pack_name'][$index] ?? '';
                         $packQuantity     = (int)($_POST['existing_pack_quantity'][$index] ?? 0);
                         $packReduction    = (int)($_POST['existing_pack_price_reduction'][$index] ?? 0);
                         $packNormal       = $_POST['selling_price'] ? ($_POST['selling_price'] * (int)($_POST['existing_pack_quantity'][$index] ?? 0)) : 0;

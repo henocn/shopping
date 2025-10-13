@@ -163,14 +163,13 @@ class Product
 
     public function createPacks($data)
     {
-        $req = $this->bd->prepare("INSERT INTO product_packs (product_id, titre, quantity, image, price_reduction, price_normal) VALUES (:product_id, :titre, :quantity, :image, :price_reduction, :price_normal)");
+        $req = $this->bd->prepare("INSERT INTO product_packs (product_id, name, quantity, image, price) VALUES (:product_id, :name, :quantity, :image, :price)");
         $req->execute([
             'product_id' => $data['product_id'],
-            'titre' => $data['titre'],
-            'quantity' => $data['quantity'],
-            'image' => $data['image'],
-            'price_reduction' => $data['price_reduction'],
-            'price_normal' => $data['price_normal'],
+            'name' => $data['pack_name'],
+            'quantity' => $data['pack_quantity'],
+            'image' => $data['pack_image'],
+            'price' => $data['pack_price']
         ]);
     }
 

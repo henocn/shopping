@@ -187,17 +187,17 @@ $packs = $productManager->getProductPacks($productId);
 
                 <div class="packs-grid">
                     <?php foreach ($packs as $pack): ?>
-                        <div class="pack-card" data-pack-id="<?= $pack['id']; ?>" onclick="selectPack(<?= $pack['id']; ?>, <?= $pack['price_reduction']; ?>, <?= $pack['quantity']; ?>)">
+                        <div class="pack-card" data-pack-id="<?= $pack['id']; ?>" onclick="selectPack(<?= $pack['id']; ?>, <?= $pack['price']; ?>, <?= $pack['quantity']; ?>)">
                             <!-- Image du pack -->
                             <?php if (!empty($pack['image'])): ?>
                                 <div class="pack-image">
-                                    <img src="uploads/packs/<?= $pack['image']; ?>" alt="<?= htmlspecialchars($pack['titre']); ?>" loading="lazy">
+                                    <img src="uploads/packs/<?= $pack['image']; ?>" alt="<?= htmlspecialchars($pack['name']); ?>" loading="lazy">
                                 </div>
                             <?php endif; ?>
 
                             <div class="pack-content">
                                 <div class="pack-header">
-                                    <h3 class="pack-title"><?= htmlspecialchars($pack['titre']); ?></h3>
+                                    <h3 class="pack-title"><?= htmlspecialchars($pack['name']); ?></h3>
                                     <div class="pack-quantity">
                                         <i class='bx bx-package'></i>
                                         <?= $pack['quantity']; ?> unités
@@ -207,10 +207,10 @@ $packs = $productManager->getProductPacks($productId);
                                 <div class="pack-pricing">
                                     <div class="price-comparison">
                                         <div class="price-reduction">
-                                            <span class="price-value highlight"><?= number_format($pack['price_reduction']); ?> FCFA</span>
+                                            <span class="price-value highlight"><?= number_format($pack['price'], 0, ' ', ' '); ?> FCFA</span>
                                         </div>
                                         <div class="price-normal">
-                                            <span class="price-value"><?= number_format($pack['price_normal']); ?> FCFA</span>
+                                            <span class="price-value"><?= number_format($product['selling_price'] * $pack['quantity'], 0, ' ', ' '); ?> FCFA</span>
                                         </div>
                                     </div>
 
@@ -285,10 +285,10 @@ $packs = $productManager->getProductPacks($productId);
                                     <option value="">Sélectionner un pack (optionnel)</option>
                                     <?php foreach ($packs as $pack): ?>
                                         <option value="<?= $pack['id']; ?>"
-                                            data-price="<?= $pack['price_reduction']; ?>"
+                                            data-price="<?= $pack['price']; ?>"
                                             data-quantity="<?= $pack['quantity']; ?>"
-                                            data-title="<?= htmlspecialchars($pack['titre']); ?>">
-                                            <?= htmlspecialchars($pack['titre']); ?> - <?= $pack['quantity']; ?> unités - <?= number_format($pack['price_reduction']); ?> FCFA
+                                            data-name="<?= htmlspecialchars($pack['name']); ?>">
+                                            <?= htmlspecialchars($pack['name']); ?> - <?= $pack['quantity']; ?> unités - <?= number_format($pack['price'], 0, ' ', ' '); ?> FCFA
                                         </option>
                                     <?php endforeach; ?>
                                 </select>

@@ -28,6 +28,8 @@ $product = $productInfo['product'];
 $videos = $productInfo['videos'];
 $caracteristics = $productInfo['caracteristics'];
 $packs = $productInfo['packs'];
+var_dump($packs);
+die();
 
 ?>
 
@@ -361,8 +363,8 @@ $packs = $productInfo['packs'];
                                 <!-- Nom -->
                                 <div class="mb-3">
                                     <label class="form-label">Nom du Pack</label>
-                                    <input type="text" class="form-control" name="existing_pack_titre[]"
-                                        value="<?= htmlspecialchars($pack['titre']) ?>" required>
+                                    <input type="text" class="form-control" name="existing_pack_name[]"
+                                        value="<?= htmlspecialchars($pack['name']) ?>" required>
                                 </div>
 
                                 <!-- Image existante -->
