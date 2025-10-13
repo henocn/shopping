@@ -117,32 +117,25 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                       <thead>
                                                             <tr>
                                                                   <th scope="col">ID</th>
-                                                                  <th scope="col">Client</th>
-                                                                  <th scope="col">Numéro</th>
-                                                                  <th scope="col">Pays</th>
-                                                                  <th scope="col">Notes</th>
                                                                   <th scope="col">Produit</th>
+                                                                  <th scope="col">Client</th>
+                                                                  <th scope="col">Contact</th>
                                                                   <th scope="col">Quantité</th>
-                                                                  <th scope="col">Prix_Unitaire</th>
-                                                                  <th scope="col">Prix_Total</th>
-                                                                  <th scope="col">Mes_Notes</th>
+                                                                  <th scope="col">A Payer</th>
+                                                                  <th scope="col">Passée le</th>
                                                                   <th scope="col">Actions</th>
-                                                                  <th scope="col">Passer le</th>
                                                             </tr>
                                                       </thead>
                                                       <tbody>
                                                             <?php foreach ($groupedOrders['to-process'] as $order): ?>
                                                                   <tr class="<?php echo $order['newstat'] == 'unreachable' ? 'table-danger' : ''; ?>">
                                                                         <td>#<?= htmlspecialchars($order['order_id']) ?></td>
+                                                                        <td><?= htmlspecialchars($order['product_name']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_name']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_phone']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_country']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_note'] ?? '') ?></td>
-                                                                        <td><?= htmlspecialchars($order['product_name']) ?></td>
                                                                         <td><?= (int)$order['quantity'] ?></td>
-                                                                        <td><?= number_format($order['unit_price'] ?? 0, 0, ',', ' ') ?> FCFA</td>
                                                                         <td><?= number_format($order['total_price'], 0, ',', ' ') ?> FCFA</td>
-                                                                        <td><?= htmlspecialchars($order['manager_note'] ?? '') ?></td>
+                                                                        <td><?= date('d/m/Y à H:i', strtotime($order['created_at'])) ?></td>
                                                                         <td>
                                                                               <button class="btn btn-outline-primary btn-sm" type="button"
                                                                                     data-bs-toggle="modal"
@@ -150,7 +143,6 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                                     <i class='bx bx-edit'></i>
                                                                               </button>
                                                                         </td>
-                                                                        <td><?= date('d/m/Y à H:i', strtotime($order['created_at'])) ?></td>
                                                                   </tr>
                                                             <?php endforeach; ?>
                                                       </tbody>

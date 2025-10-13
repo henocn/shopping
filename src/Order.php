@@ -36,15 +36,15 @@ class Order
     {
         $req = $this->bd->prepare("
         INSERT INTO orders 
-        (product_id, pack_id, unit_price, total_price, quantity, client_name, client_country, client_adress, client_phone, client_note, newstat) 
+        (product_id, pack_id, purchase_price, total_price, quantity, client_name, client_country, client_adress, client_phone, client_note, newstat) 
         VALUES 
-        (:product_id, :pack_id, :unit_price, :total_price, :quantity, :client_name, :client_country, :client_adress, :client_phone, :client_note, :newstat)
+        (:product_id, :pack_id, :purchase_price, :total_price, :quantity, :client_name, :client_country, :client_adress, :client_phone, :client_note, :newstat)
     ");
 
         $req->execute([
             'product_id'     => (int)($data['product_id'] ?? 0),
             'pack_id'        => (int)($data['pack_id'] ?? 0),
-            'unit_price'     => (int)($data['unit_price'] ?? 0),
+            'purchase_price' => (int)($data['purchase_price'] ?? 0),
             'total_price'    => (int)($data['total_price'] ?? 0),
             'quantity'       => (int)($data['quantity'] ?? 1),
             'client_name'    => $data['client_name'] ?? '',
@@ -64,7 +64,7 @@ class Order
     orders.product_id,
     orders.pack_id,
     orders.quantity,
-    orders.unit_price,
+    orders.purchase_price,
     orders.total_price,
     orders.client_name,
     orders.client_country,
@@ -120,7 +120,7 @@ ORDER BY orders.id DESC;
             o.product_id,
             o.pack_id,
             o.quantity,
-            o.unit_price,
+            o.purchase_price,
             o.total_price,
             o.client_name,
             o.client_country,
@@ -140,7 +140,7 @@ ORDER BY orders.id DESC;
         LEFT JOIN product_packs pp ON pp.id = o.pack_id
         WHERE o.manager_id = :manager_id
         GROUP BY 
-            o.id, o.product_id, o.pack_id, o.quantity, o.unit_price, o.total_price,
+            o.id, o.product_id, o.pack_id, o.quantity, o.purchase_price, o.total_price,
             o.client_name, o.client_country, o.client_phone, o.client_adress,
             o.client_note, o.manager_note, o.manager_id, o.newstat, o.created_at, o.updated_at
         ORDER BY o.id DESC;
@@ -173,12 +173,7 @@ ORDER BY orders.id DESC;
             orders.newstat,
             orders.updated_at,
             COALESCE(products.name, 'Produit supprimé') AS product_name,
-            COALESCE(products.image, '') AS product_image,
-            CASE 
-                WHEN orders.quantity > 0 
-                THEN ROUND(orders.total_price / orders.quantity, 2) 
-                ELSE orders.total_price 
-            END AS unit_price
+            COALESCE(products.image, '') AS product_image
         FROM orders
         LEFT JOIN products ON products.id = orders.product_id
         WHERE orders.updated_at >= CURDATE()
@@ -208,12 +203,7 @@ ORDER BY orders.id DESC;
             orders.newstat,
             orders.updated_at,
             COALESCE(products.name, 'Produit supprimé') AS product_name,
-            COALESCE(products.image, '') AS product_image,
-            CASE 
-                WHEN orders.quantity > 0 
-                THEN ROUND(orders.total_price / orders.quantity, 2) 
-                ELSE orders.total_price 
-            END AS unit_price
+            COALESCE(products.image, '') AS product_image
         FROM orders
         LEFT JOIN products ON products.id = orders.product_id
         WHERE orders.updated_at >= CURDATE()
