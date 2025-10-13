@@ -77,7 +77,7 @@ class Order
     orders.updated_at,
     COALESCE(MAX(products.name), 'Produit supprimé') AS product_name,
     COALESCE(MAX(products.image), '') AS product_image,
-    COALESCE(MAX(product_packs.titre), '') AS pack_name
+    COALESCE(MAX(product_packs.name), '') AS pack_name
 FROM orders
 LEFT JOIN products ON products.id = orders.product_id
 LEFT JOIN product_packs ON product_packs.id = orders.pack_id
