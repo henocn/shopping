@@ -124,10 +124,13 @@ class Product
 
     public function createProduct($data)
     {
-        $req = $this->bd->prepare("INSERT INTO products (name, price, image,description, status, carousel1, carousel2, carousel3, carousel4, carousel5, country, manager_id) VALUES (:name, :price, :image, :description, :status, :carousel1, :carousel2, :carousel3, :carousel4, :carousel5, :country, :manager_id)");
+        $req = $this->bd->prepare("INSERT INTO products (name, purchase_price, selling_price, shipping_price, quantity, image,description, status, carousel1, carousel2, carousel3, carousel4, carousel5, country, manager_id) VALUES (:name, :purchase_price, :selling_price, :shipping_price, :image, :description, :status, :carousel1, :carousel2, :carousel3, :carousel4, :carousel5, :country, :manager_id)");
         $req->execute([
             'name'   => $data['name'],
-            'price'    => $data['price'],
+            'purchase_price'    => $data['purchase_price'],
+            'selling_price'     => $data['selling_price'],
+            'shipping_price'    => $data['shipping_price'],
+            'quantity'          => $data['quantity'],
             'image'     => $data['image'],
             'description' => $data['description'],
             'status'  => $data['status'],
@@ -257,11 +260,14 @@ class Product
 
     public function updateProduct($productId, $data)
     {
-        $req = $this->bd->prepare("UPDATE products SET name = :name, price = :price, image = :image, description = :description, carousel1 = :carousel1, carousel2 = :carousel2, carousel3 = :carousel3, carousel4 = :carousel4, carousel5 = :carousel5, country = :country, manager_id = :manager_id WHERE id = :id");
+        $req = $this->bd->prepare("UPDATE products SET name = :name, purchase_price = :purchase_price, selling_price = :selling_price, shipping_price = :shipping_price, quantity = :quantity, image = :image, description = :description, carousel1 = :carousel1, carousel2 = :carousel2, carousel3 = :carousel3, carousel4 = :carousel4, carousel5 = :carousel5, country = :country, manager_id = :manager_id WHERE id = :id");
         $req->execute([
             'id' => $productId,
             'name'   => $data['name'],
-            'price'    => $data['price'],
+            'purchase_price'    => $data['purchase_price'],
+            'selling_price'     => $data['selling_price'],
+            'shipping_price'    => $data['shipping_price'],
+            'quantity'          => $data['quantity'],
             'image'     => $data['image'],
             'description' => $data['description'],
             'carousel1' => $data['carousel1'],
