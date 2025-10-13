@@ -46,7 +46,7 @@ if (isset($_POST['valider'])) {
                     'client_adress' => htmlspecialchars($_POST['client_adress']),
                     'client_phone'  => htmlspecialchars($_POST['client_phone']),
                     'client_note'   => htmlspecialchars($_POST['client_note']),
-                    'unit_price'    => $product['price'],
+                    'unit_price'    => $product['selling_price'],
                     'total_price'   => !empty($pack['price_reduction']) ? $pack['price_reduction'] : $product['price'],
                     'quantity'      => !empty($pack['quantity']) ? $pack['quantity'] : 1,
                     'manager_id'   => $product['manager_id'],

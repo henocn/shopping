@@ -533,20 +533,6 @@ html {
   box-shadow: 0 8px 25px var(--shadow);
 }
 
-.share-facebook {
-  background: #1877f2;
-  color: var(--white);
-}
-
-.share-twitter {
-  background: #1da1f2;
-  color: var(--white);
-}
-
-.share-whatsapp {
-  background: #25d366;
-  color: var(--white);
-}
 
 .share-copy {
   background: var(--gradient-primary);
@@ -778,32 +764,6 @@ footer.footer p {
   width: 100%;
 }
 
-.custom-modal-header {
-  background: var(--gradient-primary);
-  color: var(--white);
-  border: none;
-  padding: 1.5rem 2rem;
-  position: relative;
-}
-
-.custom-modal-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.custom-modal-header .modal-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
 
 .btn-close-custom {
   background: none;
@@ -832,7 +792,7 @@ footer.footer p {
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-label {
@@ -845,10 +805,10 @@ footer.footer p {
 
 .form-control-custom {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.8rem 1rem;
   border: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: var(--border-radius);
-  font-size: 1rem;
+  font-size: 0.9rem;
   transition: var(--transition);
   background: var(--white);
   color: var(--text);
@@ -901,7 +861,7 @@ footer.footer p {
 
 .modal-footer-custom {
   margin-top: 2rem;
-  padding-top: 1.5rem;
+  padding-top: 1rem;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -911,7 +871,7 @@ footer.footer p {
   color: var(--white);
   border: none;
   border-radius: var(--border-radius);
-  padding: 1rem 1.5rem;
+  padding: 0.7rem 1.5rem;
   font-size: 1.1rem;
   font-weight: 700;
   display: flex;
