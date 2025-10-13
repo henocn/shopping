@@ -28,8 +28,7 @@ $product = $productInfo['product'];
 $videos = $productInfo['videos'];
 $caracteristics = $productInfo['caracteristics'];
 $packs = $productInfo['packs'];
-var_dump($packs);
-die();
+
 
 ?>
 
@@ -402,20 +401,12 @@ die();
                                         value="<?= $pack['quantity'] ?>" min="1">
                                 </div>
 
-                                <!-- Prix normal -->
-                                <div class="mb-3">
-                                    <label class="form-label">Prix Normal (€)</label>
-                                    <input type="number" class="form-control"
-                                        name="existing_pack_price_normal[]"
-                                        value="<?= $pack['price_normal'] ?>" step="0.01" required>
-                                </div>
-
                                 <!-- Réduction -->
                                 <div class="mb-3">
-                                    <label class="form-label">Réduction (€)</label>
+                                    <label class="form-label">Prix du pack</label>
                                     <input type="number" class="form-control"
-                                        name="existing_pack_price_reduction[]"
-                                        value="<?= $pack['price_reduction'] ?>" step="0.01">
+                                        name="existing_pack_price[]"
+                                        value="<?= $pack['price'] ?>" step="0.01">
                                 </div>
 
                                 <!-- Supprimer pack -->

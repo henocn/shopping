@@ -182,7 +182,7 @@ switch ($action) {
                                 $_FILES['pack_image']['error'][$key] === UPLOAD_ERR_OK
                             ) {
 
-                                $image = time() . '_' . basename($_FILES['pack_image']['tmp_name'][$key]);
+                                $image = time() . '_' . basename($_FILES['pack_image']['name'][$key]);
                                 move_uploaded_file(
                                     $_FILES['pack_image']['tmp_name'][$key],
                                     $uploadDirs['packs'] . $image
@@ -214,6 +214,12 @@ switch ($action) {
             exit;
         }
         break;
+
+
+
+
+
+
     case 'Mettre a jour le produit':
         // Code pour mettre à jour un produit
         if (isset($_POST['productId'])) {
@@ -527,10 +533,9 @@ switch ($action) {
                         }
 
                         // Récupérer les valeurs envoyées
-                        $packTitre        = $_POST['existing_pack_name'][$index] ?? '';
+                        $packName        = $_POST['existing_pack_name'][$index] ?? '';
                         $packQuantity     = (int)($_POST['existing_pack_quantity'][$index] ?? 0);
-                        $packReduction    = (int)($_POST['existing_pack_price_reduction'][$index] ?? 0);
-                        $packNormal       = $_POST['selling_price'] ? ($_POST['selling_price'] * (int)($_POST['existing_pack_quantity'][$index] ?? 0)) : 0;
+                        $packPrice    = (int)($_POST['existing_pack_price'][$index] ?? 0);
                         $packImage        = $_POST['existing_pack_image'][$index] ?? '';
 
                         // Suppression d’image si demandé
@@ -564,11 +569,10 @@ switch ($action) {
 
                         // Mettre à jour le pack
                         $packData = [
-                            'titre'           => htmlspecialchars($packTitre),
-                            'image'           => $packImage,
-                            'quantity'        => $packQuantity,
-                            'price_reduction' => $packReduction,
-                            'price_normal'    => $packNormal
+                            'pack_name'           => htmlspecialchars($packName),
+                            'pack_image'           => $packImage,
+                            'pack_quantity'        => $packQuantity,
+                            'pack_price'           => $packPrice,
                         ];
 
                         $manager->updatePack($packId, $packData);

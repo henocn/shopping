@@ -315,13 +315,12 @@ class Product
 
     public function updatePack($packId, $data)
     {
-        $req = $this->bd->prepare("UPDATE product_packs SET titre = :titre, quantity = :quantity, image = :image, price_reduction = :price_reduction, price_normal = :price_normal WHERE id = :id");
+        $req = $this->bd->prepare("UPDATE product_packs SET name = :name, quantity = :quantity, image = :image, price = :price WHERE id = :id");
         $req->execute([
-            'titre' => $data['titre'],
-            'quantity' => $data['quantity'],
-            'image' => $data['image'],
-            'price_reduction' => $data['price_reduction'],
-            'price_normal' => $data['price_normal'],
+            'name' => $data['pack_name'],
+            'quantity' => $data['pack_quantity'],
+            'image' => $data['pack_image'],
+            'price' => $data['pack_price'],
             'id' => $packId
         ]);
     }
