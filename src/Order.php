@@ -75,6 +75,7 @@ class Order
     orders.newstat,
     orders.created_at,
     orders.updated_at,
+    products.selling_price AS unit_price,
     COALESCE(MAX(products.name), 'Produit supprimé') AS product_name,
     COALESCE(MAX(products.image), '') AS product_image,
     COALESCE(MAX(product_packs.name), '') AS pack_name
@@ -132,6 +133,7 @@ ORDER BY orders.id DESC;
             o.newstat,
             o.created_at,
             o.updated_at,
+            p.selling_price AS unit_price,
             COALESCE(MAX(p.name), 'Produit supprimé') AS product_name,
             COALESCE(MAX(p.image), '') AS product_image,
             COALESCE(MAX(pp.titre), '') AS pack_name
