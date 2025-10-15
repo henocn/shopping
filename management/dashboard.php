@@ -27,9 +27,9 @@ $activeUsers = $userObj->getActiveUsers();
 $inactiveUsers = $totalUsers - $activeUsers;
 
 $totalOrders = $orderObj->getTotalOrders();
-$processingOrders = $orderObj->getOrdersByStatus('processing');
+/*$processingOrders = $orderObj->getOrdersByStatus('processing');
 $validatedOrders = $orderObj->getOrdersByStatus('validated');
-$canceledOrders = $orderObj->getOrdersByStatus('canceled');
+$canceledOrders = $orderObj->getOrdersByStatus('canceled');*/
 ?>
 <!DOCTYPE html>
 <html lang="fr" class="h-100">
@@ -185,7 +185,7 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
                     </div>
                 </div>
 
-                <div class="col-12 col-lg-6">
+                <!--<div class="col-12 col-lg-6">
                     <div class="card shadow-sm">
                         <div class="card-body border-style-1">
                             <h5 class="card-title mb-4">État des Commandes</h5>
@@ -214,7 +214,7 @@ $canceledOrders = $orderObj->getOrdersByStatus('canceled');
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>-->
             </div>
         </div>
     </main>

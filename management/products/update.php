@@ -29,6 +29,7 @@ $videos = $productInfo['videos'];
 $caracteristics = $productInfo['caracteristics'];
 $packs = $productInfo['packs'];
 
+
 ?>
 
 <!DOCTYPE html>
@@ -100,13 +101,31 @@ $packs = $productInfo['packs'];
                         <label class="form-label">
                             <i class='bx bx-purchase-tag'></i> Nom du produit
                         </label>
-                        <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($product['name']) ?>" required>
+                        <input type="text" class="form-control" name="name" value="<?= $product['name'] ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            <i class='bx bx-dollar'></i> Prix
+                            <i class='bx bx-dollar'></i> Prix d'achat
                         </label>
-                        <input type="number" class="form-control" name="price" value="<?= $product['price'] ?>" required>
+                        <input type="number" class="form-control" name="purchase_price" value="<?= $product['purchase_price'] ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-dollar'></i> Prix de vente
+                        </label>
+                        <input type="number" class="form-control" name="selling_price" value="<?= $product['selling_price'] ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-dollar'></i> Livraison
+                        </label>
+                        <input type="number" class="form-control" name="shipping_price" value="<?= $product['shipping_price'] ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-package'></i> Quantité
+                        </label>
+                        <input type="number" class="form-control" name="quantity" value="<?= $product['quantity'] ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
@@ -160,7 +179,7 @@ $packs = $productInfo['packs'];
                         <label class="form-label">
                             <i class='bx bx-text'></i> Description
                         </label>
-                        <textarea id="description" class="form-control" name="description" rows="4"><?= htmlspecialchars($product['description']) ?></textarea>
+                        <textarea id="summernote" class="form-control" name="description" rows="4"><?= htmlspecialchars($product['description']) ?></textarea>
                     </div>
                 </div>
             </div>
@@ -272,7 +291,7 @@ $packs = $productInfo['packs'];
                     <div id="characteristicsList"></div>
                 </div>
             </div>
-<!-- Vidéos -->
+            <!-- Vidéos -->
             <div class="card mb-4" id="videosSection" style="display: none;">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Vidéos</h5>
@@ -343,8 +362,8 @@ $packs = $productInfo['packs'];
                                 <!-- Nom -->
                                 <div class="mb-3">
                                     <label class="form-label">Nom du Pack</label>
-                                    <input type="text" class="form-control" name="existing_pack_titre[]"
-                                        value="<?= htmlspecialchars($pack['titre']) ?>" required>
+                                    <input type="text" class="form-control" name="existing_pack_name[]"
+                                        value="<?= htmlspecialchars($pack['name']) ?>" required>
                                 </div>
 
                                 <!-- Image existante -->
@@ -382,20 +401,12 @@ $packs = $productInfo['packs'];
                                         value="<?= $pack['quantity'] ?>" min="1">
                                 </div>
 
-                                <!-- Prix normal -->
-                                <div class="mb-3">
-                                    <label class="form-label">Prix Normal (€)</label>
-                                    <input type="number" class="form-control"
-                                        name="existing_pack_price_normal[]"
-                                        value="<?= $pack['price_normal'] ?>" step="0.01" required>
-                                </div>
-
                                 <!-- Réduction -->
                                 <div class="mb-3">
-                                    <label class="form-label">Réduction (€)</label>
+                                    <label class="form-label">Prix du pack</label>
                                     <input type="number" class="form-control"
-                                        name="existing_pack_price_reduction[]"
-                                        value="<?= $pack['price_reduction'] ?>" step="0.01">
+                                        name="existing_pack_price[]"
+                                        value="<?= $pack['price'] ?>" step="0.01">
                                 </div>
 
                                 <!-- Supprimer pack -->
@@ -437,37 +448,15 @@ $packs = $productInfo['packs'];
 
     <script src="../../assets/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/add-product.js"></script>
+    
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script>
     <script>
-        // Initialiser CKEditor
-        document.addEventListener('DOMContentLoaded', function() {
-            ClassicEditor
-                .create(document.querySelector('#description'), {
-                    toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 'blockQuote', 'insertTable', 'undo', 'redo'],
-                    heading: {
-                        options: [{
-                                model: 'paragraph',
-                                title: 'Paragraphe',
-                                class: 'ck-heading_paragraph'
-                            },
-                            {
-                                model: 'heading1',
-                                view: 'h1',
-                                title: 'Titre 1',
-                                class: 'ck-heading_heading1'
-                            },
-                            {
-                                model: 'heading2',
-                                view: 'h2',
-                                title: 'Titre 2',
-                                class: 'ck-heading_heading2'
-                            }
-                        ]
-                    },
-                    language: 'fr'
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+        $(document).ready(function() {
+            $('#summernote').summernote();
         });
     </script>
 

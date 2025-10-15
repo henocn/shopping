@@ -62,11 +62,6 @@ $packs = $productManager->getProductPacks($productId);
     <link href="./assets/css/product.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" rel="stylesheet">
-
-    <!-- Vibrant.js -->
-    <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"></script>
-
-    <style id="dynamicStyles"></style>
 </head>
 
 <body>
@@ -89,7 +84,7 @@ $packs = $productManager->getProductPacks($productId);
             class="hero-image" id="mainImage">
         <div class="hero-overlay">
             <h1><?= htmlspecialchars($product['name']); ?></h1>
-            <div class="hero-price"><?= $product['price'] ?> FCFA</div>
+            <div class="hero-price"><?= $product['selling_price'] ?> FCFA</div>
             <div class="hero-cta">
                 <button class="btn-hero btn-hero-primary" onclick="openOrderForm()">
                     <i class='bx bx-cart'></i>
@@ -108,12 +103,6 @@ $packs = $productManager->getProductPacks($productId);
         <div class="container">
             <div class="intro-content">
                 <h2 class="intro-title">LUXEMARKET</h2>
-                <p class="intro-description">
-                    Découvrez l'excellence du shopping en ligne avec LUXEMARKET.
-                    Nous vous proposons une sélection premium de produits de qualité,
-                    soigneusement choisis pour répondre à vos besoins les plus exigeants.
-                    Une expérience d'achat unique, sécurisée et personnalisée.
-                </p>
                 <button class="btn-intro" onclick="openOrderForm()">
                     <i class='bx bx-shopping-bag'></i>
                     Commander maintenant
@@ -169,22 +158,6 @@ $packs = $productManager->getProductPacks($productId);
             <?= $product['description']; ?>
         </div>
 
-        <!-- Boutons de partage social -->
-        <div class="social-sharing">
-            <h3>Partager ce produit :</h3>
-            <button class="share-btn share-facebook" onclick="shareProduct('facebook')">
-                <i class='bx bxl-facebook'></i>
-            </button>
-            <button class="share-btn share-twitter" onclick="shareProduct('twitter')">
-                <i class='bx bxl-twitter'></i>
-            </button>
-            <button class="share-btn share-whatsapp" onclick="shareProduct('whatsapp')">
-                <i class='bx bxl-whatsapp'></i>
-            </button>
-            <button class="share-btn share-copy" onclick="copyLink()">
-                <i class='bx bx-link'></i>
-            </button>
-        </div>
     </section>
 
     <!-- CARACTÉRISTIQUES -->
@@ -214,17 +187,17 @@ $packs = $productManager->getProductPacks($productId);
 
                 <div class="packs-grid">
                     <?php foreach ($packs as $pack): ?>
-                        <div class="pack-card" data-pack-id="<?= $pack['id']; ?>" onclick="selectPack(<?= $pack['id']; ?>, <?= $pack['price_reduction']; ?>, <?= $pack['quantity']; ?>)">
+                        <div class="pack-card" data-pack-id="<?= $pack['id']; ?>" onclick="selectPack(<?= $pack['id']; ?>, <?= $pack['price']; ?>, <?= $pack['quantity']; ?>)">
                             <!-- Image du pack -->
                             <?php if (!empty($pack['image'])): ?>
                                 <div class="pack-image">
-                                    <img src="uploads/packs/<?= $pack['image']; ?>" alt="<?= htmlspecialchars($pack['titre']); ?>" loading="lazy">
+                                    <img src="uploads/packs/<?= $pack['image']; ?>" alt="<?= htmlspecialchars($pack['name']); ?>" loading="lazy">
                                 </div>
                             <?php endif; ?>
 
                             <div class="pack-content">
                                 <div class="pack-header">
-                                    <h3 class="pack-title"><?= htmlspecialchars($pack['titre']); ?></h3>
+                                    <h3 class="pack-title"><?= htmlspecialchars($pack['name']); ?></h3>
                                     <div class="pack-quantity">
                                         <i class='bx bx-package'></i>
                                         <?= $pack['quantity']; ?> unités
@@ -233,13 +206,11 @@ $packs = $productManager->getProductPacks($productId);
 
                                 <div class="pack-pricing">
                                     <div class="price-comparison">
-                                        <div class="price-normal">
-                                            <span class="price-label">Prix normal</span>
-                                            <span class="price-value"><?= number_format($pack['price_normal']); ?> FCFA</span>
-                                        </div>
                                         <div class="price-reduction">
-                                            <span class="price-label">Prix pack</span>
-                                            <span class="price-value highlight"><?= number_format($pack['price_reduction']); ?> FCFA</span>
+                                            <span class="price-value highlight"><?= number_format($pack['price'], 0, ' ', ' '); ?> FCFA</span>
+                                        </div>
+                                        <div class="price-normal">
+                                            <span class="price-value"><?= number_format($product['selling_price'] * $pack['quantity'], 0, ' ', ' '); ?> FCFA</span>
                                         </div>
                                     </div>
 
@@ -300,17 +271,6 @@ $packs = $productManager->getProductPacks($productId);
     <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content custom-modal">
-
-                <!-- Header -->
-                <div class="modal-header custom-modal-header">
-                    <h5 class="modal-title" id="orderModalLabel">
-                        <i class='bx bx-cart-alt'></i> Commander : <?= htmlspecialchars($product['name']); ?>
-                    </h5>
-                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Fermer">
-                        <i class='bx bx-x'></i>
-                    </button>
-                </div>
-
                 <!-- Body -->
                 <div class="modal-body custom-modal-body">
                     <form id="orderForm" action="management/orders/save.php" method="POST">
@@ -325,10 +285,10 @@ $packs = $productManager->getProductPacks($productId);
                                     <option value="">Sélectionner un pack (optionnel)</option>
                                     <?php foreach ($packs as $pack): ?>
                                         <option value="<?= $pack['id']; ?>"
-                                            data-price="<?= $pack['price_reduction']; ?>"
+                                            data-price="<?= $pack['price']; ?>"
                                             data-quantity="<?= $pack['quantity']; ?>"
-                                            data-title="<?= htmlspecialchars($pack['titre']); ?>">
-                                            <?= htmlspecialchars($pack['titre']); ?> - <?= $pack['quantity']; ?> unités - <?= number_format($pack['price_reduction']); ?> FCFA
+                                            data-name="<?= htmlspecialchars($pack['name']); ?>">
+                                            <?= htmlspecialchars($pack['name']); ?> - <?= $pack['quantity']; ?> unités - <?= number_format($pack['price'], 0, ' ', ' '); ?> FCFA
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -392,9 +352,10 @@ $packs = $productManager->getProductPacks($productId);
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script src="assets/js/tracking-manager.js" defer></script>
     <script src="assets/js/product.js"></script>
-    <script src="assets/js/theme.js"></script>
+    <!-- <script src="assets/js/theme.js"></script> -->
     <script src="assets/js/pack.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -402,7 +363,7 @@ $packs = $productManager->getProductPacks($productId);
                 trackEvent('QualifiedVisit', {
                     content_ids: ['<?= $product['id']; ?>'],
                     content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                    value: <?= $product['price']; ?>,
+                    value: <?= $product['selling_price']; ?>,
                     currency: 'XOF'
                 });
             }, 5000);
@@ -428,7 +389,7 @@ $packs = $productManager->getProductPacks($productId);
                             trackEvent('FormStarted', {
                                 content_ids: ['<?= $product['id']; ?>'],
                                 content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                value: <?= $product['price']; ?>,
+                                value: <?= $product['selling_price']; ?>,
                                 currency: 'XOF'
                             });
 
@@ -437,7 +398,7 @@ $packs = $productManager->getProductPacks($productId);
                                     trackEvent('FormInactive', {
                                         content_ids: ['<?= $product['id']; ?>'],
                                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['price']; ?>,
+                                        value: <?= $product['selling_price']; ?>,
                                         currency: 'XOF',
                                         time_spent: Math.round((Date.now() - formStartTime) / 1000)
                                     });
@@ -456,7 +417,7 @@ $packs = $productManager->getProductPacks($productId);
                                     trackEvent('FormProgress25', {
                                         content_ids: ['<?= $product['id']; ?>'],
                                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['price']; ?>,
+                                        value: <?= $product['selling_price']; ?>,
                                         currency: 'XOF',
                                         progress: 25
                                     });
@@ -464,7 +425,7 @@ $packs = $productManager->getProductPacks($productId);
                                     trackEvent('FormProgress50', {
                                         content_ids: ['<?= $product['id']; ?>'],
                                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['price']; ?>,
+                                        value: <?= $product['selling_price']; ?>,
                                         currency: 'XOF',
                                         progress: 50
                                     });
@@ -472,7 +433,7 @@ $packs = $productManager->getProductPacks($productId);
                                     trackEvent('FormProgress75', {
                                         content_ids: ['<?= $product['id']; ?>'],
                                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['price']; ?>,
+                                        value: <?= $product['selling_price']; ?>,
                                         currency: 'XOF',
                                         progress: 75
                                     });
@@ -480,7 +441,7 @@ $packs = $productManager->getProductPacks($productId);
                                     trackEvent('FormCompleted', {
                                         content_ids: ['<?= $product['id']; ?>'],
                                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['price']; ?>,
+                                        value: <?= $product['selling_price']; ?>,
                                         currency: 'XOF',
                                         progress: 100
                                     });
@@ -495,7 +456,7 @@ $packs = $productManager->getProductPacks($productId);
                                     trackEvent('FormInactive', {
                                         content_ids: ['<?= $product['id']; ?>'],
                                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['price']; ?>,
+                                        value: <?= $product['selling_price']; ?>,
                                         currency: 'XOF',
                                         time_spent: Math.round((Date.now() - formStartTime) / 1000)
                                     });
@@ -508,7 +469,7 @@ $packs = $productManager->getProductPacks($productId);
                         trackEvent('FormFieldFocus', {
                             content_ids: ['<?= $product['id']; ?>'],
                             content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                            value: <?= $product['price']; ?>,
+                            value: <?= $product['selling_price']; ?>,
                             currency: 'XOF',
                             field_name: this.name || this.id || 'unknown',
                             field_index: index
@@ -525,7 +486,7 @@ $packs = $productManager->getProductPacks($productId);
                             trackEvent('FormAbandoned', {
                                 content_ids: ['<?= $product['id']; ?>'],
                                 content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                value: <?= $product['price']; ?>,
+                                value: <?= $product['selling_price']; ?>,
                                 currency: 'XOF',
                                 time_spent: timeSpent,
                                 abandonment_point: 'modal_close'
@@ -541,7 +502,7 @@ $packs = $productManager->getProductPacks($productId);
                         trackEvent('FormAbandoned', {
                             content_ids: ['<?= $product['id']; ?>'],
                             content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                            value: <?= $product['price']; ?>,
+                            value: <?= $product['selling_price']; ?>,
                             currency: 'XOF',
                             time_spent: timeSpent,
                             abandonment_point: 'page_leave'
@@ -588,10 +549,10 @@ $packs = $productManager->getProductPacks($productId);
                         purchasePayload.contents = [{
                             id: '<?= $product['id']; ?>',
                             quantity: 1,
-                            item_price: <?= $product['price']; ?>
+                            item_price: <?= $product['selling_price']; ?>
                         }];
                         purchasePayload.num_items = 1;
-                        purchasePayload.value = <?= $product['price']; ?>;
+                        purchasePayload.value = <?= $product['selling_price']; ?>;
                     }
 
                     // Envoyer uniquement l'événement Purchase (conseillé par Facebook)
@@ -607,11 +568,11 @@ $packs = $productManager->getProductPacks($productId);
                 contents: [{
                     'id': '<?= $product['id']; ?>',
                     'quantity': 1,
-                    'item_price': <?= $product['price']; ?>
+                    'item_price': <?= $product['selling_price']; ?>
                 }],
                 currency: 'XOF',
                 num_items: 1,
-                value: <?= $product['price']; ?>
+                value: <?= $product['selling_price']; ?>
             });
 
             var modal = new bootstrap.Modal(document.getElementById('orderModal'));

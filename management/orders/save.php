@@ -46,9 +46,10 @@ if (isset($_POST['valider'])) {
                     'client_adress' => htmlspecialchars($_POST['client_adress']),
                     'client_phone'  => htmlspecialchars($_POST['client_phone']),
                     'client_note'   => htmlspecialchars($_POST['client_note']),
-                    'unit_price'    => $product['price'],
-                    'total_price'   => !empty($pack['price_reduction']) ? $pack['price_reduction'] : $product['price'],
+                    'purchase_price'    => $product['purchase_price'],
+                    'total_price'   => !empty($pack['price']) ? $pack['price'] : $product['selling_price'],
                     'quantity'      => !empty($pack['quantity']) ? $pack['quantity'] : 1,
+                    'manager_id'   => $product['manager_id'],
                 ];
 
 
@@ -69,11 +70,10 @@ if (isset($_POST['valider'])) {
                     'id'           => htmlspecialchars($_POST['order_id']),
                     'quantity'     => htmlspecialchars($_POST['quantity'] ?? ''),
                     'total_price'  => htmlspecialchars($_POST['total_price'] ?? ''),
+                    'newstat'      => htmlspecialchars($_POST['newstat'] ?? ''),
                     'manager_note' => htmlspecialchars($_POST['manager_note'] ?? ''),
                     'updated_at'   => date('Y-m-d H:i:s'),
-                    'status'       => htmlspecialchars($_POST['status'] ?? 'processing'),
-                    'action'       => htmlspecialchars($_POST['action'] ?? 'move'),
-                ];
+                    ];
 
                 $orderManager->updateOrder($data);
 
@@ -81,13 +81,12 @@ if (isset($_POST['valider'])) {
                     header('Content-Type: application/json');
                     echo json_encode([
                         'success' => true,
-                        'status'  => $data['status'],
-                        'action'  => $data['action']
+                        'newstat'  => $data['newstat']
                     ]);
                     exit;
                 }
 
-                $message = urlencode("Le statut de la commande a été mis à jour avec succès.");
+                $message = urlencode(" commande a été mis à jour avec succès.");
                 header("Location: index.php?message=" . $message);
                 exit;
             } else {

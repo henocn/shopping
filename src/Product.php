@@ -124,10 +124,15 @@ class Product
 
     public function createProduct($data)
     {
-        $req = $this->bd->prepare("INSERT INTO products (name, price, image,description, status, carousel1, carousel2, carousel3, carousel4, carousel5, country, manager_id) VALUES (:name, :price, :image, :description, :status, :carousel1, :carousel2, :carousel3, :carousel4, :carousel5, :country, :manager_id)");
+        $req = $this->bd->prepare("INSERT INTO products (name, purchase_price, selling_price, shipping_price, quantity, image, description, status, carousel1, carousel2, carousel3, carousel4, carousel5, country, manager_id) VALUES (:name, :purchase_price, :selling_price, :shipping_price, :quantity, :image, :description, :status, :carousel1, :carousel2, :carousel3, :carousel4, :carousel5, :country, :manager_id)");
+        var_dump($data);
+        // die();
         $req->execute([
             'name'   => $data['name'],
-            'price'    => $data['price'],
+            'purchase_price'    => $data['purchase_price'],
+            'selling_price'     => $data['selling_price'],
+            'shipping_price'    => $data['shipping_price'],
+            'quantity'          => $data['quantity'],
             'image'     => $data['image'],
             'description' => $data['description'],
             'status'  => $data['status'],
@@ -158,14 +163,13 @@ class Product
 
     public function createPacks($data)
     {
-        $req = $this->bd->prepare("INSERT INTO product_packs (product_id, titre, quantity, image, price_reduction, price_normal) VALUES (:product_id, :titre, :quantity, :image, :price_reduction, :price_normal)");
+        $req = $this->bd->prepare("INSERT INTO product_packs (product_id, name, quantity, image, price) VALUES (:product_id, :name, :quantity, :image, :price)");
         $req->execute([
             'product_id' => $data['product_id'],
-            'titre' => $data['titre'],
-            'quantity' => $data['quantity'],
-            'image' => $data['image'],
-            'price_reduction' => $data['price_reduction'],
-            'price_normal' => $data['price_normal'],
+            'name' => $data['pack_name'],
+            'quantity' => $data['pack_quantity'],
+            'image' => $data['pack_image'],
+            'price' => $data['pack_price']
         ]);
     }
 
@@ -204,7 +208,7 @@ class Product
 
     public function getAllProducts()
     {
-        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`price`, `products`.`image`, `products`.`description`, `products`.`status`, `products`.`country`, `users`.`name` AS `manager_name`
+        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`selling_price`, `products`.`image`, `products`.`description`, `products`.`status`, `products`.`country`, `users`.`name` AS `manager_name`
         FROM `products` INNER JOIN `users` ON `products`.`manager_id` = `users`.`id` ORDER BY `products`.`id` DESC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -213,7 +217,7 @@ class Product
     
     // une fonction qui renvoi a un produit au hazar dans la base de donnée
     public function getRandomProduct(){
-        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`price`, `products`.`image`, `products`.`description`, `products`.`status`, `products`.`country`, `users`.`name` AS `manager_name`
+        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`selling_price`, `products`.`image`, `products`.`description`, `products`.`status`, `products`.`country`, `users`.`name` AS `manager_name`
         FROM products INNER JOIN users ON products.manager_id = users.id ORDER BY RAND() LIMIT 1");
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -257,11 +261,14 @@ class Product
 
     public function updateProduct($productId, $data)
     {
-        $req = $this->bd->prepare("UPDATE products SET name = :name, price = :price, image = :image, description = :description, carousel1 = :carousel1, carousel2 = :carousel2, carousel3 = :carousel3, carousel4 = :carousel4, carousel5 = :carousel5, country = :country, manager_id = :manager_id WHERE id = :id");
+        $req = $this->bd->prepare("UPDATE products SET name = :name, purchase_price = :purchase_price, selling_price = :selling_price, shipping_price = :shipping_price, quantity = :quantity, image = :image, description = :description, carousel1 = :carousel1, carousel2 = :carousel2, carousel3 = :carousel3, carousel4 = :carousel4, carousel5 = :carousel5, country = :country, manager_id = :manager_id WHERE id = :id");
         $req->execute([
             'id' => $productId,
             'name'   => $data['name'],
-            'price'    => $data['price'],
+            'purchase_price'    => $data['purchase_price'],
+            'selling_price'     => $data['selling_price'],
+            'shipping_price'    => $data['shipping_price'],
+            'quantity'          => $data['quantity'],
             'image'     => $data['image'],
             'description' => $data['description'],
             'carousel1' => $data['carousel1'],
@@ -308,13 +315,12 @@ class Product
 
     public function updatePack($packId, $data)
     {
-        $req = $this->bd->prepare("UPDATE product_packs SET titre = :titre, quantity = :quantity, image = :image, price_reduction = :price_reduction, price_normal = :price_normal WHERE id = :id");
+        $req = $this->bd->prepare("UPDATE product_packs SET name = :name, quantity = :quantity, image = :image, price = :price WHERE id = :id");
         $req->execute([
-            'titre' => $data['titre'],
-            'quantity' => $data['quantity'],
-            'image' => $data['image'],
-            'price_reduction' => $data['price_reduction'],
-            'price_normal' => $data['price_normal'],
+            'name' => $data['pack_name'],
+            'quantity' => $data['pack_quantity'],
+            'image' => $data['pack_image'],
+            'price' => $data['pack_price'],
             'id' => $packId
         ]);
     }

@@ -19,7 +19,7 @@ function checkAdminAccess($id)
     $user = $manager->getUserById($id);
     if ($user) {
         if ($user['role'] !== 1) {
-            header('Location: /error.php?code=403');
+            header('Location: /management/orders/');
             exit();
         }
     } else {

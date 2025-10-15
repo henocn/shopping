@@ -83,7 +83,7 @@ function addPack(){
     packDiv.innerHTML = `
         <div class="mb-3">
             <label class="form-label">Nom du Pack</label>
-            <input type="text" class="form-control" name="pack_titre[]" required>
+            <input type="text" class="form-control" name="pack_name[]" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Image</label>
@@ -94,11 +94,7 @@ function addPack(){
             <input type="number" class="form-control" name="pack_quantity[]" min="0" required>
         </div>
         <div class="mb-3">
-            <label class="form-label">Prix de reduction</label>
-            <input type="number" class="form-control" name="pack_price_reduction[]" min="0" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Prix normal</label>
+            <label class="form-label">Prix du pack</label>
             <input type="number" class="form-control" name="pack_price[]" min="0" required>
         </div>
         <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">
@@ -205,7 +201,7 @@ function handleFiles(files, uploaderId) {
             reader.readAsDataURL(file);
         }
     } else {
-        preview.innerHTML = ''; // Réinitialiser la prévisualisation
+        preview.innerHTML = '';
         Array.from(files).slice(0, 5).forEach(file => {
             const img = document.createElement('img');
             img.className = 'preview-image';

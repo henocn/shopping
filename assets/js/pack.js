@@ -13,14 +13,14 @@ function selectPack(packId, packPrice, quantity) {
   document.getElementById("selectedPackId").value = packId;
 
   const packInfo = document.getElementById("selectedPackInfo");
-  const packTitle = document.getElementById("packTitle");
+  const packName = document.getElementById("packName");
   const packQuantity = document.getElementById("packQuantity");
   const packPriceElement = document.getElementById("packPrice");
 
   const selectedCard = event.currentTarget;
-  const title = selectedCard.querySelector(".pack-title").textContent;
+  const name = selectedCard.querySelector(".pack-name").textContent;
 
-  packTitle.textContent = title;
+  packName.textContent = name;
   packQuantity.textContent = quantity + " unités";
   packPriceElement.textContent =
     new Intl.NumberFormat("fr-FR").format(packPrice) + " FCFA";
@@ -42,7 +42,7 @@ function selectPack(packId, packPrice, quantity) {
 
     trackEvent('PackSelected', {
       content_ids: [packId.toString()],
-      content_name: title,
+      content_name: name,
       value: packPrice,
       currency: 'XOF',
       quantity: quantity,
@@ -79,16 +79,16 @@ function updatePackSelection() {
     const packId = selectedOption.value;
     const packPrice = selectedOption.dataset.price;
     const packQuantity = selectedOption.dataset.quantity;
-    const packTitle = selectedOption.dataset.title;
+    const packName = selectedOption.dataset.name;
 
     document.getElementById("selectedPackId").value = packId;
 
     const packInfo = document.getElementById("selectedPackInfo");
-    const packTitleElement = document.getElementById("packTitle");
+    const packNameElement = document.getElementById("packName");
     const packQuantityElement = document.getElementById("packQuantity");
     const packPriceElement = document.getElementById("packPrice");
 
-    packTitleElement.textContent = packTitle;
+    packNameElement.textContent = packName;
     packQuantityElement.textContent = packQuantity + " unités";
     packPriceElement.textContent =
       new Intl.NumberFormat("fr-FR").format(packPrice) + " FCFA";
@@ -98,7 +98,7 @@ function updatePackSelection() {
     if (typeof trackEvent !== 'undefined') {
       trackEvent('PackSelectedDropdown', {
         content_ids: [packId],
-        content_name: packTitle,
+        content_name: packName,
         value: parseInt(packPrice),
         currency: 'XOF',
         quantity: parseInt(packQuantity),
