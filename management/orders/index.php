@@ -38,6 +38,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
       <link href="../../assets/css/navbar.css" rel="stylesheet">
       <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
       <link href="../../assets/css/order.css" rel="stylesheet">
+      <link href="../../assets/css/orders.css" rel="stylesheet">
 </head>
 
 <body>
@@ -46,53 +47,18 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
 
       <main class="container-fluid my-4">
 
-            <!-- Navigation par onglets -->
-            <ul class="nav nav-tabs" id="ordersTabs" role="tablist">
-                  <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="tab-to-process" data-bs-toggle="tab" data-bs-target="#pane-to-process" type="button" role="tab">
-                              <i class='bx bx-time-five me-2'></i>À traiter
-                        </button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="tab-remind" data-bs-toggle="tab" data-bs-target="#pane-remind" type="button" role="tab">
-                              <i class='bx bx-bell me-1'></i>Rappeler
-                        </button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="tab-processing" data-bs-toggle="tab" data-bs-target="#pane-processing" type="button" role="tab">
-                              <i class='bx bx-truck me-2'></i>Programmées
-                        </button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="tab-delivered" data-bs-toggle="tab" data-bs-target="#pane-delivered" type="button" role="tab">
-                              <i class='bx bx-check-circle me-2'></i>Livrées aujourd'hui
-                        </button>
-                  </li>
-            </ul>
-
             <?php
 
             $groupedOrders = [
-                  'to-process' => [],  // new + unreachable
-                  'remind' => [],
-                  'processing' => [],
+                  'to-process' => [],  // new + unreachable + remind + processing
                   'delivered' => []
             ];
 
-            // Regrouper les commandes normales
+            // Regrouper toutes les commandes non livrées dans "à traiter"
             foreach ($orders as $o) {
                   if (isset($o['newstat'])) {
-                        switch ($o['newstat']) {
-                              case 'new':
-                              case 'unreachable':
-                                    $groupedOrders['to-process'][] = $o;
-                                    break;
-                              case 'remind':
-                                    $groupedOrders['remind'][] = $o;
-                                    break;
-                              case 'processing':
-                                    $groupedOrders['processing'][] = $o;
-                                    break;
+                        if (in_array($o['newstat'], ['new', 'unreachable', 'remind', 'processing'])) {
+                              $groupedOrders['to-process'][] = $o;
                         }
                   }
             }
@@ -102,18 +68,55 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
 
             ?>
 
+            <!-- Navigation par onglets -->
+            <ul class="nav nav-tabs" id="ordersTabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="tab-to-process" data-bs-toggle="tab" data-bs-target="#pane-to-process" type="button" role="tab">
+                              <i class='bx bx-time-five me-2'></i>À traiter
+                              <span class="badge bg-danger ms-2"><?= count($groupedOrders['to-process']) ?></span>
+                        </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tab-delivered" data-bs-toggle="tab" data-bs-target="#pane-delivered" type="button" role="tab">
+                              <i class='bx bx-check-circle me-2'></i>Livrées aujourd'hui
+                              <span class="badge bg-success ms-2"><?= count($groupedOrders['delivered']) ?></span>
+                        </button>
+                  </li>
+            </ul>
+
             <!-- Contenu des onglets -->
             <div class="tab-content" id="ordersTabsContent">
                   <!-- Onglet À traiter -->
                   <div class="tab-pane fade show active" id="pane-to-process" role="tabpanel">
                         <div class="row mt-3">
                               <div class="col-12">
-                                    <h6>Commandes à traiter (<?= count($groupedOrders['to-process']) ?>)</h6>
+                                    <!-- Champ de recherche/filtrage compact -->
+                                    <div class="card mb-3 search-compact">
+                                          <div class="card-body p-2">
+                                                <div class="row g-2 align-items-end">
+                                                      <div class="col-md-7">
+                                                            <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="🔍 Rechercher par nom, téléphone ou produit...">
+                                                      </div>
+                                                      <div class="col-md-5">
+                                                            <select class="form-select form-select-sm" id="statusFilter">
+                                                                  <option >--Filtrer--</option>
+                                                                  <option value="all">Tous</option>
+                                                                  <option value="new">Nouvelles</option>
+                                                                  <option value="unreachable">Injoignables</option>
+                                                                  <option value="remind">Rappeler</option>
+                                                                  <option value="processing">Programmées</option>
+                                                            </select>
+                                                      </div>
+                                                </div>
+                                          </div>
+                                    </div>
+
+                                    <h6>Commandes à traiter (<span id="order-count"><?= count($groupedOrders['to-process']) ?></span>)</h6>
                                     <?php if (empty($groupedOrders['to-process'])): ?>
                                           <p class="text-muted">Aucune commande à traiter.</p>
                                     <?php else: ?>
                                           <div class="table-responsive">
-                                                <table class="table">
+                                                <table class="table" id="orders-table">
                                                       <thead>
                                                             <tr>
                                                                   <th scope="col">ID</th>
@@ -131,8 +134,25 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                             </tr>
                                                       </thead>
                                                       <tbody>
-                                                            <?php foreach ($groupedOrders['to-process'] as $order): ?>
-                                                                  <tr class="<?php echo $order['newstat'] == 'unreachable' ? 'table-danger' : ''; ?>">
+                                                            <?php foreach ($groupedOrders['to-process'] as $order):
+                                                                  $statusClass = 'order-row-default';
+                                                                  switch ($order['newstat']) {
+                                                                        case 'unreachable':
+                                                                              $statusClass = 'order-row-unreachable';
+                                                                              break;
+                                                                        case 'remind':
+                                                                              $statusClass = 'order-row-remind';
+                                                                              break;
+                                                                        case 'processing':
+                                                                              $statusClass = 'order-row-processing';
+                                                                              break;
+                                                                  }
+                                                            ?>
+                                                                  <tr class="order-row <?= $statusClass ?>"
+                                                                      data-status="<?= $order['newstat'] ?>"
+                                                                      data-client="<?= htmlspecialchars(strtolower($order['client_name'])) ?>"
+                                                                      data-phone="<?= htmlspecialchars($order['client_phone']) ?>"
+                                                                      data-product="<?= htmlspecialchars(strtolower($order['product_name'])) ?>">
                                                                         <td>#<?= htmlspecialchars($order['order_id']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_name']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_phone']) ?></td>
@@ -144,113 +164,46 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                         <td><?= number_format($order['total_price'], 0, ',', ' ') ?> FCFA</td>
                                                                         <td><?= htmlspecialchars($order['manager_note'] ?? '') ?></td>
                                                                         <td>
-                                                                              <button class="btn btn-outline-primary btn-sm" type="button"
-                                                                                    data-bs-toggle="modal"
-                                                                                    data-bs-target="#orderModal<?= (int)$order['order_id'] ?>">
-                                                                                    <i class='bx bx-edit'></i>
-                                                                              </button>
+                                                                              <?php if ($order['newstat'] === 'processing'): ?>
+                                                                                    <!-- Boutons directs pour les commandes programmées -->
+                                                                                    <div class="order-action-group">
+                                                                                          <form method="POST" action="save.php" onsubmit="return confirm('Confirmer la livraison de cette commande ?');">
+                                                                                                <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
+                                                                                                <input type="hidden" name="quantity" value="<?= $order['quantity'] ?>">
+                                                                                                <input type="hidden" name="total_price" value="<?= $order['total_price'] ?>">
+                                                                                                <input type="hidden" name="newstat" value="deliver">
+                                                                                                <input type="hidden" name="manager_note" value="<?= htmlspecialchars($order['manager_note'] ?? '') ?>">
+                                                                                                <input type="hidden" name="updated_at" value="<?= date('Y-m-d H:i:s') ?>">
+                                                                                                <input type="hidden" name="valider" value="update">
+                                                                                                <button type="submit" class="btn btn-success btn-sm" title="Livrer">
+                                                                                                      <i class='bx bx-check'></i>
+                                                                                                      <span>Livrer</span>
+                                                                                                </button>
+                                                                                          </form>
+                                                                                          <form method="POST" action="save.php" onsubmit="return confirm('Annuler cette commande ?');">
+                                                                                                <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
+                                                                                                <input type="hidden" name="quantity" value="<?= $order['quantity'] ?>">
+                                                                                                <input type="hidden" name="total_price" value="<?= $order['total_price'] ?>">
+                                                                                                <input type="hidden" name="newstat" value="canceled">
+                                                                                                <input type="hidden" name="manager_note" value="<?= htmlspecialchars($order['manager_note'] ?? '') ?>">
+                                                                                                <input type="hidden" name="updated_at" value="<?= date('Y-m-d H:i:s') ?>">
+                                                                                                <input type="hidden" name="valider" value="update">
+                                                                                                <button type="submit" class="btn btn-danger btn-sm" title="Annuler">
+                                                                                                      <i class='bx bx-x'></i>
+                                                                                                      <span>Annuler</span>
+                                                                                                </button>
+                                                                                          </form>
+                                                                                    </div>
+                                                                              <?php else: ?>
+                                                                                    <!-- Bouton modal pour les autres statuts -->
+                                                                                    <button class="btn btn-outline-primary btn-sm" type="button"
+                                                                                          data-bs-toggle="modal"
+                                                                                          data-bs-target="#orderModal<?= (int)$order['order_id'] ?>">
+                                                                                          <i class='bx bx-edit'></i>
+                                                                                    </button>
+                                                                              <?php endif; ?>
                                                                         </td>
                                                                         <td><?= date('d/m/Y à H:i', strtotime($order['created_at'])) ?></td>
-                                                                  </tr>
-                                                            <?php endforeach; ?>
-                                                      </tbody>
-                                                </table>
-                                          </div>
-                                    <?php endif; ?>
-                              </div>
-                        </div>
-                  </div>
-
-                  <!-- Onglet Rappeler -->
-                  <div class="tab-pane fade" id="pane-remind" role="tabpanel">
-                        <div class="row mt-3">
-                              <div class="col-12">
-                                    <h6>Commandes à rappeler (<?= count($groupedOrders['remind']) ?>)</h6>
-                                    <?php if (empty($groupedOrders['remind'])): ?>
-                                          <p class="text-muted">Aucune commande à rappeler.</p>
-                                    <?php else: ?>
-                                          <div class="table-responsive">
-                                                <table class="table table-striped">
-                                                      <thead>
-                                                            <tr>
-                                                                  <th>ID</th>
-                                                                  <th>Client</th>
-                                                                  <th>Numéro</th>
-                                                                  <th>Pays</th>
-                                                                  <th>Produit</th>
-                                                                  <th>Quantité</th>
-                                                                  <th>Prix_Total</th>
-                                                                  <th>Mes_Notes</th>
-                                                                  <th>Actions</th>
-                                                            </tr>
-                                                      </thead>
-                                                      <tbody>
-                                                            <?php foreach ($groupedOrders['remind'] as $order): ?>
-                                                                  <tr class="newsat-remind">
-                                                                        <td>#<?= $order['order_id'] ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_name']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_phone']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_country']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['product_name']) ?></td>
-                                                                        <td><?= (int)$order['quantity'] ?></td>
-                                                                        <td><?= number_format($order['total_price'], 0, ',', ' ') ?> FCFA</td>
-                                                                        <td><?= htmlspecialchars($order['manager_note'] ?? '') ?></td>
-                                                                        <td>
-                                                                              <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#orderModal<?= (int)$order['order_id'] ?>">
-                                                                                    <i class='bx bx-edit'></i>
-                                                                              </button>
-                                                                        </td>
-                                                                  </tr>
-                                                            <?php endforeach; ?>
-                                                      </tbody>
-                                                </table>
-                                          </div>
-                                    <?php endif; ?>
-                              </div>
-                        </div>
-                  </div>
-
-                  <!-- Onglet Programmées -->
-                  <div class="tab-pane fade" id="pane-processing" role="tabpanel">
-                        <div class="row mt-3">
-                              <div class="col-12">
-                                    <h6>Commandes programmées (<?= count($groupedOrders['processing']) ?>)</h6>
-                                    <?php if (empty($groupedOrders['processing'])): ?>
-                                          <p class="text-muted">Aucune commande programmée.</p>
-                                    <?php else: ?>
-                                          <div class="table-responsive">
-                                                <table class="table table-striped">
-                                                      <thead>
-                                                            <tr>
-                                                                  <th>ID</th>
-                                                                  <th>Client</th>
-                                                                  <th>Numero</th>
-                                                                  <th>Produit</th>
-                                                                  <th>Quantité</th>
-                                                                  <th>Total</th>
-                                                                  <th>Statut</th>
-                                                                  <th>Date</th>
-                                                                  <th>Actions</th>
-                                                            </tr>
-                                                      </thead>
-                                                      <tbody>
-                                                            <?php foreach ($groupedOrders['processing'] as $order): ?>
-                                                                  <tr>
-                                                                        <td>#<?= $order['order_id'] ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_name']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_phone']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['product_name']) ?></td>
-                                                                        <td><?= $order['quantity'] ?></td>
-                                                                        <td><?= number_format($order['total_price'], 2) ?> FCFA</td>
-                                                                        <td>
-                                                                              <span class="badge bg-primary"><?= $order['newstat'] ?></span>
-                                                                        </td>
-                                                                        <td><?= date('d/m/Y H:i', strtotime($order['created_at'])) ?></td>
-                                                                        <td>
-                                                                              <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#orderModal<?= (int)$order['order_id'] ?>">
-                                                                                    <i class='bx bx-edit'></i>
-                                                                              </button>
-                                                                        </td>
                                                                   </tr>
                                                             <?php endforeach; ?>
                                                       </tbody>
@@ -417,6 +370,8 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
 
       <script src="../../assets/js/bootstrap.bundle.min.js"></script>
       <script src="../../assets/js/order.js"></script>
+      <script src="../../assets/js/reload.js"></script>
+      <script src="../../assets/js/filter-orders.js"></script>
 
 </body>
 

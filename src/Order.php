@@ -58,6 +58,14 @@ class Order
         return true;
     }
 
+    public function getOrderById($id)
+    {
+        $sql = "SELECT * FROM orders WHERE id = :id LIMIT 1";
+        $req = $this->bd->prepare($sql);
+        $req->execute(['id' => $id]);
+        return $req->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function getAllOrders()
     {
         $sql = "SELECT
@@ -112,6 +120,7 @@ ORDER BY orders.id DESC;
             'updated_at'   => $data['updated_at'],
             'id'           => $data['id'],
         ]);
+        return true;
     }
 
     public function getOrdersByUserId($userId)
