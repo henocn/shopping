@@ -146,7 +146,7 @@ ORDER BY orders.id DESC;
             p.selling_price AS unit_price,
             COALESCE(MAX(p.name), 'Produit supprimé') AS product_name,
             COALESCE(MAX(p.image), '') AS product_image,
-            COALESCE(MAX(pp.titre), '') AS pack_name
+            COALESCE(MAX(pp.name), '') AS pack_name
         FROM orders o
         LEFT JOIN products p ON p.id = o.product_id
         LEFT JOIN product_packs pp ON pp.id = o.pack_id
