@@ -47,6 +47,14 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
 
       <main class="container-fluid my-4">
 
+            <!-- En-tête avec bouton Archives -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h4><i class='bx bx-package me-2'></i>Gestion des Commandes</h4>
+                  <a href="archive.php" class="btn btn-outline-primary">
+                        <i class='bx bx-archive me-2'></i>Voir les Archives
+                  </a>
+            </div>
+
             <?php
 
             $groupedOrders = [
