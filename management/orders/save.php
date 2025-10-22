@@ -7,6 +7,7 @@ use src\Connectbd;
 use src\Product;
 use src\Order;
 use src\Pack;
+use src\Depense;
 
 $cnx = Connectbd::getConnection();
 
@@ -16,6 +17,7 @@ if (isset($_POST['valider'])) {
     $productManager = new Product($cnx);
     $packManager = new Pack($cnx);
     $orderManager = new Order($cnx);
+    $depenseManager = new Depense($cnx);
 
 
     switch ($connect) {
@@ -104,6 +106,18 @@ if (isset($_POST['valider'])) {
 
                 if ($shouldDecreaseStock && !empty($existingOrder['product_id'])) {
                     $productManager->decrementQuantity((int)$existingOrder['product_id'], $updatedQuantity);
+                }
+
+                // Enregistrer les frais de livraison si fournis
+                if ($newStatus === 'deliver' && isset($_POST['delivery_fee']) && $_POST['delivery_fee'] > 0) {
+                    $depenseData = [
+                        'type'        => 'products',
+                        'product_id'  => (int)$existingOrder['product_id'],
+                        'cout'        => (int)$_POST['delivery_fee'],
+                        'date'        => date('Y-m-d H:i:s'),
+                        'descrption'  => 'Livraison'
+                    ];
+                    $depenseManager->createDepense($depenseData);
                 }
 
                 if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'fetch') {

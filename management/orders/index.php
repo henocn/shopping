@@ -175,7 +175,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                               <?php if ($order['newstat'] === 'processing'): ?>
                                                                                     <!-- Boutons directs pour les commandes programmées -->
                                                                                     <div class="order-action-group">
-                                                                                          <form method="POST" action="save.php" onsubmit="return confirm('Confirmer la livraison de cette commande ?');">
+                                                                                          <form method="POST" action="save.php" id="quickDeliverForm<?= $order['order_id'] ?>">
                                                                                                 <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
                                                                                                 <input type="hidden" name="quantity" value="<?= $order['quantity'] ?>">
                                                                                                 <input type="hidden" name="total_price" value="<?= $order['total_price'] ?>">
@@ -183,7 +183,8 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                                                 <input type="hidden" name="manager_note" value="<?= htmlspecialchars($order['manager_note'] ?? '') ?>">
                                                                                                 <input type="hidden" name="updated_at" value="<?= date('Y-m-d H:i:s') ?>">
                                                                                                 <input type="hidden" name="valider" value="update">
-                                                                                                <button type="submit" class="btn btn-success btn-sm" title="Livrer">
+                                                                                                <input type="hidden" name="delivery_fee" value="0">
+                                                                                                <button type="button" class="btn btn-success btn-sm quick-deliver-btn" data-order-id="<?= $order['order_id'] ?>" title="Livrer">
                                                                                                       <i class='bx bx-check'></i>
                                                                                                       <span>Livrer</span>
                                                                                                 </button>
@@ -311,6 +312,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                         case 'new':
                                                                         case 'unreachable':
                                                                               $actions = [
+                                                                                    ['value' => 'deliver', 'label' => 'Livrer'],
                                                                                     ['value' => 'processing', 'label' => 'Programmer'],
                                                                                     ['value' => 'remind', 'label' => 'Rappeler'],
                                                                                     ['value' => 'unreachable', 'label' => 'Injoignable'],
@@ -319,6 +321,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                               break;
                                                                         case 'remind':
                                                                               $actions = [
+                                                                                    ['value' => 'deliver', 'label' => 'Livrer'],
                                                                                     ['value' => 'processing', 'label' => 'Programmer'],
                                                                                     ['value' => 'remind', 'label' => 'Rappeler'],
                                                                                     ['value' => 'unreachable', 'label' => 'Injoignable'],
@@ -361,10 +364,11 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                           <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
                                           <input type="hidden" name="valider" value="update">
                                           <input type="hidden" name="updated_at" value="<?= date('Y-m-d H:i:s') ?>">
+                                          <input type="hidden" name="delivery_fee" id="deliveryFee<?= $order['order_id'] ?>" value="0">
                                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                 <i class='bx bx-x me-2'></i>Annuler
                                           </button>
-                                          <button type="submit" class="btn btn-primary">
+                                          <button type="button" class="btn btn-primary" id="submitBtn<?= $order['order_id'] ?>">
                                                 <i class='bx bx-save me-2'></i>Enregistrer
                                           </button>
                                     </div>
@@ -374,12 +378,189 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
             </div>
       <?php endforeach; ?>
 
+      <!-- Modal pour les frais de livraison -->
+      <?php foreach ($orders as $order): ?>
+            <div class="modal fade" id="deliveryFeeModal<?= $order['order_id'] ?>" tabindex="-1" aria-labelledby="deliveryFeeModalLabel<?= $order['order_id'] ?>" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                              <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title" id="deliveryFeeModalLabel<?= $order['order_id'] ?>">
+                                          <i class='bx bx-package me-2'></i>Frais de Livraison
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                              </div>
+                              <div class="modal-body">
+                                          <p class="text-muted mb-3">Commande #<?= $order['order_id'] ?> - <?= htmlspecialchars($order['client_name']) ?></p>
+                                          <div class="mb-3">
+                                                <label for="deliveryFeeInput<?= $order['order_id'] ?>" class="form-label fw-bold">
+                                                      Frais de livraison (FCFA)
+                                                </label>
+                                                <input type="number" 
+                                                       class="form-control form-control-lg" 
+                                                       id="deliveryFeeInput<?= $order['order_id'] ?>" 
+                                                       placeholder="Entrez les frais de livraison" 
+                                                       min="0" 
+                                                       value="0">
+                                                <div class="form-text">
+                                                      <i class='bx bx-info-circle me-1'></i>
+                                                      Laissez 0 si aucun frais de livraison
+                                                </div>
+                                          </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                <i class='bx bx-x me-2'></i>Annuler
+                                          </button>
+                                          <button type="button" class="btn btn-success" onclick="confirmDelivery(<?= $order['order_id'] ?>)">
+                                                <i class='bx bx-check me-2'></i>Confirmer la livraison
+                                          </button>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+      <?php endforeach; ?>
+
       <?php include '../../includes/footer.php'; ?>
 
       <script src="../../assets/js/bootstrap.bundle.min.js"></script>
       <script src="../../assets/js/order.js"></script>
       <script src="../../assets/js/reload.js"></script>
       <script src="../../assets/js/filter-orders.js"></script>
+      
+      <script>
+            let currentDeliveryContext = null;
+            let deliveryModalConfirming = false;
+
+            // Gérer le clic sur le bouton Enregistrer du modal principal
+            document.querySelectorAll('[id^="submitBtn"]').forEach(button => {
+                  button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const orderId = this.id.replace('submitBtn', '');
+                        const form = document.getElementById('orderForm' + orderId);
+                        const selectedAction = document.getElementById('actionSelect' + orderId).value;
+
+                        if (selectedAction === 'deliver') {
+                              currentDeliveryContext = { type: 'modal', orderId: orderId };
+
+                              const mainModalElement = document.getElementById('orderModal' + orderId);
+                              const mainModal = bootstrap.Modal.getInstance(mainModalElement);
+                              if (mainModal) {
+                                    mainModal.hide();
+                              }
+
+                              setTimeout(() => {
+                                    const deliveryModalElement = document.getElementById('deliveryFeeModal' + orderId);
+                                    if (deliveryModalElement) {
+                                          const feeInput = document.getElementById('deliveryFeeInput' + orderId);
+                                          if (feeInput) {
+                                                feeInput.value = '0';
+                                                feeInput.focus();
+                                          }
+                                          const existingModal = bootstrap.Modal.getInstance(deliveryModalElement);
+                                          const deliveryModal = existingModal || new bootstrap.Modal(deliveryModalElement);
+                                          deliveryModal.show();
+                                          attachDeliveryModalHandler(orderId, deliveryModalElement);
+                                    }
+                              }, 250);
+                        } else {
+                              form.submit();
+                        }
+                  });
+            });
+
+            // Boutons rapides "Livrer"
+            document.querySelectorAll('.quick-deliver-btn').forEach(button => {
+                  button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const orderId = this.dataset.orderId;
+                        currentDeliveryContext = { type: 'quick', orderId: orderId };
+
+                        const deliveryModalElement = document.getElementById('deliveryFeeModal' + orderId);
+                        if (deliveryModalElement) {
+                              const feeInput = document.getElementById('deliveryFeeInput' + orderId);
+                              if (feeInput) {
+                                    feeInput.value = '0';
+                                    feeInput.focus();
+                              }
+                              const existingModal = bootstrap.Modal.getInstance(deliveryModalElement);
+                              const deliveryModal = existingModal || new bootstrap.Modal(deliveryModalElement);
+                              deliveryModal.show();
+                              attachDeliveryModalHandler(orderId, deliveryModalElement);
+                        }
+                  });
+            });
+
+            // Confirmer la livraison avec les frais
+            function confirmDelivery(orderId) {
+                  const feeInput = document.getElementById('deliveryFeeInput' + orderId);
+                  const deliveryFee = feeInput ? parseInt(feeInput.value || '0', 10) : 0;
+
+                  const deliveryModalElement = document.getElementById('deliveryFeeModal' + orderId);
+                  const deliveryModal = bootstrap.Modal.getInstance(deliveryModalElement);
+                  if (deliveryModal) {
+                        deliveryModalConfirming = true;
+                        deliveryModal.hide();
+                  }
+
+                  if (currentDeliveryContext && currentDeliveryContext.type === 'quick') {
+                        const quickForm = document.getElementById('quickDeliverForm' + orderId);
+                        if (quickForm) {
+                              const feeField = quickForm.querySelector('input[name="delivery_fee"]');
+                              if (feeField) {
+                                    feeField.value = deliveryFee;
+                              }
+                              setTimeout(() => quickForm.submit(), 200);
+                        }
+                  } else {
+                        const feeField = document.getElementById('deliveryFee' + orderId);
+                        if (feeField) {
+                              feeField.value = deliveryFee;
+                        }
+                        setTimeout(() => {
+                              const form = document.getElementById('orderForm' + orderId);
+                              if (form) {
+                                    form.submit();
+                              }
+                        }, 200);
+                  }
+
+                  currentDeliveryContext = null;
+                  deliveryModalConfirming = false;
+            }
+
+            window.confirmDelivery = confirmDelivery;
+
+            function attachDeliveryModalHandler(orderId, modalElement) {
+                  if (!modalElement || modalElement.dataset.handlerAttached === '1') {
+                        return;
+                  }
+
+                  modalElement.addEventListener('hidden.bs.modal', function () {
+                        if (deliveryModalConfirming) {
+                              deliveryModalConfirming = false;
+                              currentDeliveryContext = null;
+                              return;
+                        }
+
+                        if (currentDeliveryContext && currentDeliveryContext.type === 'modal' && currentDeliveryContext.orderId === orderId) {
+                              const mainModalElement = document.getElementById('orderModal' + orderId);
+                              if (mainModalElement) {
+                                    const existingMainModal = bootstrap.Modal.getInstance(mainModalElement);
+                                    const mainModal = existingMainModal || new bootstrap.Modal(mainModalElement);
+                                    mainModal.show();
+                              }
+                        }
+
+                        currentDeliveryContext = null;
+                  });
+
+                  modalElement.dataset.handlerAttached = '1';
+            }
+      </script>
 
 </body>
 
