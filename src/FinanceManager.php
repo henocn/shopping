@@ -39,7 +39,7 @@ class FinanceManager
 
         try {
             $stmt = $this->pdo->prepare(
-                "INSERT INTO depense (type, product_id, manager_id, cout, descrption, date) 
+                "INSERT INTO depense (type, product_id, manager_id, cout, description, date) 
                  VALUES (?, ?, ?, ?, ?, ?)"
             );
             return $stmt->execute([$type, $productId, $managerId, $amount, $description, $dateValue]);
@@ -70,7 +70,7 @@ class FinanceManager
                     d.product_id,
                     d.cout,
                     d.date,
-                    d.descrption,
+                    d.description,
                     p.name as product_name
                 FROM depense d
                 LEFT JOIN products p ON d.product_id = p.id
@@ -112,15 +112,25 @@ class FinanceManager
     /**
      * Récupère le total des dépenses par type
      */
-    public function getTotalExpensesByType($type)
+    public function getTotalExpensesByType($type, $dateFrom = null, $dateTo = null)
     {
         try {
-            $stmt = $this->pdo->prepare("
+            $sql = "
                 SELECT COALESCE(SUM(cout), 0) as total
                 FROM depense
                 WHERE type = ?
-            ");
-            $stmt->execute([$type]);
+            ";
+
+            $params = [$type];
+
+            if (!empty($dateFrom) && !empty($dateTo)) {
+                $sql .= " AND date BETWEEN ? AND ?";
+                $params[] = $dateFrom;
+                $params[] = $dateTo;
+            }
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
             return (float) $stmt->fetchColumn();
         } catch (Exception $e) {
             error_log("Erreur getTotalExpensesByType: " . $e->getMessage());
@@ -201,7 +211,7 @@ class FinanceManager
                     d.manager_id,
                     d.cout,
                     d.date,
-                    d.descrption AS description,
+                    d.description AS description,
                     p.name AS product_name,
                     u.name AS manager_name
                 FROM depense d

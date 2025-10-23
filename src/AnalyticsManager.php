@@ -27,27 +27,45 @@ class AnalyticsManager
     public function getGlobalSalesStats($dateFrom = null, $dateTo = null)
     {
         try {
+            $hasDateRange = !empty($dateFrom) && !empty($dateTo);
+
             $sql = "
-            SELECT 
-                COUNT(id) AS total_orders,
-                COALESCE(SUM(CASE WHEN newstat = 'deliver' THEN quantity ELSE 0 END), 0) AS total_quantity_sold,
-                COALESCE(SUM(CASE WHEN newstat = 'deliver' THEN total_price ELSE 0 END), 0) AS total_revenue,
-                COALESCE(AVG(CASE WHEN newstat = 'deliver' THEN total_price END), 0) AS average_order_value,
-                (SELECT COALESCE(SUM(cout), 0) FROM depense) AS total_expenses,
-                COUNT(CASE WHEN newstat = 'deliver' THEN 1 END) AS delivered_orders,
-                COUNT(CASE WHEN newstat = 'canceled' THEN 1 END) AS cancelled_orders,
-                COUNT(CASE WHEN newstat = 'processing' THEN 1 END) AS inprogress_orders
-            FROM orders
-        ";
+                SELECT 
+                    COUNT(id) AS total_orders,
+                    COALESCE(SUM(CASE WHEN newstat = 'deliver' THEN quantity ELSE 0 END), 0) AS total_quantity_sold,
+                    COALESCE(SUM(CASE WHEN newstat = 'deliver' THEN total_price ELSE 0 END), 0) AS total_revenue,
+                    COALESCE(AVG(CASE WHEN newstat = 'deliver' THEN total_price END), 0) AS average_order_value,
+                    (
+                        SELECT COALESCE(SUM(cout), 0)
+                        FROM depense
+            ";
 
-            $params = [];
-
-            if ($dateFrom && $dateTo) {
-                $sql .= " WHERE created_at BETWEEN ? AND ?";
-                $params = [$dateFrom, $dateTo];
+            if ($hasDateRange) {
+                $sql .= " WHERE date BETWEEN :dep_date_from AND :dep_date_to";
             }
+
+            $sql .= "
+                    ) AS total_expenses,
+                    COUNT(CASE WHEN newstat = 'deliver' THEN 1 END) AS delivered_orders,
+                    COUNT(CASE WHEN newstat = 'canceled' THEN 1 END) AS cancelled_orders,
+                    COUNT(CASE WHEN newstat = 'processing' THEN 1 END) AS inprogress_orders
+                FROM orders
+            ";
+
+            if ($hasDateRange) {
+                $sql .= " WHERE created_at BETWEEN :date_from AND :date_to";
+            }
+
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute($params);
+
+            if ($hasDateRange) {
+                $stmt->bindValue(':dep_date_from', $dateFrom);
+                $stmt->bindValue(':dep_date_to', $dateTo);
+                $stmt->bindValue(':date_from', $dateFrom);
+                $stmt->bindValue(':date_to', $dateTo);
+            }
+
+            $stmt->execute();
 
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result;
