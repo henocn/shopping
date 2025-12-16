@@ -71,7 +71,7 @@ $packs = $productManager->getProductPacks($productId);
             
             <div class="logo">
                 <a href="/" aria-label="home">
-                    <img src="logo.jpg" alt="TUBKAL MARKET" >
+                    <img src="assets/images/logo.jpg" alt="TUBKAL MARKET" >
                 </a>
             </div>
             <div >
