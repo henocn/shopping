@@ -1,5 +1,5 @@
 :root {
-  --yc-primary-color: rgb(65, 93, 35);
+  --yc-primary-color: rgb(56, 89, 161);
   --yc-secondary-color: #33696e;
   --yc-neutral-color: #16191bff;
   --yc-neutral-light-color: #e3e3e3ff;
@@ -14,54 +14,47 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
   font-family: var(--yc-font-family);
   color: var(--yc-neutral-color);
   background-color: #e6e2e2b8;
 }
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* Header Navigation */
+/* ================= HEADER ================= */
+
 .yc-header {
-  background-color: #ffffffff;
-  border-bottom: 1px solid var(--yc-neutral-light-color);
-  padding: 15px 0;
+  background-color: #fff;
+  border-bottom: 1px solid var(--yc-success-color);
+  padding: 6px 0;
   position: sticky;
   top: 0;
   z-index: 100;
 }
+
 .yc-navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .logo img {
   max-width: 140px;
   height: auto;
 }
-.menu-list {
-  display: flex;
-  list-style: none;
-  gap: 20px;
-}
-.menu-list a {
-  text-decoration: none;
-  color: var(--yc-neutral-color);
-  font-weight: 400;
-  transition: color 0.3s;
-}
-.menu-list a:hover {
-  color: var(--yc-secondary-color);
-}
+
 .corner {
   display: flex;
   gap: 15px;
   align-items: center;
 }
+
 .commander-btn {
   background-color: var(--yc-primary-color);
   color: white;
@@ -70,58 +63,134 @@ body {
   border-radius: 4px;
   cursor: pointer;
   font-weight: 500;
-  font-family: var(--yc-font-family);
   transition: background-color 0.3s;
 }
+
 .commander-btn:hover {
   background-color: var(--yc-secondary-color);
 }
 
-/* Mobile drawer */
-.navigation-drawer {
-  display: none;
+/* Badge livraison */
+.yc-navbar > div span {
+  background: linear-gradient(135deg, #0b7035, #156a11);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
 }
-@media (max-width: 768px) {
-  .menu-list {
-    display: none;
-  }
-  .navigation-drawer {
-    display: block;
+
+/* ================= LAYOUT PRODUIT ================= */
+
+.main-content > section.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  padding: 30px 0;
+  align-items: start;
+}
+
+/* ================= IMAGES ================= */
+
+.product-images {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+/* Image sticky desktop */
+@media (min-width: 768px) {
+  .product-images {
+    position: sticky;
+    top: 90px;
+    align-self: flex-start;
   }
 }
 
-/* Product Section */
-.product-images {
-  margin-bottom: 30px;
+/* Image principale (légèrement réduite) */
+.main-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 500px;
+  margin: 0 auto;
+  background: #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
 }
+.main-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Thumbnails */
+.carousel-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 60px);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.carousel-item {
+  width: 60px;
+  height: 60px;
+  overflow: hidden;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.carousel-item:hover img {
+  transform: scale(1.05);
+}
+
+/* ================= DETAILS PRODUIT ================= */
+
 .product-details {
   padding: 20px;
+  background: #fff;
+  border-radius: 6px;
   border-left: 1px solid var(--yc-neutral-light-color);
+  display: flex;
+  flex-direction: column;
 }
+
 .product-name {
   font-size: 24px;
   margin-bottom: 15px;
   color: var(--yc-primary-color);
 }
+
 .product-price {
   font-size: 20px;
   color: var(--yc-primary-color);
   margin-bottom: 20px;
 }
+
 .product-quantity {
   margin: 20px 0;
 }
+
 .quantity-field {
   display: flex;
   gap: 10px;
   align-items: center;
 }
+
 .quantity-field input {
   width: 60px;
   padding: 5px;
   border: 1px solid var(--yc-neutral-light-color);
   border-radius: 4px;
 }
+
 .quantity-field button {
   background-color: var(--yc-primary-color);
   color: white;
@@ -132,101 +201,187 @@ body {
   border-radius: 4px;
 }
 
-/* Form */
+/* ================= FORM ================= */
+
 .express-checkout-form {
+  margin-top: 20px;
   padding: 20px;
   border: 1px solid var(--yc-primary-color);
   border-radius: 4px;
   background-color: #f7f7f7ff;
 }
+
 .express-checkout-fields {
   display: grid;
   gap: 15px;
 }
+
 .express-checkout-field input {
   width: 100%;
   padding: 12px;
-  border: 1px solid #000000ff;
+  border: 1px solid #000;
   border-radius: 4px;
-  font-family: var(--yc-font-family);
   font-size: 13px;
 }
+
 .express-checkout-button {
   background-color: var(--yc-primary-color);
   color: white;
   border: none;
   padding: 12px 20px;
   border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  font-family: var(--yc-font-family);
-  width: 100%;
   font-size: 16px;
+  cursor: pointer;
 }
+
 .express-checkout-button:hover {
   background-color: var(--yc-secondary-color);
 }
 
-/* Product Description */
+/* ================= DESCRIPTION ================= */
+
 .product-description {
-  margin: 30px 0;
+  margin-top: 30px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 6px;
   line-height: 1.8;
 }
+
 .product-description p {
   margin-bottom: 15px;
 }
 
-/* Accordion */
-.accordion {
-  background-color: #f7f7f7ff;
-  color: #000000ff;
-  margin-bottom: 14px;
-}
-.accordion-header {
-  padding: 15px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 500;
-}
-.accordion-content {
-  padding: 15px;
-  display: none;
-}
-.accordion-content.active {
-  display: block;
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+  .main-content > section.container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-details {
+    order: 1;
+  }
+
+  .product-images {
+    order: 2;
+    position: relative;
+    top: 0;
+  }
+
+  .product-description {
+    order: 3;
+  }
 }
 
-/* Footer */
+/* ================= FOOTER ================= */
+
 footer {
   background-color: var(--yc-secondary-color);
   color: white;
   padding: 20px 0;
   margin-top: 40px;
 }
+
 .columns {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 30px;
 }
+
 .column h1 {
   font-size: 16px;
   margin-bottom: 15px;
 }
+
 .column a {
   color: white;
   text-decoration: none;
   display: block;
   margin-bottom: 8px;
-  transition: opacity 0.3s;
 }
+
 .column a:hover {
   opacity: 0.8;
 }
+
 .copyright-wrapper {
   text-align: center;
   padding: 20px 0;
   margin-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+
+/* ============= PARTIE FORMULAIRES ============= */
+
+/* Styles généraux pour tous les champs */
+.form-control-custom {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--yc-neutral-light-color);
+    border-radius: 6px;
+    font-family: var(--yc-font-family);
+    font-size: 14px;
+    color: var(--yc-neutral-color);
+    background-color: #fff;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control-custom:focus {
+    border-color: var(--yc-primary-color);
+    box-shadow: 0 0 5px rgba(56,89,161,0.3);
+    outline: none;
+}
+
+/* Textarea */
+textarea.form-control-custom {
+    resize: none;
+}
+
+/* Selects */
+select.form-control-custom {
+    padding: 8px 10px; /* override padding pour select */
+}
+
+/* Wrapper pour indicatif + téléphone */
+.phone-input-wrapper {
+    display: flex;
+    gap: 5px;
+}
+
+.form-control-country {
+    width: 100px; /* petit input pour indicatif */
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--yc-neutral-light-color);
+    font-family: var(--yc-font-family);
+    font-size: 14px;
+    background-color: #fff;
+}
+
+.form-control-country:focus {
+    border-color: var(--yc-primary-color);
+    outline: none;
+}
+
+/* Bouton de validation */
+.btn-submit-order {
+    background-color: var(--yc-primary-color);
+    color: #fff;
+    border: none;
+    margin-top: 20px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+}
+
+.btn-submit-order:hover {
+    background-color: var(--yc-secondary-color);
 }

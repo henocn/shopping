@@ -89,84 +89,70 @@ $packs = $productManager->getProductPacks($productId);
 
     <!-- Main Content -->
     <main class="main-content">
-        <section class="container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 30px 0;">
-            <!-- Product Images -->
+        <section class="container product-layout">
+
+            <!-- IMAGES -->
             <div class="product-images">
-                <div style="width: 100%; background-color: #f0f0f0; border-radius: 8px; overflow: hidden;">
-                    <img id="main-image" src="uploads/main/<?= $product['image']; ?>"
-                        alt="<?= htmlspecialchars($product['name']); ?> style=" width: 100%; height: auto; display:
-                        block;">
+                <div class="main-image-wrapper">
+                    <img id="main-image" src="uploads/main/<?= htmlspecialchars($product['image']); ?>">
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px;">
+
+                <div class="carousel-grid">
                     <?php for ($i = 1; $i <= 5; $i++): ?>
                         <?php if (!empty($product['carousel' . $i])): ?>
-                            <img src="uploads/carousel/<?= htmlspecialchars($product['carousel' . $i]) ?>" alt="Image <?= $i ?>"
-                                style="width: 100%; cursor: pointer; border-radius: 4px;"
-                                onclick="document.getElementById('main-image').src=this.src">
+                            <div class="carousel-item">
+                                <img src="uploads/carousel/<?= htmlspecialchars($product['carousel' . $i]) ?>"
+                                    onclick="document.getElementById('main-image').src=this.src">
+                            </div>
                         <?php endif; ?>
                     <?php endfor; ?>
                 </div>
-
             </div>
 
-            <!-- Product Details -->
-            <div class="product-details" id="product_details">
-                <h1 class="product-name"><?= htmlspecialchars($product['name']); ?></h1>
-
-                <div class="product-price-container">
+            <!-- DETAILS + DESCRIPTION -->
+            <div>
+                <div class="product-details" id="product_details">
+                    <h1 class="product-name"><?= htmlspecialchars($product['name']); ?></h1>
                     <h2 class="product-price"><?= number_format($product['selling_price'], 0, '', ' ') ?> CFA</h2>
-                    <div
-                        style="background: #5db2b9; color: white; padding: 5px 10px; border-radius: 4px; display: inline-block; font-size: 14px; margin-bottom: 20px;">
-                        20% de réduction</div>
+
+                    <form class="express-checkout-form" method="POST" action="management/orders/save.php">
+                        <div class="express-checkout-fields">
+                            <input type="text" name="client_name" class="form-control-custom" placeholder="Nom complet"
+                                required>
+                            <div class="phone-input-wrapper">
+                                <select name="client_country" class="form-control-country" required>
+                                    <option value="TD" data-length="8">🇹🇩 +235</option>
+                                    <option value="GN" data-length="9">🇬🇳 +224</option>
+                                </select>
+                                <input type="tel" name="client_phone" class="form-control-custom" placeholder="Numéro"
+                                    required>
+                            </div>
+                            <input type="text" name="client_adress" class="form-control-custom"
+                                placeholder="Ville, Quartier" required>
+                            <textarea name="client_note" class="form-control-custom" rows="2"
+                                placeholder="Note éventuelle"></textarea>
+
+                            <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                            <input type="hidden" name="valider" value="commander">
+
+                        </div>
+                        <div class="modal-footer-custom">
+                            <button type="submit" class="btn-submit-order">
+                                <i class='bx bx-check-circle'></i>
+                                <span>Valider la commande</span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
-                <div class="product-quantity">
-                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Quantité</label>
-                    <div class="quantity-field">
-                        <button class="decrement-button">−</button>
-                        <input type="number" class="quantity-input" id="quantity" name="quantity" min="1" value="1">
-                        <button class="increment-button">+</button>
-                    </div>
+                <div class="product-description">
+                    <?= nl2br($product['description']); ?>
                 </div>
-
-                <form class="express-checkout-form" id="express-checkout-form" onsubmit="return false;">
-                    <div class="express-checkout-fields">
-                        <div style="color: var(--yc-neutral-color); margin-bottom: 10px; font-weight: 500;">Pour
-                            commander, veuillez remplir ce formulaire et nous vous contacterons dans les plus brefs
-                            délais !</div>
-
-                        <div class="express-checkout-field">
-                            <input type="text" name="first_name" id="first_name" placeholder="Nom complet" required>
-                        </div>
-
-                        <div class="express-checkout-field">
-                            <input type="tel" name="phone" id="phone"
-                                placeholder="Téléphone (joignable pour vous appeler)" required>
-                        </div>
-
-                        <div class="express-checkout-field">
-                            <input type="text" name="city" id="city" placeholder="Ville" required>
-                        </div>
-
-                        <button type="submit" class="express-checkout-button" id="commander">Achetez maintenant</button>
-                    </div>
-                </form>
             </div>
-        </section>
-
-        <!-- Product Description -->
-        <section class="container" style="margin: 40px 0;">
-            <div class="product-description">
-                <p>La description du produit sera affichée ici depuis votre backend.</p>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nisi, ea ratione? Neque illum ea, facere
-                    um quibusdam. Exercitationem non facilis saepe dolores distinctio hic accusantium
-                    perspiciatis recusandae amet, delectus perferendis! Veniam, harum corrupti. Voluptates consequatur
-                    maxime dolorem pariatur! Eum fugiat corrupti qui vero!</p>
-            </div>
-        </section>
 
         </section>
     </main>
+
 
     <!-- Footer -->
     <footer>
