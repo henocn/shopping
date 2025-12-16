@@ -40,13 +40,28 @@ $packs = $productManager->getProductPacks($productId);
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nouveau support de téléphone magnétique pliable.</title>
+    <title><?= htmlspecialchars($product['name']); ?></title>
+
+    <meta property="og:title" content="<?= htmlspecialchars($product['name']); ?>" />
+    <meta property="og:description" content="<?= htmlspecialchars(substr(strip_tags($product['description']), 0, 150)); ?>..." />
+    <meta property="og:image" content="https://luxemarket.click/uploads/main/<?= $product['image']; ?>" />
+    <meta property="og:url" content="https://luxemarket.click/product.php?id=<?= $product['id']; ?>" />
+    <meta property="og:type" content="product" />
+    <meta property="og:site_name" content="LuxeMarket" />
+    <meta property="og:locale" content="fr_FR" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="<?= htmlspecialchars($product['name']); ?>" />
+    <meta name="twitter:description" content="<?= htmlspecialchars(substr(strip_tags($product['description']), 0, 150)); ?>..." />
+    <meta name="twitter:image" content="https://luxemarket.click/uploads/main/<?= $product['image']; ?>" />
+    <meta name="twitter:site" content="@LuxeMarket" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;500;700&display=swap">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="assets/css/index2.css">
 </head>
 <body>
 
