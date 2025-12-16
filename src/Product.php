@@ -334,6 +334,21 @@ class Product
         ]);
     }
 
+    public function decrementQuantity(int $productId, int $amount)
+    {
+        $amount = max(0, (int)$amount);
+        if ($amount === 0) {
+            return true;
+        }
+
+        $sql = "UPDATE products SET quantity = CASE WHEN quantity >= :amount THEN quantity - :amount ELSE 0 END WHERE id = :id";
+        $req = $this->bd->prepare($sql);
+        return $req->execute([
+            'amount' => $amount,
+            'id' => $productId
+        ]);
+    }
+
 
     public function deleteCaracteristic($id)
     {

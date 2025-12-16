@@ -1,6 +1,93 @@
-.product-image {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 8px;
+/* Style global du tableau */
+#orders-table thead th {
+  background-color: #f2eefc;
+  color: #4a2c82;
+  border-bottom: 2px solid #d2c6f2;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+}
+
+#orders-table tbody td {
+  vertical-align: middle;
+  border-color: #f0e6ff !important;
+}
+
+#orders-table tbody tr:hover td {
+  background-color: #f5f0ff !important;
+}
+
+/* Couleurs de fond personnalisées par statut */
+.order-row-default td {
+  background-color: #ffffff;
+}
+
+.order-row-unreachable td {
+  background-color: #f8b6bc !important;
+  color: #5e1b20;
+  border-color: #f19ba3 !important;
+}
+
+.order-row-remind td {
+  background-color: #bed3ff !important;
+  color: #16397f;
+  border-color: #a2c1ff !important;
+}
+
+.order-row-processing td {
+  background-color: #ffd48a !important;
+  color: #5a3500;
+  border-color: #ffc562 !important;
+}
+
+.order-row-unreachable:hover td {
+  background-color: #f5a0a8 !important;
+}
+
+.order-row-remind:hover td {
+  background-color: #a8c4ff !important;
+}
+
+.order-row-processing:hover td {
+  background-color: #ffc86a !important;
+}
+
+.search-compact {
+  padding: 0.75rem;
+}
+.search-compact .row {
+  row-gap: 0;
+}
+
+.order-action-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.order-action-group form {
+  margin: 0;
+}
+
+.order-action-group .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 576px) {
+  .order-action-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .order-action-group form {
+    width: 100%;
+  }
+
+  .order-action-group .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }

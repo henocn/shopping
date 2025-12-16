@@ -7,6 +7,7 @@ use src\Connectbd;
 use src\Product;
 use src\Order;
 use src\Pack;
+use src\Depense;
 
 $cnx = Connectbd::getConnection();
 
@@ -16,6 +17,7 @@ if (isset($_POST['valider'])) {
     $productManager = new Product($cnx);
     $packManager = new Pack($cnx);
     $orderManager = new Order($cnx);
+    $depenseManager = new Depense($cnx);
 
 
     switch ($connect) {
@@ -66,16 +68,57 @@ if (isset($_POST['valider'])) {
 
         case 'update':
             if (isset($_POST['order_id'])) {
+                $orderId = (int)($_POST['order_id'] ?? 0);
+                $existingOrder = $orderManager->getOrderById($orderId);
+
+                if (!$existingOrder) {
+                    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'fetch') {
+                        header('Content-Type: application/json');
+                        echo json_encode([
+                            'success' => false,
+                            'error'   => 'Commande introuvable'
+                        ]);
+                        exit;
+                    }
+
+                    $message = urlencode("Commande introuvable.");
+                    header("Location: index.php?message=" . $message);
+                    exit;
+                }
+
+                $newStatus = htmlspecialchars($_POST['newstat'] ?? '');
+                $updatedQuantity = (int)($_POST['quantity'] ?? $existingOrder['quantity']);
+                $updatedTotal = (float)($_POST['total_price'] ?? $existingOrder['total_price']);
+                $managerNote = htmlspecialchars($_POST['manager_note'] ?? '');
+
                 $data = [
-                    'id'           => htmlspecialchars($_POST['order_id']),
-                    'quantity'     => htmlspecialchars($_POST['quantity'] ?? ''),
-                    'total_price'  => htmlspecialchars($_POST['total_price'] ?? ''),
-                    'newstat'      => htmlspecialchars($_POST['newstat'] ?? ''),
-                    'manager_note' => htmlspecialchars($_POST['manager_note'] ?? ''),
+                    'id'           => $orderId,
+                    'quantity'     => $updatedQuantity,
+                    'total_price'  => $updatedTotal,
+                    'newstat'      => $newStatus,
+                    'manager_note' => $managerNote,
                     'updated_at'   => date('Y-m-d H:i:s'),
-                    ];
+                ];
 
                 $orderManager->updateOrder($data);
+
+                $shouldDecreaseStock = $newStatus === 'deliver' && $existingOrder['newstat'] !== 'deliver';
+
+                if ($shouldDecreaseStock && !empty($existingOrder['product_id'])) {
+                    $productManager->decrementQuantity((int)$existingOrder['product_id'], $updatedQuantity);
+                }
+
+                // Enregistrer les frais de livraison si fournis
+                if ($newStatus === 'deliver' && isset($_POST['delivery_fee']) && $_POST['delivery_fee'] > 0) {
+                    $depenseData = [
+                        'type'        => 'products',
+                        'product_id'  => (int)$existingOrder['product_id'],
+                        'cout'        => (int)$_POST['delivery_fee'],
+                        'date'        => date('Y-m-d H:i:s'),
+                        'descrption'  => 'Livraison'
+                    ];
+                    $depenseManager->createDepense($depenseData);
+                }
 
                 if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'fetch') {
                     header('Content-Type: application/json');
@@ -86,7 +129,7 @@ if (isset($_POST['valider'])) {
                     exit;
                 }
 
-                $message = urlencode(" commande a été mis à jour avec succès.");
+                $message = urlencode("Commande mise à jour avec succès.");
                 header("Location: index.php?message=" . $message);
                 exit;
             } else {
@@ -103,8 +146,6 @@ if (isset($_POST['valider'])) {
                 header("Location: index.php?message=" . $message);
                 exit;
             }
-            break;
-
         default:
             header("Location: /error.php?code=400");
     }

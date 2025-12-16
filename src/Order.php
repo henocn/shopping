@@ -58,6 +58,14 @@ class Order
         return true;
     }
 
+    public function getOrderById($id)
+    {
+        $sql = "SELECT * FROM orders WHERE id = :id LIMIT 1";
+        $req = $this->bd->prepare($sql);
+        $req->execute(['id' => $id]);
+        return $req->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function getAllOrders()
     {
         $sql = "SELECT
@@ -112,6 +120,7 @@ ORDER BY orders.id DESC;
             'updated_at'   => $data['updated_at'],
             'id'           => $data['id'],
         ]);
+        return true;
     }
 
     public function getOrdersByUserId($userId)
@@ -137,7 +146,7 @@ ORDER BY orders.id DESC;
             p.selling_price AS unit_price,
             COALESCE(MAX(p.name), 'Produit supprimé') AS product_name,
             COALESCE(MAX(p.image), '') AS product_image,
-            COALESCE(MAX(pp.titre), '') AS pack_name
+            COALESCE(MAX(pp.name), '') AS pack_name
         FROM orders o
         LEFT JOIN products p ON p.id = o.product_id
         LEFT JOIN product_packs pp ON pp.id = o.pack_id
@@ -218,6 +227,79 @@ ORDER BY orders.id DESC;
 
         $req = $this->bd->prepare($sql);
         $req->execute(['manager_id' => $userId]);
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Récupérer TOUTES les commandes livrées (archives)
+    public function getAllDeliveredOrders()
+    {
+        $sql = "
+        SELECT DISTINCT
+            orders.id AS order_id,
+            orders.product_id,
+            orders.pack_id,
+            orders.quantity,
+            orders.total_price,
+            orders.client_name,
+            orders.client_country,
+            orders.client_phone,
+            orders.client_adress,
+            orders.client_note,
+            orders.manager_note,
+            orders.manager_id,
+            orders.newstat,
+            orders.created_at,
+            orders.updated_at,
+            COALESCE(products.name, 'Produit supprimé') AS product_name,
+            COALESCE(products.image, '') AS product_image,
+            COALESCE(product_packs.name, '') AS pack_name,
+            CASE WHEN orders.quantity > 0 THEN ROUND(orders.total_price / orders.quantity, 2) ELSE orders.total_price END AS unit_price
+        FROM orders
+        LEFT JOIN products ON products.id = orders.product_id
+        LEFT JOIN product_packs ON product_packs.id = orders.pack_id
+        WHERE orders.newstat = 'deliver'
+        ORDER BY orders.updated_at DESC, orders.id DESC
+        ";
+
+        $req = $this->bd->prepare($sql);
+        $req->execute();
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Récupérer les commandes livrées d'un manager spécifique (archives)
+    public function getDeliveredOrdersByUserId($userId)
+    {
+        $sql = "
+        SELECT DISTINCT
+            orders.id AS order_id,
+            orders.product_id,
+            orders.pack_id,
+            orders.quantity,
+            orders.total_price,
+            orders.client_name,
+            orders.client_country,
+            orders.client_phone,
+            orders.client_adress,
+            orders.client_note,
+            orders.manager_note,
+            orders.manager_id,
+            orders.newstat,
+            orders.created_at,
+            orders.updated_at,
+            COALESCE(products.name, 'Produit supprimé') AS product_name,
+            COALESCE(products.image, '') AS product_image,
+            COALESCE(product_packs.name, '') AS pack_name,
+            CASE WHEN orders.quantity > 0 THEN ROUND(orders.total_price / orders.quantity, 2) ELSE orders.total_price END AS unit_price
+        FROM orders
+        LEFT JOIN products ON products.id = orders.product_id
+        LEFT JOIN product_packs ON product_packs.id = orders.pack_id
+        WHERE orders.newstat = 'deliver'
+          AND orders.manager_id = :user_id
+        ORDER BY orders.updated_at DESC, orders.id DESC
+        ";
+
+        $req = $this->bd->prepare($sql);
+        $req->execute(['user_id' => $userId]);
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 }
