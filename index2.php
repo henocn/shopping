@@ -59,7 +59,7 @@ $packs = $productManager->getProductPacks($productId);
     <meta name="twitter:description"
         content="<?= htmlspecialchars(substr(strip_tags($product['description']), 0, 150)); ?>..." />
     <meta name="twitter:image" content="https://luxemarket.click/uploads/main/<?= $product['image']; ?>" />
-    <meta name="twitter:site" content="@LuxeMarket" />
+    <meta name="twitter:site" content="@MaxoraMarket" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -122,7 +122,9 @@ $packs = $productManager->getProductPacks($productId);
                             <div class="phone-input-wrapper">
                                 <select name="client_country" class="form-control-country" required>
                                     <option value="TD" data-length="8">🇹🇩 +235</option>
-                                    <option value="GN" data-length="9">🇬🇳 +224</option>
+                                    <option value="ML" data-length="8">🇲🇱 +223</option>
+                                    <option value="GA" data-length="8">🇬🇦 +241</option>
+
                                 </select>
                                 <input type="tel" name="client_phone" class="form-control-custom" placeholder="Numéro"
                                     required>
@@ -158,13 +160,13 @@ $packs = $productManager->getProductPacks($productId);
     <footer>
         <div class="columns container">
             <div class="column logo">
-                <img src="logo.jpg" alt="TUBKAL MARKET" width="110" height="70">
+                <img src="assets/images/logo.jpg" alt="TUBKAL MARKET" width="110" height="70">
             </div>
             <div class="column">
                 <h1>À propos</h1>
-                <a href="/pages/about-us">À propos de nous</a>
-                <a href="/pages/how-to-pay">Modes de paiement</a>
-                <a href="/pages/shipping-delivery">Livraison</a>
+                <a href="#">À propos de nous</a>
+                <a href="#">Modes de paiement</a>
+                <a href="#">Livraison</a>
             </div>
 
             <div class="column">
@@ -175,7 +177,7 @@ $packs = $productManager->getProductPacks($productId);
             </div>
         </div>
         <div class="copyright-wrapper">
-            <p><strong>Tous les droits réservés © Tubkal Market 2025</strong></p>
+            <p><strong>Tous les droits réservés © Maxora Market 2025</strong></p>
         </div>
     </footer>
 
