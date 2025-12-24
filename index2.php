@@ -47,10 +47,10 @@ $packs = $productManager->getProductPacks($productId);
     <meta property="og:title" content="<?= htmlspecialchars($product['name']); ?>" />
     <meta property="og:description"
         content="<?= htmlspecialchars(substr(strip_tags($product['description']), 0, 150)); ?>..." />
-    <meta property="og:image" content="https://luxemarket.click/uploads/main/<?= $product['image']; ?>" />
-    <meta property="og:url" content="https://luxemarket.click/product.php?id=<?= $product['id']; ?>" />
+    <meta property="og:image" content="https://maxora.cloud/uploads/main/<?= $product['image']; ?>" />
+    <meta property="og:url" content="https://maxora.cloud/product.php?id=<?= $product['id']; ?>" />
     <meta property="og:type" content="product" />
-    <meta property="og:site_name" content="LuxeMarket" />
+    <meta property="og:site_name" content="MaxoraMarket" />
     <meta property="og:locale" content="fr_FR" />
 
     <!-- Twitter Cards -->
@@ -58,12 +58,13 @@ $packs = $productManager->getProductPacks($productId);
     <meta name="twitter:title" content="<?= htmlspecialchars($product['name']); ?>" />
     <meta name="twitter:description"
         content="<?= htmlspecialchars(substr(strip_tags($product['description']), 0, 150)); ?>..." />
-    <meta name="twitter:image" content="https://luxemarket.click/uploads/main/<?= $product['image']; ?>" />
+    <meta name="twitter:image" content="https://maxora.cloud/uploads/main/<?= $product['image']; ?>" />
     <meta name="twitter:site" content="@MaxoraMarket" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;500;700&display=swap">
+    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/index2.css">
 </head>
 
@@ -153,6 +154,19 @@ $packs = $productManager->getProductPacks($productId);
             </div>
 
         </section>
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
+            <div id="liveToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive"
+                aria-atomic="true">
+                <div class="d-flex">
+                    <div id="toastMessage" class="toast-body">
+                        <?= isset($order_message) ? htmlspecialchars($order_message) : ''; ?>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
     </main>
 
 
@@ -160,7 +174,7 @@ $packs = $productManager->getProductPacks($productId);
     <footer>
         <div class="columns container">
             <div class="column logo">
-                <img src="assets/images/logo.jpg" alt="TUBKAL MARKET" width="110" height="70">
+                <img src="assets/images/logo.jpg" alt="MAXORA MARKET" width="110" height="70">
             </div>
             <div class="column">
                 <h1>À propos</h1>
@@ -180,6 +194,12 @@ $packs = $productManager->getProductPacks($productId);
             <p><strong>Tous les droits réservés © Maxora Market 2025</strong></p>
         </div>
     </footer>
+
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="assets/js/index2.js"></script>
+
 
     <script>
         // Quantity controls
