@@ -64,7 +64,7 @@ $packs = $productManager->getProductPacks($productId);
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;500;700&display=swap">
-    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="./assets/css/bootstrap.min.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="assets/css/index2.css">
 </head>
 
@@ -78,9 +78,6 @@ $packs = $productManager->getProductPacks($productId);
                 <a href="/" aria-label="home">
                     <img src="assets/images/logo.jpg" alt="TUBKAL MARKET">
                 </a>
-            </div>
-            <div>
-                <span>Livraison gratuite.</span>
             </div>
             <div class="corner">
                 <button class="commander-btn" onclick="location.href='#product_details'">Commander</button>
