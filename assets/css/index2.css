@@ -265,20 +265,20 @@ body {
   }
 
   .product-images {
-    order: 2;
+    order: 3;
     position: relative;
     top: 0;
   }
 
   .product-description {
-    order: 3;
+    order: 2;
   }
 }
 
 /* ================= FOOTER ================= */
 
 footer {
-  background-color: var(--yc-secondary-color);
+  background-color: var(--yc-primary-color);
   color: white;
   padding: 20px 0;
   margin-top: 40px;

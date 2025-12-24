@@ -8,6 +8,16 @@
 }
 
 
+/* second-site */
+/* :root {
+
+--primary: #8f87e0;
+--secondary: rgb(116, 185, 119);
+--paper: rgb(193, 170, 217);
+--magenta: rgb(231, 207, 231);
+--purple: rgb(8, 58, 79);
+} */
+
 
 .primary-color {
   color: var(--primary);

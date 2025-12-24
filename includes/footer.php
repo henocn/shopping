@@ -4,6 +4,7 @@
       <div class="col-md-4 mb-4">
         <h5 class="fw-bold primary-color">
           <i class='bx bx-store'></i> MyShop
+          <!-- <i class='bx bx-store-alt'></i> MAXORA Shop -->
         </h5>
         <p class="small">
           Votre boutique en ligne pour trouver les meilleurs produits au meilleur prix.

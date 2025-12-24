@@ -76,6 +76,11 @@ $users = $user->getAllUsers();
                                 <select class="form-select" name="country" required style="border-color: var(--purple); border-radius: 10px;">
                                     <option value="GN" selected>🇬🇳 Guinée</option>
                                     <option value="TD">🇹🇩 Tchad</option>
+
+                                    <!-- Second site -->
+                                    <!-- <option value="TD">🇹🇩 Tchad</option>
+                                    <option value="ML">🇲🇱 Mali</option>
+                                    <option value="GA">🇬🇦 Gabon</option> -->
                                 </select>
                             </div>
 

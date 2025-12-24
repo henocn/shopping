@@ -6,6 +6,7 @@
         <a class="navbar-brand fw-bold d-flex align-items-center gap-2 magenta-color" href="#">
             <h5 class="fw-bold primary-color">
                 <i class='bx bx-store'></i> MyShop
+                <!-- <i class='bx bx-store'></i> MAXORA Shop -->
             </h5>
         </a>
 

@@ -9,7 +9,7 @@ class Connectbd {
     private static function connect() {
         try {
             $file = ".env";
-            $config = parse_ini_file($file, true);
+            $config = parse_ini_file(filename: $file, process_sections: true);
 
             $host = $config['database']['host'];
             $dbname = $config['database']['dbname'];
