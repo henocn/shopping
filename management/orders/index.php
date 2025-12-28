@@ -10,7 +10,7 @@ use src\Order;
 
 $cnx = Connectbd::getConnection();
 $orderManager = new Order($cnx);
-
+$test = "Ok";
 $orders = [];
 $deliveredToday = [];
 
