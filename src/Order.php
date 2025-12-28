@@ -69,31 +69,30 @@ class Order
     public function getAllOrders()
     {
         $sql = "SELECT
-    orders.id AS order_id,
-    orders.product_id,
-    orders.pack_id,
-    orders.quantity,
-    orders.purchase_price,
-    orders.total_price,
-    orders.client_name,
-    orders.client_country,
-    orders.client_phone,
-    orders.client_adress,
-    orders.client_note,
-    orders.manager_note,
-    orders.newstat,
-    orders.created_at,
-    orders.updated_at,
-    products.selling_price AS unit_price,
-    COALESCE(MAX(products.name), 'Produit supprimé') AS product_name,
-    COALESCE(MAX(products.image), '') AS product_image,
-    COALESCE(MAX(product_packs.name), '') AS pack_name
-FROM orders
-LEFT JOIN products ON products.id = orders.product_id
-LEFT JOIN product_packs ON product_packs.id = orders.pack_id
-GROUP BY orders.id
-ORDER BY orders.id DESC;
-
+            orders.id AS order_id,
+            orders.product_id,
+            orders.pack_id,
+            orders.quantity,
+            orders.purchase_price,
+            orders.total_price,
+            orders.client_name,
+            orders.client_country,
+            orders.client_phone,
+            orders.client_adress,
+            orders.client_note,
+            orders.manager_note,
+            orders.newstat,
+            orders.created_at,
+            orders.updated_at,
+            products.selling_price AS unit_price,
+            COALESCE(MAX(products.name), 'Produit supprimé') AS product_name,
+            /*COALESCE(MAX(products.image), '') AS product_image,*/
+            COALESCE(MAX(product_packs.name), '') AS pack_name
+        FROM orders
+            LEFT JOIN products ON products.id = orders.product_id
+            LEFT JOIN product_packs ON product_packs.id = orders.pack_id
+            GROUP BY orders.id
+            ORDER BY orders.id DESC;
         ";
 
         $req = $this->bd->prepare($sql);
@@ -124,44 +123,38 @@ ORDER BY orders.id DESC;
     }
 
     public function getOrdersByUserId($userId)
-{
-    $sql = "
-        SELECT
-            o.id AS order_id,
-            o.product_id,
-            o.pack_id,
-            o.quantity,
-            o.purchase_price,
-            o.total_price,
-            o.client_name,
-            o.client_country,
-            o.client_phone,
-            o.client_adress,
-            o.client_note,
-            o.manager_note,
-            o.manager_id,
-            o.newstat,
-            o.created_at,
-            o.updated_at,
-            p.selling_price AS unit_price,
-            COALESCE(MAX(p.name), 'Produit supprimé') AS product_name,
-            COALESCE(MAX(p.image), '') AS product_image,
-            COALESCE(MAX(pp.name), '') AS pack_name
-        FROM orders o
-        LEFT JOIN products p ON p.id = o.product_id
-        LEFT JOIN product_packs pp ON pp.id = o.pack_id
-        WHERE o.manager_id = :manager_id
-        GROUP BY 
-            o.id, o.product_id, o.pack_id, o.quantity, o.purchase_price, o.total_price,
-            o.client_name, o.client_country, o.client_phone, o.client_adress,
-            o.client_note, o.manager_note, o.manager_id, o.newstat, o.created_at, o.updated_at
-        ORDER BY o.id DESC;
+    {
+        $sql = " SELECT
+    o.id AS order_id,
+    o.product_id,
+    o.pack_id,
+    o.quantity,
+    o.purchase_price,
+    o.total_price,
+    o.client_name,
+    o.client_country,
+    o.client_phone,
+    o.client_adress,
+    o.client_note,
+    o.manager_note,
+    o.manager_id,
+    o.newstat,
+    o.created_at,
+    o.updated_at,
+    p.selling_price AS unit_price,
+    COALESCE(p.name, 'Produit supprimé') AS product_name,
+    COALESCE(pp.name, '')      AS pack_name
+FROM orders o
+LEFT JOIN products  p  ON p.id  = o.product_id
+LEFT JOIN product_packs pp ON pp.id = o.pack_id
+WHERE o.manager_id = :manager_id
+ORDER BY o.id DESC;
     ";
 
-    $req = $this->bd->prepare($sql);
-    $req->execute(['manager_id' => $userId]);
-    return $req->fetchAll(PDO::FETCH_ASSOC);
-}
+        $req = $this->bd->prepare($sql);
+        $req->execute(['manager_id' => $userId]);
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function deleteOrder($id)
     {
