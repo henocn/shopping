@@ -200,20 +200,210 @@ $packs = $productManager->getProductPacks($productId);
 
     <script>
         // Quantity controls
-        document.querySelector('.increment-button').addEventListener('click', function () {
+        document.querySelector('.increment-button').addEventListener('click', function() {
             const qty = document.getElementById('quantity');
             qty.value = parseInt(qty.value) + 1;
         });
 
-        document.querySelector('.decrement-button').addEventListener('click', function () {
+        document.querySelector('.decrement-button').addEventListener('click', function() {
             const qty = document.getElementById('quantity');
             if (parseInt(qty.value) > 1) qty.value = parseInt(qty.value) - 1;
         });
 
         // Form submission
-        document.getElementById('express-checkout-form').addEventListener('submit', function (e) {
+        document.getElementById('express-checkout-form').addEventListener('submit', function(e) {
             e.preventDefault();
             alert('Formulaire envoyé: ' + document.getElementById('first_name').value);
+        });
+    </script>
+
+    <script>
+        // Tracking interaction du formulaire produit (adapté à la page index2)
+        document.addEventListener('DOMContentLoaded', function() {
+            const safeTrack = (name, payload) => {
+                if (typeof trackEvent === 'function') {
+                    trackEvent(name, payload);
+                }
+            };
+
+            setTimeout(function() {
+                safeTrack('QualifiedVisit', {
+                    content_ids: ['<?= $product['id']; ?>'],
+                    content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                    value: <?= $product['selling_price']; ?>,
+                    currency: 'XOF'
+                });
+            }, 5000);
+
+            const orderForm = document.querySelector('.express-checkout-form');
+            let formStarted = false;
+            let formSubmitted = false;
+            let formStartTime = null;
+            let abandonTimer = null;
+
+            if (orderForm) {
+                const formFields = orderForm.querySelectorAll('input[type="text"], input[type="tel"], textarea, select');
+                let fieldsCompleted = 0;
+                const totalFields = formFields.length || 1;
+
+                formFields.forEach((field, index) => {
+                    field.addEventListener('input', function() {
+                        if (!formStarted && this.value.length > 2) {
+                            formStarted = true;
+                            formStartTime = Date.now();
+
+                            safeTrack('FormStarted', {
+                                content_ids: ['<?= $product['id']; ?>'],
+                                content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                value: <?= $product['selling_price']; ?>,
+                                currency: 'XOF'
+                            });
+
+                            abandonTimer = setTimeout(function() {
+                                if (formStarted && !formSubmitted) {
+                                    safeTrack('FormInactive', {
+                                        content_ids: ['<?= $product['id']; ?>'],
+                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                        value: <?= $product['selling_price']; ?>,
+                                        currency: 'XOF',
+                                        time_spent: Math.round((Date.now() - formStartTime) / 1000)
+                                    });
+                                }
+                            }, 300000);
+                        }
+
+                        if (this.value.length > 2) {
+                            const currentFieldsCompleted = Array.from(formFields).filter(f => f.value.length > 2).length;
+
+                            if (currentFieldsCompleted > fieldsCompleted) {
+                                fieldsCompleted = currentFieldsCompleted;
+                                const progressPercent = Math.round((fieldsCompleted / totalFields) * 100);
+
+                                if (progressPercent === 25) {
+                                    safeTrack('FormProgress25', {
+                                        content_ids: ['<?= $product['id']; ?>'],
+                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                        value: <?= $product['selling_price']; ?>,
+                                        currency: 'XOF',
+                                        progress: 25
+                                    });
+                                } else if (progressPercent === 50) {
+                                    safeTrack('FormProgress50', {
+                                        content_ids: ['<?= $product['id']; ?>'],
+                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                        value: <?= $product['selling_price']; ?>,
+                                        currency: 'XOF',
+                                        progress: 50
+                                    });
+                                } else if (progressPercent === 75) {
+                                    safeTrack('FormProgress75', {
+                                        content_ids: ['<?= $product['id']; ?>'],
+                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                        value: <?= $product['selling_price']; ?>,
+                                        currency: 'XOF',
+                                        progress: 75
+                                    });
+                                } else if (progressPercent === 100) {
+                                    safeTrack('FormCompleted', {
+                                        content_ids: ['<?= $product['id']; ?>'],
+                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                        value: <?= $product['selling_price']; ?>,
+                                        currency: 'XOF',
+                                        progress: 100
+                                    });
+                                }
+                            }
+                        }
+
+                        if (abandonTimer) {
+                            clearTimeout(abandonTimer);
+                            abandonTimer = setTimeout(function() {
+                                if (formStarted && !formSubmitted) {
+                                    safeTrack('FormInactive', {
+                                        content_ids: ['<?= $product['id']; ?>'],
+                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                        value: <?= $product['selling_price']; ?>,
+                                        currency: 'XOF',
+                                        time_spent: Math.round((Date.now() - formStartTime) / 1000)
+                                    });
+                                }
+                            }, 300000);
+                        }
+                    });
+
+                    field.addEventListener('focus', function() {
+                        safeTrack('FormFieldFocus', {
+                            content_ids: ['<?= $product['id']; ?>'],
+                            content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                            value: <?= $product['selling_price']; ?>,
+                            currency: 'XOF',
+                            field_name: this.name || this.id || 'unknown',
+                            field_index: index
+                        });
+                    });
+                });
+
+                window.addEventListener('beforeunload', function() {
+                    if (formStarted && !formSubmitted) {
+                        const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
+
+                        safeTrack('FormAbandoned', {
+                            content_ids: ['<?= $product['id']; ?>'],
+                            content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                            value: <?= $product['selling_price']; ?>,
+                            currency: 'XOF',
+                            time_spent: timeSpent,
+                            abandonment_point: 'page_leave'
+                        });
+                    }
+                });
+
+                orderForm.addEventListener('submit', function(e) {
+                    formSubmitted = true;
+
+                    const purchasePayload = {
+                        content_ids: ['<?= $product['id']; ?>'],
+                        content_type: 'product',
+                        contents: [{
+                            id: '<?= $product['id']; ?>',
+                            quantity: 1,
+                            item_price: <?= $product['selling_price']; ?>
+                        }],
+                        num_items: 1,
+                        value: <?= $product['selling_price']; ?>,
+                        currency: 'XOF'
+                    };
+
+                    safeTrack('Purchase', purchasePayload);
+                });
+            }
+
+            window.openOrderForm = function() {
+                safeTrack('InitiateCheckout', {
+                    content_ids: ['<?= $product['id']; ?>'],
+                    contents: [{
+                        id: '<?= $product['id']; ?>',
+                        quantity: 1,
+                        item_price: <?= $product['selling_price']; ?>
+                    }],
+                    currency: 'XOF',
+                    num_items: 1,
+                    value: <?= $product['selling_price']; ?>
+                });
+
+                const modalEl = document.getElementById('orderModal');
+                if (modalEl && typeof bootstrap !== 'undefined') {
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                } else {
+                    const target = document.getElementById('product_details');
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            };
         });
     </script>
 </body>
