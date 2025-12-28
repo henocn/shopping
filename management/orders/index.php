@@ -134,7 +134,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                           </div>
                                     </div>
 
-                                    <h6>Commandes à traiter (New + Remind) - (<span id="order-count"><?= count($groupedOrders['to-process']) ?></span>)</h6>
+                                    <h6>Commandes à traiter (<span id="order-count"><?= count($groupedOrders['to-process']) ?></span>)</h6>
                                     <?php if (empty($groupedOrders['to-process'])): ?>
                                           <p class="text-muted">Aucune commande à traiter.</p>
                                     <?php else: ?>
@@ -145,7 +145,6 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                   <th scope="col">ID</th>
                                                                   <th scope="col">Client</th>
                                                                   <th scope="col">Numéro</th>
-                                                                  <th scope="col">Notes</th>
                                                                   <th scope="col">Produit</th>
                                                                   <th scope="col">Quantité</th>
                                                                   <th scope="col">Prix_Unitaire</th>
@@ -178,12 +177,11 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                         <td>#<?= htmlspecialchars($order['order_id']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_name']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_phone']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_note'] ?? '') ?></td>
                                                                         <td class="product-name-cell" title="<?= htmlspecialchars($order['product_name']) ?>"><?= htmlspecialchars($order['product_name']) ?></td>
                                                                         <td><?= (int)$order['quantity'] ?></td>
                                                                         <td><?= number_format($order['unit_price'] ?? 0, 0, ',', ' ') ?> FCFA</td>
                                                                         <td><?= number_format($order['total_price'], 0, ',', ' ') ?> FCFA</td>
-                                                                        <td><?= htmlspecialchars($order['manager_note'] ?? '') ?></td>
+                                                                        <td class="note-cell" title="<?= htmlspecialchars($order['manager_note'] ?? '') ?>"><?= htmlspecialchars($order['manager_note'] ?? '') ?></td>
                                                                         <td>
                                                                               <?php if ($order['newstat'] === 'processing'): ?>
                                                                                     <!-- Boutons directs pour les commandes programmées -->
@@ -251,7 +249,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                           </div>
                                     </div>
 
-                                    <h6>Commandes injoignables (<?= count($groupedOrders['unreachable']) ?>)</h6>
+                                    <h6>Clients injoignables (<?= count($groupedOrders['unreachable']) ?>)</h6>
                                     <?php if (empty($groupedOrders['unreachable'])): ?>
                                           <p class="text-muted">Aucune commande injoignable.</p>
                                     <?php else: ?>
@@ -262,7 +260,6 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                   <th scope="col">ID</th>
                                                                   <th scope="col">Client</th>
                                                                   <th scope="col">Numéro</th>
-                                                                  <th scope="col">Notes</th>
                                                                   <th scope="col">Produit</th>
                                                                   <th scope="col">Quantité</th>
                                                                   <th scope="col">Prix_Unitaire</th>
@@ -282,12 +279,11 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                         <td>#<?= htmlspecialchars($order['order_id']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_name']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_phone']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_note'] ?? '') ?></td>
                                                                         <td class="product-name-cell" title="<?= htmlspecialchars($order['product_name']) ?>"><?= htmlspecialchars($order['product_name']) ?></td>
                                                                         <td><?= (int)$order['quantity'] ?></td>
                                                                         <td><?= number_format($order['unit_price'] ?? 0, 0, ',', ' ') ?> FCFA</td>
                                                                         <td><?= number_format($order['total_price'], 0, ',', ' ') ?> FCFA</td>
-                                                                        <td><?= htmlspecialchars($order['manager_note'] ?? '') ?></td>
+                                                                        <td class="note-cell" title="<?= htmlspecialchars($order['manager_note'] ?? '') ?>"><?= htmlspecialchars($order['manager_note'] ?? '') ?></td>
                                                                         <td>
                                                                               <button class="btn btn-outline-primary btn-sm" type="button"
                                                                                     data-bs-toggle="modal"
@@ -332,7 +328,6 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                   <th scope="col">ID</th>
                                                                   <th scope="col">Client</th>
                                                                   <th scope="col">Numéro</th>
-                                                                  <th scope="col">Notes</th>
                                                                   <th scope="col">Produit</th>
                                                                   <th scope="col">Quantité</th>
                                                                   <th scope="col">Prix_Unitaire</th>
@@ -352,12 +347,11 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                         <td>#<?= htmlspecialchars($order['order_id']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_name']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_phone']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_note'] ?? '') ?></td>
                                                                         <td class="product-name-cell" title="<?= htmlspecialchars($order['product_name']) ?>"><?= htmlspecialchars($order['product_name']) ?></td>
                                                                         <td><?= (int)$order['quantity'] ?></td>
                                                                         <td><?= number_format($order['unit_price'] ?? 0, 0, ',', ' ') ?> FCFA</td>
                                                                         <td><?= number_format($order['total_price'], 0, ',', ' ') ?> FCFA</td>
-                                                                        <td><?= htmlspecialchars($order['manager_note'] ?? '') ?></td>
+                                                                        <td class="note-cell" title="<?= htmlspecialchars($order['manager_note'] ?? '') ?>"><?= htmlspecialchars($order['manager_note'] ?? '') ?></td>
                                                                         <td>
                                                                               <div class="order-action-group">
                                                                                     <form method="POST" action="save.php" id="quickDeliverForm<?= $order['order_id'] ?>">
@@ -460,40 +454,42 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
       <?php foreach ($orders as $order): ?>
             <?php $modalId = 'orderModal' . (int)$order['order_id']; ?>
             <div class="modal fade" id="<?= $modalId ?>" tabindex="-1" aria-labelledby="<?= $modalId ?>Label" aria-hidden="true">
-                  <div class="modal-dialog modal-lg">
+                  <div class="modal-dialog">
                         <div class="modal-content">
-                              <div class="modal-header">
-                                    <h5 class="modal-title" id="<?= $modalId ?>Label">
-                                          <i class='bx bx-edit-alt me-2'></i>
-                                          Commande #<?= $order['order_id'] ?> - <?= htmlspecialchars($order['product_name']) ?>
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                              <div class="modal-header py-2">
+                                    <h6 class="modal-title mb-0" id="<?= $modalId ?>Label">
+                                          <i class='bx bx-edit-alt me-1'></i>
+                                          Commande #<?= $order['order_id'] ?>
+                                    </h6>
+                                    <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="modal" aria-label="Fermer"></button>
                               </div>
                               <form action="save.php" method="POST" id="orderForm<?= $order['order_id'] ?>">
-                                    <div class="modal-body">
-                                          <!-- Gestion de la commande -->
-                                          <div class="row mb-4">
-                                                <div class="col-md-12">
-                                                      <h6 class="text-muted mb-3"><i class='bx bx-cog me-2'></i>Gestion de la commande</h6>
+                                    <div class="modal-body py-2">
+                                          <?php if (!empty($order['client_note'])): ?>
+                                                <div class="alert alert-info mb-2 py-1 small">
+                                                      <strong><i class='bx bx-message-detail me-1'></i>Note:</strong>
+                                                      <?= nl2br(htmlspecialchars($order['client_note'])) ?>
                                                 </div>
-                                                <div class="col-md-6">
-                                                      <div class="mb-3">
-                                                            <label for="modalQuantity<?= $order['order_id'] ?>" class="form-label fw-bold">Quantité</label>
-                                                            <input type="number" class="form-control" id="modalQuantity<?= $order['order_id'] ?>" name="quantity" value="<?= (int)$order['quantity'] ?>" min="1" required>
+                                          <?php endif; ?>
+
+                                          <div class="row">
+                                                <div class="col-6">
+                                                      <div class="mb-2">
+                                                            <label for="modalQuantity<?= $order['order_id'] ?>" class="form-label mb-1 small fw-bold">Quantité</label>
+                                                            <input type="number" class="form-control form-control-sm" id="modalQuantity<?= $order['order_id'] ?>" name="quantity" value="<?= (int)$order['quantity'] ?>" min="1" required>
                                                       </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                      <div class="mb-3">
-                                                            <label for="modalTotal<?= $order['order_id'] ?>" class="form-label fw-bold">Prix total (FCFA)</label>
-                                                            <input type="number" class="form-control" id="modalTotal<?= $order['order_id'] ?>" name="total_price" value="<?= (int)$order['total_price'] ?>" min="0" required>
+                                                <div class="col-6">
+                                                      <div class="mb-2">
+                                                            <label for="modalTotal<?= $order['order_id'] ?>" class="form-label mb-1 small fw-bold">Prix (FCFA)</label>
+                                                            <input type="number" class="form-control form-control-sm" id="modalTotal<?= $order['order_id'] ?>" name="total_price" value="<?= (int)$order['total_price'] ?>" min="0" required>
                                                       </div>
                                                 </div>
 
-                                                <!-- Actions disponibles -->
                                                 <div class="col-12">
-                                                      <div class="mb-3">
-                                                            <label for="actionSelect<?= $order['order_id'] ?>" class="form-label fw-bold">Action à effectuer</label>
-                                                            <select class="form-select" id="actionSelect<?= $order['order_id'] ?>" name="newstat" required>
+                                                      <div class="mb-2">
+                                                            <label for="actionSelect<?= $order['order_id'] ?>" class="form-label mb-1 small fw-bold">Action</label>
+                                                            <select class="form-select form-select-sm" id="actionSelect<?= $order['order_id'] ?>" name="newstat" required>
                                                                   <?php
                                                                   $actions = [];
                                                                   switch ($order['newstat']) {
@@ -533,31 +529,30 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                             </select>
                                                             <div class="form-text">
                                                                   <small class="text-muted">
-                                                                        <i class="bx bx-info-circle me-1"></i>
-                                                                        Statut actuel : <strong><?= ucfirst($order['newstat']) ?></strong>
+                                                                        Statut: <strong><?= ucfirst($order['newstat']) ?></strong>
                                                                   </small>
                                                             </div>
                                                       </div>
                                                 </div>
 
                                                 <div class="col-12">
-                                                      <div class="mb-3">
-                                                            <label for="modalManagerNote<?= $order['order_id'] ?>" class="form-label fw-bold">Note manager</label>
-                                                            <textarea class="form-control" id="modalManagerNote<?= $order['order_id'] ?>" name="manager_note" rows="3" placeholder="Ajoutez vos notes sur cette commande..."><?= htmlspecialchars($order['manager_note'] ?? '') ?></textarea>
+                                                      <div class="mb-2">
+                                                            <label for="modalManagerNote<?= $order['order_id'] ?>" class="form-label mb-1 small fw-bold">Note manager</label>
+                                                            <textarea class="form-control form-control-sm" id="modalManagerNote<?= $order['order_id'] ?>" name="manager_note" rows="2" placeholder="Notes..."><?= htmlspecialchars($order['manager_note'] ?? '') ?></textarea>
                                                       </div>
                                                 </div>
                                           </div>
                                     </div>
-                                    <div class="modal-footer">
+                                    <div class="modal-footer py-2">
                                           <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
                                           <input type="hidden" name="valider" value="update">
                                           <input type="hidden" name="updated_at" value="<?= date('Y-m-d H:i:s') ?>">
                                           <input type="hidden" name="delivery_fee" id="deliveryFee<?= $order['order_id'] ?>" value="0">
-                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                <i class='bx bx-x me-2'></i>Annuler
+                                          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                                                <i class='bx bx-x me-1'></i>Annuler
                                           </button>
-                                          <button type="button" class="btn btn-primary" id="submitBtn<?= $order['order_id'] ?>">
-                                                <i class='bx bx-save me-2'></i>Enregistrer
+                                          <button type="button" class="btn btn-primary btn-sm" id="submitBtn<?= $order['order_id'] ?>">
+                                                <i class='bx bx-save me-1'></i>Enregistrer
                                           </button>
                                     </div>
                               </form>
