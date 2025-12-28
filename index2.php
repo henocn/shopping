@@ -196,6 +196,7 @@ $packs = $productManager->getProductPacks($productId);
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="assets/js/index2.js"></script>
+    <script src="assets/js/tracking-manager.js" defer></script>
 
 
     <script>
