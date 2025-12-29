@@ -4,34 +4,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const message = toastBody.textContent.trim();
 
-  if (message !== "") {
+  if (message.length > 0) {
     toastEl.className = "toast align-items-center text-white border-0";
+    toastEl.classList.add(/succès|success/i.test(message) ? "bg-success" : "bg-danger");
 
-    if (/succès|success/i.test(message)) {
-      toastEl.classList.add("bg-success");
-    } else {
-      toastEl.classList.add("bg-danger");
-    }
-
-    const toast = new bootstrap.Toast(toastEl, { delay: 8000 });
+    const toast = new bootstrap.Toast(toastEl);
     toast.show();
   }
 });
-
-function showToast(message, type = "success") {
-  const toastEl = document.getElementById("liveToast");
-  const toastBody = document.getElementById("toastMessage");
-
-  toastBody.textContent = message;
-
-  toastEl.className = "toast align-items-center text-white border-0";
-
-  if (type === "success") {
-    toastEl.classList.add("bg-success");
-  } else {
-    toastEl.classList.add("bg-danger");
-  }
-
-  const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
-  toast.show();
-}

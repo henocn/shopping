@@ -8,7 +8,6 @@ use src\Product;
 $cnx = Connectbd::getConnection();
 $productManager = new Product($cnx);
 
-
 if (!isset($_GET['id'])) {
     $product = $productManager->getRandomProduct();
     $productId = intval($product['product_id']);
@@ -21,10 +20,7 @@ if (isset($_SESSION['order_message'])) {
     unset($_SESSION['order_message']);
 }
 
-
 $product = $productManager->getProducts($productId);
-
-
 
 if (!$product) {
     header('Location: error.php?code=404');
@@ -35,7 +31,6 @@ $characteristics = $productManager->getProductCharacteristics($productId);
 $videos = $productManager->getProductVideos($productId);
 $packs = $productManager->getProductPacks($productId);
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -64,16 +59,14 @@ $packs = $productManager->getProductPacks($productId);
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;500;700&display=swap">
-    <!-- <link href="./assets/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/index2.css">
 </head>
 
 <body>
 
-    <!-- Header/Navbar -->
     <header class="yc-header">
         <nav class="yc-navbar container">
-
             <div class="logo">
                 <a href="/" aria-label="home">
                     <img src="assets/images/logo.jpg" alt="TUBKAL MARKET">
@@ -85,21 +78,18 @@ $packs = $productManager->getProductPacks($productId);
         </nav>
     </header>
 
-    <!-- Main Content -->
     <main class="main-content">
         <section class="container product-layout">
-
-            <!-- IMAGES -->
+            <!-- Images -->
             <div class="product-images">
                 <div class="main-image-wrapper">
                     <img id="main-image" src="uploads/main/<?= htmlspecialchars($product['image']); ?>">
                 </div>
-
                 <div class="carousel-grid">
                     <?php for ($i = 1; $i <= 5; $i++): ?>
                         <?php if (!empty($product['carousel' . $i])): ?>
                             <div class="carousel-item">
-                                <img src="uploads/carousel/<?= htmlspecialchars($product['carousel' . $i]) ?>"
+                                <img src="uploads/carousel/<?= htmlspecialchars($product['carousel' . $i]); ?>"
                                     onclick="document.getElementById('main-image').src=this.src">
                             </div>
                         <?php endif; ?>
@@ -107,67 +97,62 @@ $packs = $productManager->getProductPacks($productId);
                 </div>
             </div>
 
-            <!-- DETAILS + DESCRIPTION -->
-            <div>
-                <div class="product-details" id="product_details">
-                    <h1 class="product-name"><?= htmlspecialchars($product['name']); ?></h1>
-                    <h2 class="product-price"><?= number_format($product['selling_price'], 0, '', ' ') ?> CFA</h2>
-
-                    <form class="express-checkout-form" method="POST" action="management/orders/save.php">
-                        <div class="express-checkout-fields">
-                            <input type="text" name="client_name" class="form-control-custom" placeholder="Nom complet"
+            <!-- Details + Form -->
+            <div class="product-details" id="product_details">
+                <h1 class="product-name"><?= htmlspecialchars($product['name']); ?></h1>
+                <h2 class="product-price"><?= number_format($product['selling_price'], 0, '', ' ') ?> CFA</h2>
+                <form class="express-checkout-form" method="POST" action="management/orders/save.php">
+                    <div class="express-checkout-fields">
+                        <input type="text" name="client_name" class="form-control-custom" placeholder="Nom complet"
+                            required>
+                        <div class="phone-input-wrapper">
+                            <select name="client_country" class="form-control-country" required>
+                                <option value="TD" data-length="8">🇹🇩 +235</option>
+                                <option value="ML" data-length="8">🇲🇱 +223</option>
+                                <option value="GA" data-length="8">🇬🇦 +241</option>
+                            </select>
+                            <input type="tel" name="client_phone" class="form-control-custom" placeholder="Numéro"
                                 required>
-                            <div class="phone-input-wrapper">
-                                <select name="client_country" class="form-control-country" required>
-                                    <option value="TD" data-length="8">🇹🇩 +235</option>
-                                    <option value="ML" data-length="8">🇲🇱 +223</option>
-                                    <option value="GA" data-length="8">🇬🇦 +241</option>
-
-                                </select>
-                                <input type="tel" name="client_phone" class="form-control-custom" placeholder="Numéro"
-                                    required>
-                            </div>
-                            <input type="text" name="client_adress" class="form-control-custom"
-                                placeholder="Ville, Quartier" required>
-                            <textarea name="client_note" class="form-control-custom" rows="2"
-                                placeholder="Note éventuelle"></textarea>
-
-                            <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
-                            <input type="hidden" name="valider" value="commander">
-
                         </div>
-                        <div class="modal-footer-custom">
-                            <button type="submit" class="btn-submit-order">
-                                <i class='bx bx-check-circle'></i>
-                                <span>Valider la commande</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                        <input type="text" name="client_adress" class="form-control-custom"
+                            placeholder="Ville, Quartier" required>
+                        <textarea name="client_note" class="form-control-custom" rows="2"
+                            placeholder="Note éventuelle"></textarea>
 
-                <div class="product-description">
-                    <?= nl2br($product['description']); ?>
+                        <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                        <input type="hidden" name="valider" value="commander">
+                    </div>
+                    <div class="modal-footer-custom">
+                        <button type="submit" class="btn-submit-order">
+                            <i class='bx bx-check-circle'></i>
+                            <span>Valider la commande</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Description -->
+            <div class="product-description">
+                <?= nl2br($product['description']); ?>
+            </div>
+
+            <div class="toast-container">
+                <div id="liveToast" class="toast align-items-center text-white border-0" role="alert"
+                    aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                    <div class="d-flex">
+                        <div id="toastMessage" class="toast-body">
+                            <?= isset($order_message) ? htmlspecialchars($order_message) : ''; ?>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                            aria-label="Close"></button>
+                    </div>
                 </div>
             </div>
 
         </section>
 
-        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
-            <div id="liveToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive"
-                aria-atomic="true">
-                <div class="d-flex">
-                    <div id="toastMessage" class="toast-body">
-                        <?= isset($order_message) ? htmlspecialchars($order_message) : ''; ?>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
     </main>
 
-
-    <!-- Footer -->
     <footer>
         <div class="columns container">
             <div class="column logo">
@@ -179,10 +164,9 @@ $packs = $productManager->getProductPacks($productId);
                 <a href="#">Modes de paiement</a>
                 <a href="#">Livraison</a>
             </div>
-
             <div class="column">
                 <h1>A propos</h1>
-                <h5>Nous somme une boutique en ligne</h5>
+                <h5>Nous sommes une boutique en ligne</h5>
                 <h5>Nous proposons des services d'achat</h5>
                 <h5>Politique de confidentialité</h5>
             </div>
@@ -192,221 +176,10 @@ $packs = $productManager->getProductPacks($productId);
         </div>
     </footer>
 
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/index2.js"></script>
-    <script src="assets/js/tracking-manager.js" defer></script>
 
-
-    <script>
-        // Quantity controls
-        document.querySelector('.increment-button').addEventListener('click', function() {
-            const qty = document.getElementById('quantity');
-            qty.value = parseInt(qty.value) + 1;
-        });
-
-        document.querySelector('.decrement-button').addEventListener('click', function() {
-            const qty = document.getElementById('quantity');
-            if (parseInt(qty.value) > 1) qty.value = parseInt(qty.value) - 1;
-        });
-
-        // Form submission
-        document.getElementById('express-checkout-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Formulaire envoyé: ' + document.getElementById('first_name').value);
-        });
-    </script>
-
-    <script>
-        // Tracking interaction du formulaire produit (adapté à la page index2)
-        document.addEventListener('DOMContentLoaded', function() {
-            const safeTrack = (name, payload) => {
-                if (typeof trackEvent === 'function') {
-                    trackEvent(name, payload);
-                }
-            };
-
-            setTimeout(function() {
-                safeTrack('QualifiedVisit', {
-                    content_ids: ['<?= $product['id']; ?>'],
-                    content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                    value: <?= $product['selling_price']; ?>,
-                    currency: 'XOF'
-                });
-            }, 5000);
-
-            const orderForm = document.querySelector('.express-checkout-form');
-            let formStarted = false;
-            let formSubmitted = false;
-            let formStartTime = null;
-            let abandonTimer = null;
-
-            if (orderForm) {
-                const formFields = orderForm.querySelectorAll('input[type="text"], input[type="tel"], textarea, select');
-                let fieldsCompleted = 0;
-                const totalFields = formFields.length || 1;
-
-                formFields.forEach((field, index) => {
-                    field.addEventListener('input', function() {
-                        if (!formStarted && this.value.length > 2) {
-                            formStarted = true;
-                            formStartTime = Date.now();
-
-                            safeTrack('FormStarted', {
-                                content_ids: ['<?= $product['id']; ?>'],
-                                content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                value: <?= $product['selling_price']; ?>,
-                                currency: 'XOF'
-                            });
-
-                            abandonTimer = setTimeout(function() {
-                                if (formStarted && !formSubmitted) {
-                                    safeTrack('FormInactive', {
-                                        content_ids: ['<?= $product['id']; ?>'],
-                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['selling_price']; ?>,
-                                        currency: 'XOF',
-                                        time_spent: Math.round((Date.now() - formStartTime) / 1000)
-                                    });
-                                }
-                            }, 300000);
-                        }
-
-                        if (this.value.length > 2) {
-                            const currentFieldsCompleted = Array.from(formFields).filter(f => f.value.length > 2).length;
-
-                            if (currentFieldsCompleted > fieldsCompleted) {
-                                fieldsCompleted = currentFieldsCompleted;
-                                const progressPercent = Math.round((fieldsCompleted / totalFields) * 100);
-
-                                if (progressPercent === 25) {
-                                    safeTrack('FormProgress25', {
-                                        content_ids: ['<?= $product['id']; ?>'],
-                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['selling_price']; ?>,
-                                        currency: 'XOF',
-                                        progress: 25
-                                    });
-                                } else if (progressPercent === 50) {
-                                    safeTrack('FormProgress50', {
-                                        content_ids: ['<?= $product['id']; ?>'],
-                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['selling_price']; ?>,
-                                        currency: 'XOF',
-                                        progress: 50
-                                    });
-                                } else if (progressPercent === 75) {
-                                    safeTrack('FormProgress75', {
-                                        content_ids: ['<?= $product['id']; ?>'],
-                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['selling_price']; ?>,
-                                        currency: 'XOF',
-                                        progress: 75
-                                    });
-                                } else if (progressPercent === 100) {
-                                    safeTrack('FormCompleted', {
-                                        content_ids: ['<?= $product['id']; ?>'],
-                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['selling_price']; ?>,
-                                        currency: 'XOF',
-                                        progress: 100
-                                    });
-                                }
-                            }
-                        }
-
-                        if (abandonTimer) {
-                            clearTimeout(abandonTimer);
-                            abandonTimer = setTimeout(function() {
-                                if (formStarted && !formSubmitted) {
-                                    safeTrack('FormInactive', {
-                                        content_ids: ['<?= $product['id']; ?>'],
-                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['selling_price']; ?>,
-                                        currency: 'XOF',
-                                        time_spent: Math.round((Date.now() - formStartTime) / 1000)
-                                    });
-                                }
-                            }, 300000);
-                        }
-                    });
-
-                    field.addEventListener('focus', function() {
-                        safeTrack('FormFieldFocus', {
-                            content_ids: ['<?= $product['id']; ?>'],
-                            content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                            value: <?= $product['selling_price']; ?>,
-                            currency: 'XOF',
-                            field_name: this.name || this.id || 'unknown',
-                            field_index: index
-                        });
-                    });
-                });
-
-                window.addEventListener('beforeunload', function() {
-                    if (formStarted && !formSubmitted) {
-                        const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
-
-                        safeTrack('FormAbandoned', {
-                            content_ids: ['<?= $product['id']; ?>'],
-                            content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                            value: <?= $product['selling_price']; ?>,
-                            currency: 'XOF',
-                            time_spent: timeSpent,
-                            abandonment_point: 'page_leave'
-                        });
-                    }
-                });
-
-                orderForm.addEventListener('submit', function(e) {
-                    formSubmitted = true;
-
-                    const purchasePayload = {
-                        content_ids: ['<?= $product['id']; ?>'],
-                        content_type: 'product',
-                        contents: [{
-                            id: '<?= $product['id']; ?>',
-                            quantity: 1,
-                            item_price: <?= $product['selling_price']; ?>
-                        }],
-                        num_items: 1,
-                        value: <?= $product['selling_price']; ?>,
-                        currency: 'XOF'
-                    };
-
-                    safeTrack('Purchase', purchasePayload);
-                });
-            }
-
-            window.openOrderForm = function() {
-                safeTrack('InitiateCheckout', {
-                    content_ids: ['<?= $product['id']; ?>'],
-                    contents: [{
-                        id: '<?= $product['id']; ?>',
-                        quantity: 1,
-                        item_price: <?= $product['selling_price']; ?>
-                    }],
-                    currency: 'XOF',
-                    num_items: 1,
-                    value: <?= $product['selling_price']; ?>
-                });
-
-                const modalEl = document.getElementById('orderModal');
-                if (modalEl && typeof bootstrap !== 'undefined') {
-                    const modal = new bootstrap.Modal(modalEl);
-                    modal.show();
-                } else {
-                    const target = document.getElementById('product_details');
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                    }
-                }
-            };
-        });
-    </script>
 </body>
 
 </html>
