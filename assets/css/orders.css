@@ -88,10 +88,10 @@
 .product-name-cell,
 .note-cell,
 .client-name-cell {
-  max-width: 200px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  max-width: 200px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   cursor: help;
   position: relative;
 }
@@ -99,8 +99,8 @@
 .product-name-cell:hover,
 .note-cell:hover,
 .client-name-cell:hover {
-  overflow: visible;
-  white-space: normal;
+  overflow: visible !important;
+  white-space: normal !important;
   word-break: break-word;
   background-color: #f8f9fa;
   z-index: 10;
