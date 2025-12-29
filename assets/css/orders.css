@@ -84,9 +84,10 @@
   white-space: nowrap;
 }
 
-/* Style pour les noms de produits longs et les notes */
+/* Style pour les cellules longues: produit, notes, client */
 .product-name-cell,
-.note-cell {
+.note-cell,
+.client-name-cell {
   max-width: 200px;
   white-space: nowrap;
   overflow: hidden;
@@ -96,7 +97,8 @@
 }
 
 .product-name-cell:hover,
-.note-cell:hover {
+.note-cell:hover,
+.client-name-cell:hover {
   overflow: visible;
   white-space: normal;
   word-break: break-word;
