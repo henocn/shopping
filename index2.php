@@ -59,7 +59,7 @@ $packs = $productManager->getProductPacks($productId);
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;500;700&display=swap">
-    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="./assets/css/bootstrap.min.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="assets/css/index2.css">
 </head>
 
