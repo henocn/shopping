@@ -6,6 +6,13 @@
   text-transform: uppercase;
   font-size: 0.8rem;
   letter-spacing: 0.03em;
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+}
+
+.table thead th {
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
 }
 
 #orders-table tbody td {
@@ -55,6 +62,7 @@
 .search-compact {
   padding: 0.75rem;
 }
+
 .search-compact .row {
   row-gap: 0;
 }
@@ -74,6 +82,30 @@
   align-items: center;
   gap: 0.35rem;
   white-space: nowrap;
+}
+
+/* Style pour les cellules longues: produit, notes, client */
+.product-name-cell,
+.note-cell,
+.client-name-cell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: help;
+  position: relative;
+}
+
+.product-name-cell:hover,
+.note-cell:hover,
+.client-name-cell:hover {
+  overflow: visible;
+  white-space: normal;
+  word-break: break-word;
+  background-color: #f8f9fa;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem;
 }
 
 @media (max-width: 576px) {

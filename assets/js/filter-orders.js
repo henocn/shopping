@@ -42,4 +42,38 @@ document.addEventListener("DOMContentLoaded", function () {
   // Écouter les événements
   searchInput.addEventListener("input", filterOrders);
   statusFilter.addEventListener("change", filterOrders);
+
+  // Fonction de recherche générique pour les autres onglets
+  function setupTabSearch(inputId, tabPaneId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    input.addEventListener("input", function () {
+      const searchTerm = this.value.toLowerCase();
+      const tabPane = document.getElementById(tabPaneId);
+      const rows = tabPane.querySelectorAll(".order-row, tbody tr");
+
+      rows.forEach((row) => {
+        const clientName = row.getAttribute("data-client") || row.textContent.toLowerCase();
+        const clientPhone = row.getAttribute("data-phone") || "";
+        const productName = row.getAttribute("data-product") || "";
+        const rowText = row.textContent.toLowerCase();
+
+        const searchMatch =
+          searchTerm === "" ||
+          clientName.includes(searchTerm) ||
+          clientPhone.includes(searchTerm) ||
+          productName.includes(searchTerm) ||
+          rowText.includes(searchTerm);
+
+        row.style.display = searchMatch ? "" : "none";
+      });
+    });
+  }
+
+  // Configurer la recherche pour chaque onglet
+  setupTabSearch("searchInputUnreachable", "pane-unreachable");
+  setupTabSearch("searchInputProcessing", "pane-processing");
+  setupTabSearch("searchInputDelivered", "pane-delivered");
 });
+
