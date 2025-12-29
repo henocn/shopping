@@ -43,7 +43,6 @@ $packs = $productManager->getProductPacks($productId);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($product['name']); ?></title>
-
     <meta property="og:title" content="<?= htmlspecialchars($product['name']); ?>" />
     <meta property="og:description"
         content="<?= htmlspecialchars(substr(strip_tags($product['description']), 0, 150)); ?>..." />
@@ -122,7 +121,6 @@ $packs = $productManager->getProductPacks($productId);
                                     <option value="TD" data-length="8">🇹🇩 +235</option>
                                     <option value="ML" data-length="8">🇲🇱 +223</option>
                                     <option value="GA" data-length="8">🇬🇦 +241</option>
-
                                 </select>
                                 <input type="tel" name="client_phone" class="form-control-custom" placeholder="Numéro"
                                     required>

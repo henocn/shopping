@@ -146,7 +146,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                   <th scope="col">Client</th>
                                                                   <th scope="col">Numéro</th>
                                                                   <th scope="col">Produit</th>
-                                                                  <th scope="col">Quantité</th>
+                                                                  <th scope="col">Qté</th>
                                                                   <th scope="col">Prix_Unitaire</th>
                                                                   <th scope="col">Prix_Total</th>
                                                                   <th scope="col">Mes_Notes</th>
@@ -175,7 +175,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                         data-phone="<?= htmlspecialchars($order['client_phone']) ?>"
                                                                         data-product="<?= htmlspecialchars(strtolower($order['product_name'])) ?>">
                                                                         <td>#<?= htmlspecialchars($order['order_id']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_name']) ?></td>
+                                                                        <td class="client-name-cell" title="<?= htmlspecialchars($order['client_name']) ?>"><?= htmlspecialchars($order['client_name']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_phone']) ?></td>
                                                                         <td class="product-name-cell" title="<?= htmlspecialchars($order['product_name']) ?>"><?= htmlspecialchars($order['product_name']) ?></td>
                                                                         <td><?= (int)$order['quantity'] ?></td>
@@ -261,7 +261,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                   <th scope="col">Client</th>
                                                                   <th scope="col">Numéro</th>
                                                                   <th scope="col">Produit</th>
-                                                                  <th scope="col">Quantité</th>
+                                                                  <th scope="col">Qté</th>
                                                                   <th scope="col">Prix_Unitaire</th>
                                                                   <th scope="col">Prix_Total</th>
                                                                   <th scope="col">Mes_Notes</th>
@@ -277,7 +277,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                         data-phone="<?= htmlspecialchars($order['client_phone']) ?>"
                                                                         data-product="<?= htmlspecialchars(strtolower($order['product_name'])) ?>">
                                                                         <td>#<?= htmlspecialchars($order['order_id']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_name']) ?></td>
+                                                                        <td class="client-name-cell" title="<?= htmlspecialchars($order['client_name']) ?>"><?= htmlspecialchars($order['client_name']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_phone']) ?></td>
                                                                         <td class="product-name-cell" title="<?= htmlspecialchars($order['product_name']) ?>"><?= htmlspecialchars($order['product_name']) ?></td>
                                                                         <td><?= (int)$order['quantity'] ?></td>
@@ -329,7 +329,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                   <th scope="col">Client</th>
                                                                   <th scope="col">Numéro</th>
                                                                   <th scope="col">Produit</th>
-                                                                  <th scope="col">Quantité</th>
+                                                                  <th scope="col">Qté</th>
                                                                   <th scope="col">Prix_Unitaire</th>
                                                                   <th scope="col">Prix_Total</th>
                                                                   <th scope="col">Mes_Notes</th>
@@ -345,7 +345,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                         data-phone="<?= htmlspecialchars($order['client_phone']) ?>"
                                                                         data-product="<?= htmlspecialchars(strtolower($order['product_name'])) ?>">
                                                                         <td>#<?= htmlspecialchars($order['order_id']) ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_name']) ?></td>
+                                                                        <td class="client-name-cell" title="<?= htmlspecialchars($order['client_name']) ?>"><?= htmlspecialchars($order['client_name']) ?></td>
                                                                         <td><?= htmlspecialchars($order['client_phone']) ?></td>
                                                                         <td class="product-name-cell" title="<?= htmlspecialchars($order['product_name']) ?>"><?= htmlspecialchars($order['product_name']) ?></td>
                                                                         <td><?= (int)$order['quantity'] ?></td>
@@ -420,7 +420,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                                   <th>ID</th>
                                                                   <th>Client</th>
                                                                   <th>Produit</th>
-                                                                  <th>Quantité</th>
+                                                                  <th>Qté</th>
                                                                   <th>Total</th>
                                                                   <th>Statut</th>
                                                                   <th>Date</th>
@@ -430,7 +430,7 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                             <?php foreach ($groupedOrders['delivered'] as $order): ?>
                                                                   <tr>
                                                                         <td>#<?= $order['order_id'] ?></td>
-                                                                        <td><?= htmlspecialchars($order['client_name']) ?></td>
+                                                                        <td class="client-name-cell" title="<?= htmlspecialchars($order['client_name']) ?>"><?= htmlspecialchars($order['client_name']) ?></td>
                                                                         <td class="product-name-cell" title="<?= htmlspecialchars($order['product_name']) ?>"><?= htmlspecialchars($order['product_name']) ?></td>
                                                                         <td><?= $order['quantity'] ?></td>
                                                                         <td><?= number_format($order['total_price']) ?> FCFA</td>
