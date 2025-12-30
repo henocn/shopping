@@ -41,10 +41,10 @@ $packs = $productManager->getProductPacks($productId);
     <meta property="og:title" content="<?= htmlspecialchars($product['name']); ?>" />
     <meta property="og:description"
         content="<?= htmlspecialchars(substr(strip_tags($product['description']), 0, 150)); ?>..." />
-    <meta property="og:image" content="https://maxora.cloud/uploads/main/<?= $product['image']; ?>" />
-    <meta property="og:url" content="https://maxora.cloud/product.php?id=<?= $product['id']; ?>" />
+    <meta property="og:image" content="https://LUXEMARKET.cloud/uploads/main/<?= $product['image']; ?>" />
+    <meta property="og:url" content="https://LUXEMARKET.cloud/product.php?id=<?= $product['id']; ?>" />
     <meta property="og:type" content="product" />
-    <meta property="og:site_name" content="MaxoraMarket" />
+    <meta property="og:site_name" content="LUXEMARKET" />
     <meta property="og:locale" content="fr_FR" />
 
     <!-- Twitter Cards -->
@@ -52,13 +52,13 @@ $packs = $productManager->getProductPacks($productId);
     <meta name="twitter:title" content="<?= htmlspecialchars($product['name']); ?>" />
     <meta name="twitter:description"
         content="<?= htmlspecialchars(substr(strip_tags($product['description']), 0, 150)); ?>..." />
-    <meta name="twitter:image" content="https://maxora.cloud/uploads/main/<?= $product['image']; ?>" />
-    <meta name="twitter:site" content="@MaxoraMarket" />
+    <meta name="twitter:image" content="https://LUXEMARKET.cloud/uploads/main/<?= $product['image']; ?>" />
+    <meta name="twitter:site" content="@LUXEMARKET" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;500;700&display=swap">
-    <link rel="stylesheet" href="assets/css/index2.css">
+    <link rel="stylesheet" href="assets/css/index1.css">
 </head>
 
 <body>
@@ -67,7 +67,7 @@ $packs = $productManager->getProductPacks($productId);
         <nav class="yc-navbar container">
             <div class="logo">
                 <a href="/" aria-label="home">
-                    <img src="assets/images/logo.jpg" alt="TUBKAL MARKET">
+                    <img src="assets/images/idx121.png" alt="TUBKAL MARKET">
                 </a>
             </div>
             <div class="corner">
@@ -105,9 +105,8 @@ $packs = $productManager->getProductPacks($productId);
                             required>
                         <div class="phone-input-wrapper">
                             <select name="client_country" class="form-control-country" required>
-                                <option value="TD" data-length="8">🇹🇩 +235</option>
-                                <option value="ML" data-length="8">🇲🇱 +223</option>
-                                <option value="GA" data-length="8">🇬🇦 +241</option>
+                                    <option value="TD" data-length="8">🇹🇩 +235</option>
+                                    <option value="GN" data-length="9">🇬🇳 +224</option>
                             </select>
                             <input type="tel" name="client_phone" class="form-control-custom" placeholder="Numéro"
                                 required>
@@ -154,7 +153,7 @@ $packs = $productManager->getProductPacks($productId);
     <footer>
         <div class="columns container">
             <div class="column logo">
-                <img src="assets/images/logo.jpg" alt="MAXORA MARKET" width="110" height="70">
+                <img src="assets/images/logo.jpg" alt="LUXEMARKET" width="110" height="70">
             </div>
             <div class="column">
                 <h1>À propos</h1>
@@ -170,7 +169,7 @@ $packs = $productManager->getProductPacks($productId);
             </div>
         </div>
         <div class="copyright-wrapper">
-            <p><strong>Tous les droits réservés © Maxora Market 2025</strong></p>
+            <p><strong>Tous les droits réservés © LUXEMARKET 2025</strong></p>
         </div>
     </footer>
 
