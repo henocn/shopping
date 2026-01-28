@@ -13,7 +13,10 @@ $cnx = Connectbd::getConnection();
 $userManager = new User($cnx);
 $helpers = $userManager->getUsersByRole(0);
 
-
+// Récupérer la liste des pays
+$countryStmt = $cnx->prepare("SELECT id, code, name FROM countries ORDER BY name ASC");
+$countryStmt->execute();
+$countries = $countryStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -62,21 +65,21 @@ $helpers = $userManager->getUsersByRole(0);
                 <div class="card-body">
                     <div class="mb-3">
                         <label class="form-label">
-                            <i class='bx bx-purchase-tag'></i> Nom du produit
+                            <i class='bx bx-purchase-tag'></i> Nom du produit (FR)
                         </label>
                         <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-purchase-tag'></i> Nom du produit (AR)
+                        </label>
+                        <input type="text" class="form-control" name="ar_name">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
                             <i class='bx bx-dollar'></i> Prix d'achat
                         </label>
                         <input type="number" class="form-control" name="purchase_price" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            <i class='bx bx-dollar'></i> Prix de vente
-                        </label>
-                        <input type="number" class="form-control" name="selling_price" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
@@ -92,25 +95,32 @@ $helpers = $userManager->getUsersByRole(0);
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            <i class='bx bx-flag'></i> Pays de vente
+                            <i class='bx bx-user'></i> Assistants de vente (sélection multiple)
                         </label>
-                        <select class="form-select" name="country" required>
-                            <option value='' selected>------------</option>
-                            <option value="GN">🇬🇳 Guinée</option>
-                            <option value="TD">🇹🇩 Tchad</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            <i class='bx bx-user'></i> Assistante de vente
-                        </label>
-                        <select class="form-select" name="manager_id" required>
-                            <option value='' selected>------------</option>
+                        <select class="form-select" name="manager_ids[]" multiple required>
                             <?php
                             foreach ($helpers as $helper) { ?>
                                 <option value=<?= $helper['id'] ?>><?= $helper['name'] ?> (<?= $helper['country'] ?>)</option>
                             <?php } ?>
                         </select>
+                        <small class="form-text text-muted">Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs assistants</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-flag'></i> Pays de vente (sélection multiple)
+                        </label>
+                        <div style="border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 10px; max-height: 200px; overflow-y: auto;">
+                            <?php foreach ($countries as $country) { ?>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="country_ids[]" value="<?= $country['id'] ?>" id="country_<?= $country['id'] ?>">
+                                    <label class="form-check-label" for="country_<?= $country['id'] ?>">
+                                        <?= htmlspecialchars($country['code'] . ' - ' . $country['name']) ?>
+                                    </label>
+                                    <input type="number" class="form-control form-control-sm" placeholder="Prix de vente" name="country_prices[<?= $country['id'] ?>]" style="display:none; width: 120px; margin-left: 20px;" id="price_<?= $country['id'] ?>">
+                                </div>
+                            <?php } ?>
+                        </div>
+                        <small class="form-text text-muted">Sélectionnez les pays et renseignez les prix de vente</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
@@ -124,9 +134,15 @@ $helpers = $userManager->getUsersByRole(0);
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            <i class='bx bx-text'></i> Description
+                            <i class='bx bx-text'></i> Description (FR)
                         </label>
                         <textarea id="summernote" class="form-control" name="description" rows="4"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-text'></i> Description (AR)
+                        </label>
+                        <textarea id="summernote-ar" class="form-control" name="ar_description" rows="4"></textarea>
                     </div>
                 </div>
             </div>
@@ -220,6 +236,22 @@ $helpers = $userManager->getUsersByRole(0);
     <script>
         $(document).ready(function() {
             $('#summernote').summernote();
+            $('#summernote-ar').summernote();
+            
+            // Toggle price input visibility based on checkbox
+            document.querySelectorAll('input[name="country_ids[]"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const priceInput = document.getElementById('price_' + this.value);
+                    if (this.checked) {
+                        priceInput.style.display = 'block';
+                        priceInput.required = true;
+                    } else {
+                        priceInput.style.display = 'none';
+                        priceInput.required = false;
+                        priceInput.value = '';
+                    }
+                });
+            });
         });
     </script>
 </body>

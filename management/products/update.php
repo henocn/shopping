@@ -17,6 +17,11 @@ $manager = new Product($cnx);
 $userManager = new User($cnx);
 $helpers = $userManager->getUsersByRole(0);
 
+// Récupérer la liste des pays
+$countryStmt = $cnx->prepare("SELECT id, code, name FROM countries ORDER BY name ASC");
+$countryStmt->execute();
+$countries = $countryStmt->fetchAll(PDO::FETCH_ASSOC);
+
 if (!isset($_GET['id'])) {
     die("Produit introuvable.");
 }
@@ -29,6 +34,9 @@ $videos = $productInfo['videos'];
 $caracteristics = $productInfo['caracteristics'];
 $packs = $productInfo['packs'];
 
+// Récupérer les managers et pays associés au produit
+$productManagers = $manager->getProductManagers($productId);
+$productCountries = $manager->getProductCountries($productId);
 
 ?>
 
@@ -99,21 +107,21 @@ $packs = $productInfo['packs'];
                 <div class="card-body">
                     <div class="mb-3">
                         <label class="form-label">
-                            <i class='bx bx-purchase-tag'></i> Nom du produit
+                            <i class='bx bx-purchase-tag'></i> Nom du produit (FR)
                         </label>
-                        <input type="text" class="form-control" name="name" value="<?= $product['name'] ?>" required>
+                        <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($product['name']) ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-purchase-tag'></i> Nom du produit (AR)
+                        </label>
+                        <input type="text" class="form-control" name="ar_name" value="<?= htmlspecialchars($product['ar_name'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
                             <i class='bx bx-dollar'></i> Prix d'achat
                         </label>
                         <input type="number" class="form-control" name="purchase_price" value="<?= $product['purchase_price'] ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            <i class='bx bx-dollar'></i> Prix de vente
-                        </label>
-                        <input type="number" class="form-control" name="selling_price" value="<?= $product['selling_price'] ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
@@ -129,25 +137,41 @@ $packs = $productInfo['packs'];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            <i class='bx bx-flag'></i> Pays de vente
+                            <i class='bx bx-user'></i> Assistants de vente (sélection multiple)
                         </label>
-                        <select class="form-select" name="country" required>
-                            <option value='' disabled>------------</option>
-                            <option value="GN" <?= ($product['country'] === 'GN' ? 'selected' : '') ?>>🇬🇳 Guinée</option>
-                            <option value="TD" <?= ($product['country'] === 'TD' ? 'selected' : '') ?>>🇹🇩 Tchad</option>
+                        <select class="form-select" name="manager_ids[]" multiple required>
+                            <?php
+                            $selectedManagerIds = array_column($productManagers, 'id');
+                            foreach ($helpers as $helper) { ?>
+                                <option value="<?= $helper['id'] ?>" <?= in_array($helper['id'], $selectedManagerIds) ? 'selected' : '' ?>><?= $helper['name'] ?> (<?= $helper['country'] ?>)</option>
+                            <?php } ?>
                         </select>
+                        <small class="form-text text-muted">Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs assistants</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            <i class='bx bx-user'></i> Assistante de vente
+                            <i class='bx bx-flag'></i> Pays de vente (sélection multiple)
                         </label>
-                        <select class="form-select" name="manager_id" required>
-                            <option value='' disabled>------------</option>
-                            <?php
-                            foreach ($helpers as $helper) { ?>
-                                <option value=<?= $helper['id'] ?> <?= ($product['manager_id'] == $helper['id'] ? 'selected' : '') ?>><?= $helper['name'] ?> (<?= $helper['country'] ?>)</option>
+                        <div style="border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 10px; max-height: 200px; overflow-y: auto;">
+                            <?php 
+                            $selectedCountryIds = array_column($productCountries, 'id');
+                            $countryPrices = [];
+                            foreach ($productCountries as $pc) {
+                                $countryPrices[$pc['id']] = $pc['selling_price'];
+                            }
+                            foreach ($countries as $country) { 
+                                $isSelected = in_array($country['id'], $selectedCountryIds);
+                            ?>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="country_ids[]" value="<?= $country['id'] ?>" id="country_<?= $country['id'] ?>" <?= $isSelected ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="country_<?= $country['id'] ?>">
+                                        <?= htmlspecialchars($country['code'] . ' - ' . $country['name']) ?>
+                                    </label>
+                                    <input type="number" class="form-control form-control-sm" placeholder="Prix de vente" name="country_prices[<?= $country['id'] ?>]" value="<?= $countryPrices[$country['id']] ?? '' ?>" style="<?= $isSelected ? 'display:block' : 'display:none' ?>; width: 120px; margin-left: 20px;" id="price_<?= $country['id'] ?>">
+                                </div>
                             <?php } ?>
-                        </select>
+                        </div>
+                        <small class="form-text text-muted">Sélectionnez les pays et renseignez les prix de vente</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
@@ -177,9 +201,15 @@ $packs = $productInfo['packs'];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            <i class='bx bx-text'></i> Description
+                            <i class='bx bx-text'></i> Description (FR)
                         </label>
                         <textarea id="summernote" class="form-control" name="description" rows="4"><?= htmlspecialchars($product['description']) ?></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class='bx bx-text'></i> Description (AR)
+                        </label>
+                        <textarea id="summernote-ar" class="form-control" name="ar_description" rows="4"><?= htmlspecialchars($product['ar_description'] ?? '') ?></textarea>
                     </div>
                 </div>
             </div>
@@ -457,6 +487,21 @@ $packs = $productInfo['packs'];
     <script>
         $(document).ready(function() {
             $('#summernote').summernote();
+            $('#summernote-ar').summernote();
+            
+            // Toggle price input visibility based on checkbox
+            document.querySelectorAll('input[name="country_ids[]"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const priceInput = document.getElementById('price_' + this.value);
+                    if (this.checked) {
+                        priceInput.style.display = 'block';
+                        priceInput.required = true;
+                    } else {
+                        priceInput.style.display = 'none';
+                        priceInput.required = false;
+                    }
+                });
+            });
         });
     </script>
 

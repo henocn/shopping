@@ -39,6 +39,14 @@ if (isset($_POST['valider'])) {
 
                 //$pack = $packManager->getPackById($packId);
                 $product = $productManager->getProducts($productId);
+                
+                // Récupérer le prix de vente depuis la table product_countries
+                $productCountries = $productManager->getProductCountries($productId);
+                $sellingPrice = !empty($productCountries) ? $productCountries[0]['selling_price'] : 0;
+                
+                // Récupérer le premier manager associé au produit (s'il existe)
+                $productManagers = $productManager->getProductManagers($productId);
+                $managerId = !empty($productManagers) ? $productManagers[0]['id'] : null;
 
                 $data = [
                     'product_id'    => $productId,
@@ -49,9 +57,9 @@ if (isset($_POST['valider'])) {
                     'client_phone'  => htmlspecialchars($_POST['client_phone']),
                     'client_note'   => htmlspecialchars($_POST['client_note']),
                     'purchase_price'    => $product['purchase_price'],
-                    'total_price'   => !empty($pack['price']) ? $pack['price'] : $product['selling_price'],
+                    'total_price'   => !empty($pack['price']) ? $pack['price'] : $sellingPrice,
                     'quantity'      => !empty($pack['quantity']) ? $pack['quantity'] : 1,
-                    'manager_id'   => $product['manager_id'],
+                    'manager_id'   => $managerId,
                 ];
 
 

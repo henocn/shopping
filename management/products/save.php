@@ -102,21 +102,38 @@ switch ($action) {
             // Création du produit principal
             $productData = [
                 'name' => htmlspecialchars($_POST['name']),
+                'ar_name' => htmlspecialchars($_POST['ar_name'] ?? ''),
                 'purchase_price' => floatval($_POST['purchase_price']),
-                'selling_price' => floatval($_POST['selling_price']),
                 'shipping_price' => floatval($_POST['shipping_price']),
                 'quantity' => intval($_POST['quantity']),
                 'image' => $mainImageName,
                 'description' => $_POST['description'],
-                'status' => 1,
+                'ar_description' => $_POST['ar_description'] ?? '',
                 'carousel1' => $carouselImages[0],
                 'carousel2' => $carouselImages[1],
                 'carousel3' => $carouselImages[2],
                 'carousel4' => $carouselImages[3],
                 'carousel5' => $carouselImages[4],
-                'country' => $_POST['country'],
-                'manager_id' => $_POST['manager_id']
             ];
+            
+            // Ajouter les managers
+            if (isset($_POST['manager_ids']) && is_array($_POST['manager_ids']) && !empty($_POST['manager_ids'])) {
+                $productData['manager_ids'] = $_POST['manager_ids'];
+            }
+            
+            // Ajouter les pays avec prix
+            if (isset($_POST['country_ids']) && is_array($_POST['country_ids']) && !empty($_POST['country_ids'])) {
+                $productData['product_countries'] = [];
+                foreach ($_POST['country_ids'] as $country_id) {
+                    $selling_price = floatval($_POST['country_prices'][$country_id] ?? 0);
+                    if ($selling_price > 0) {
+                        $productData['product_countries'][] = [
+                            'country_id' => intval($country_id),
+                            'selling_price' => $selling_price
+                        ];
+                    }
+                }
+            }
 
             $manager->createProduct($productData);
             $productId = $manager->GetLastProductId();
@@ -318,22 +335,75 @@ switch ($action) {
                 // Mise à jour du produit principal
                 $productData = [
                     'name' => htmlspecialchars($_POST['name']),
+                    'ar_name' => htmlspecialchars($_POST['ar_name'] ?? ''),
                     'purchase_price' => floatval($_POST['purchase_price']),
-                    'selling_price' => floatval($_POST['selling_price']),
                     'shipping_price' => floatval($_POST['shipping_price']),
                     'quantity' => intval($_POST['quantity']),
                     'image' => $mainImageName,
                     'description' => $_POST['description'],
+                    'ar_description' => $_POST['ar_description'] ?? '',
                     'carousel1' => $carouselImages[0],
                     'carousel2' => $carouselImages[1],
                     'carousel3' => $carouselImages[2],
                     'carousel4' => $carouselImages[3],
                     'carousel5' => $carouselImages[4],
-                    'country' => $_POST['country'],
-                    'manager_id' => $_POST['manager_id']
                 ];
 
                 $manager->updateProduct($productId, $productData);
+                
+                // Mettre à jour les managers
+                if (isset($_POST['manager_ids']) && is_array($_POST['manager_ids'])) {
+                    // Récupérer les managers actuels
+                    $currentManagers = $manager->getProductManagers($productId);
+                    $currentManagerIds = array_column($currentManagers, 'id');
+                    
+                    // Supprimer les managers qui ne sont plus sélectionnés
+                    foreach ($currentManagerIds as $managerId) {
+                        if (!in_array($managerId, $_POST['manager_ids'])) {
+                            $manager->removeProductManager($productId, $managerId);
+                        }
+                    }
+                    
+                    // Ajouter les nouveaux managers
+                    foreach ($_POST['manager_ids'] as $managerId) {
+                        if (!in_array($managerId, $currentManagerIds)) {
+                            $manager->addProductManager($productId, intval($managerId));
+                        }
+                    }
+                }
+                
+                // Mettre à jour les pays et prix
+                if (isset($_POST['country_ids']) && is_array($_POST['country_ids'])) {
+                    // Récupérer les pays actuels
+                    $currentCountries = $manager->getProductCountries($productId);
+                    $currentCountryIds = array_column($currentCountries, 'id');
+                    
+                    // Supprimer les pays qui ne sont plus sélectionnés
+                    foreach ($currentCountryIds as $countryId) {
+                        if (!in_array($countryId, $_POST['country_ids'])) {
+                            $manager->removeProductCountry($productId, $countryId);
+                        }
+                    }
+                    
+                    // Ajouter ou mettre à jour les pays
+                    foreach ($_POST['country_ids'] as $countryId) {
+                        $countryId = intval($countryId);
+                        $sellingPrice = floatval($_POST['country_prices'][$countryId] ?? 0);
+                        
+                        if (in_array($countryId, $currentCountryIds)) {
+                            // Mettre à jour le prix si nécessaire
+                            $stmt = $cnx->prepare("UPDATE product_countries SET selling_price = :price WHERE product_id = :product_id AND country_id = :country_id");
+                            $stmt->execute([
+                                'price' => $sellingPrice,
+                                'product_id' => $productId,
+                                'country_id' => $countryId
+                            ]);
+                        } else {
+                            // Ajouter le nouveau pays
+                            $manager->addProductCountry($productId, $countryId, $sellingPrice);
+                        }
+                    }
+                }
 
                 // Traitement des caractéristiques existantes
                 if (isset($_POST['existing_char_id'])) {

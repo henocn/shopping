@@ -84,11 +84,12 @@ class Order
                 o.newstat,
                 o.created_at,
                 o.updated_at,
-                p.selling_price AS unit_price,
-            COALESCE(p.name, 'Produit supprimé')      AS product_name,
-            COALESCE(pp.name, '')                     AS pack_name
+                COALESCE(pc.selling_price, 0) AS unit_price,
+                COALESCE(p.name, 'Produit supprimé')      AS product_name,
+                COALESCE(pp.name, '')                     AS pack_name
         FROM orders o
                 LEFT JOIN products      p  ON p.id  = o.product_id
+                LEFT JOIN product_countries pc ON pc.product_id = p.id
                 LEFT JOIN product_packs pp ON pp.id = o.pack_id
             ORDER BY o.id DESC;
         ";
