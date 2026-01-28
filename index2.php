@@ -170,7 +170,7 @@ $langSwitchUrl = '?id=' . $productId . '&lang=' . $otherLang;
             <!-- Details + Form -->
             <div class="product-details" id="product_details">
                 <h1 class="product-name"><?= htmlspecialchars($displayTitle); ?></h1>
-                <h2 class="product-price"><?= number_format($displayPrice, 0, '', ' ') ?> CFA</h2>
+                <h2 class="product-price"><?= ($displayPrice) ?> CFA</h2>
                 <form class="express-checkout-form" method="POST" action="management/orders/save.php">
                     <div class="express-checkout-fields">
                         <input type="text" name="client_name" class="form-control-custom" placeholder="<?= $t['fullname'] ?>"
