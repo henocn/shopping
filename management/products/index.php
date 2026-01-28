@@ -47,12 +47,8 @@ $products = $product->getAllProducts();
                 <thead class="table-light">
                     <tr>
                         <th>ID</th>
-                        <th>Image</th>
-                        <th>Nom (FR)</th>
-                        <th>Nom (AR)</th>
-                        <th>Prix d'achat</th>
-                        <th>Managers</th>
-                        <th>Pays</th>
+                        <th>Nom</th>
+                        <th>Prix par pays</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -66,26 +62,32 @@ $products = $product->getAllProducts();
                         <tr>
                             <td><?php echo $prod['product_id']; ?></td>
                             <td>
-                                <img src="../../uploads/main/<?php echo htmlspecialchars($prod['image']); ?>"
-                                    alt="<?php echo htmlspecialchars($prod['name']); ?>"
-                                    class="product-image">
-                            </td>
-                            <td><?php echo htmlspecialchars($prod['name']); ?></td>
-                            <td><?php echo htmlspecialchars($prod['ar_name'] ?? ''); ?></td>
-                            <td><?php echo $prod['purchase_price']; ?> FCFA</td>
-                            <td>
-                                <?php if (!empty($managers)): ?>
-                                    <?php foreach ($managers as $mgr): ?>
-                                        <span class="badge bg-secondary"><?php echo htmlspecialchars($mgr['name']); ?></span>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <span class="text-muted">-</span>
+                                <strong><?php echo htmlspecialchars($prod['name']); ?></strong>
+                                <?php if (!empty($prod['ar_name'])): ?>
+                                    <br><small class="text-muted"><?php echo htmlspecialchars($prod['ar_name']); ?></small>
                                 <?php endif; ?>
                             </td>
                             <td>
                                 <?php if (!empty($countries)): ?>
                                     <?php foreach ($countries as $ctry): ?>
-                                        <span class="badge bg-info"><?php echo htmlspecialchars($ctry['code']); ?> (<?php echo $ctry['selling_price']; ?> FCFA)</span>
+                                        <div style="margin-bottom: 8px;">
+                                            <span class="badge bg-info"><?php echo htmlspecialchars($ctry['code']); ?> - <?php echo number_format($ctry['selling_price'], 0, ',', ' '); ?> FCFA</span>
+                                            <?php 
+                                                // Trouver les managers qui gèrent ce pays
+                                                $countryManagers = array_filter($managers, function($m) use ($ctry) {
+                                                    return $m['country'] === $ctry['code'];
+                                                });
+                                            ?>
+                                            <?php if (!empty($countryManagers)): ?>
+                                                <div style="font-size: 12px; margin-top: 3px;">
+                                                    <?php foreach ($countryManagers as $mgr): ?>
+                                                        <span class="badge bg-secondary"><?php echo htmlspecialchars($mgr['name']); ?></span>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            <?php else: ?>
+                                                <div style="font-size: 12px; margin-top: 3px; color: #999;">Aucun manager assigné</div>
+                                            <?php endif; ?>
+                                        </div>
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <span class="text-muted">-</span>
@@ -96,7 +98,6 @@ $products = $product->getAllProducts();
                                     <i class='bx bx-dots-vertical-rounded'></i>
                                 </button>
                                 <div class="context-menu" id="contextMenu<?php echo $prod['product_id']; ?>" style="display:none; position:absolute; right:0; top:40px; z-index:1000; min-width:180px; background:var(--paper); border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.12);">
-                                    <!-- for product sharing link copy using format dynamic-host-domaine-name/index.php?id=product_id -->
                                     <a href="javascript:void(0);" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; text-decoration:none;" onclick="copyProductLink(<?php echo $prod['product_id']; ?>)">
                                         <i class='bx bx-link'></i> Share Product
                                     </a>
@@ -110,7 +111,6 @@ $products = $product->getAllProducts();
                             </td>
                         </tr>
                     <?php endforeach; ?>
-                </tbody>
                 </tbody>
             </table>
         </div>
