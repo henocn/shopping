@@ -124,26 +124,89 @@ class Product
 
     public function createProduct($data)
     {
-        $req = $this->bd->prepare("INSERT INTO products (name, purchase_price, selling_price, shipping_price, quantity, image, description, status, carousel1, carousel2, carousel3, carousel4, carousel5, country, manager_id) VALUES (:name, :purchase_price, :selling_price, :shipping_price, :quantity, :image, :description, :status, :carousel1, :carousel2, :carousel3, :carousel4, :carousel5, :country, :manager_id)");
-        var_dump($data);
-        // die();
+        $req = $this->bd->prepare("INSERT INTO products (name, ar_name, purchase_price, shipping_price, quantity, image, description, ar_description, carousel1, carousel2, carousel3, carousel4, carousel5) VALUES (:name, :ar_name, :purchase_price, :shipping_price, :quantity, :image, :description, :ar_description, :carousel1, :carousel2, :carousel3, :carousel4, :carousel5)");
         $req->execute([
             'name'   => $data['name'],
+            'ar_name' => $data['ar_name'] ?? '',
             'purchase_price'    => $data['purchase_price'],
-            'selling_price'     => $data['selling_price'],
             'shipping_price'    => $data['shipping_price'],
             'quantity'          => $data['quantity'],
             'image'     => $data['image'],
             'description' => $data['description'],
-            'status'  => $data['status'],
-            'carousel1' => $data['carousel1'],
-            'carousel2' => $data['carousel2'],
-            'carousel3' => $data['carousel3'],
-            'carousel4' => $data['carousel4'],
-            'carousel5' => $data['carousel5'],
-            'country' => $data['country'],
-            'manager_id' => $data['manager_id'],
+            'ar_description' => $data['ar_description'] ?? '',
+            'carousel1' => $data['carousel1'] ?? '',
+            'carousel2' => $data['carousel2'] ?? '',
+            'carousel3' => $data['carousel3'] ?? '',
+            'carousel4' => $data['carousel4'] ?? '',
+            'carousel5' => $data['carousel5'] ?? '',
         ]);
+        
+        $lastProductId = $this->GetLastProductId();
+        
+        // Ajouter les managers si fournis
+        if (isset($data['manager_ids']) && is_array($data['manager_ids'])) {
+            foreach ($data['manager_ids'] as $manager_id) {
+                $this->addProductManager($lastProductId, $manager_id);
+            }
+        }
+        
+        // Ajouter les pays avec prix de vente si fournis
+        if (isset($data['product_countries']) && is_array($data['product_countries'])) {
+            foreach ($data['product_countries'] as $country_data) {
+                $this->addProductCountry($lastProductId, $country_data['country_id'], $country_data['selling_price']);
+            }
+        }
+    }
+    
+    public function addProductManager($productId, $managerId)
+    {
+        $req = $this->bd->prepare("INSERT INTO product_managers (product_id, manager_id) VALUES (:product_id, :manager_id)");
+        $req->execute([
+            'product_id' => $productId,
+            'manager_id' => $managerId
+        ]);
+    }
+    
+    public function addProductCountry($productId, $countryId, $sellingPrice)
+    {
+        $req = $this->bd->prepare("INSERT INTO product_countries (product_id, country_id, selling_price) VALUES (:product_id, :country_id, :selling_price)");
+        $req->execute([
+            'product_id' => $productId,
+            'country_id' => $countryId,
+            'selling_price' => $sellingPrice
+        ]);
+    }
+    
+    public function removeProductManager($productId, $managerId)
+    {
+        $req = $this->bd->prepare("DELETE FROM product_managers WHERE product_id = :product_id AND manager_id = :manager_id");
+        return $req->execute([
+            'product_id' => $productId,
+            'manager_id' => $managerId
+        ]);
+    }
+    
+    public function removeProductCountry($productId, $countryId)
+    {
+        $req = $this->bd->prepare("DELETE FROM product_countries WHERE product_id = :product_id AND country_id = :country_id");
+        return $req->execute([
+            'product_id' => $productId,
+            'country_id' => $countryId
+        ]);
+    }
+    
+    public function getProductManagers($productId)
+    {
+        $req = $this->bd->prepare("SELECT u.id, u.name, u.email, u.country FROM users u INNER JOIN product_managers pm ON u.id = pm.manager_id WHERE pm.product_id = :product_id");
+        $req->execute(['product_id' => $productId]);
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function getProductCountries($productId)
+    {
+        $req = $this->bd->prepare("SELECT c.id, c.code, c.name, pc.selling_price FROM countries c INNER JOIN product_countries pc ON c.id = pc.country_id WHERE pc.product_id = :product_id");
+        $req->execute(['product_id' => $productId]);
+        return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
@@ -188,7 +251,7 @@ class Product
     {
         try {
             $this->bd->beginTransaction();
-            $tables = ['product_caracteristics', 'product_video', 'product_packs'];
+            $tables = ['product_caracteristics', 'product_video', 'product_packs', 'product_managers', 'product_countries'];
             foreach ($tables as $table) {
                 $stmt = $this->bd->prepare("DELETE FROM $table WHERE product_id = :id");
                 $stmt->execute(['id' => $productId]);
@@ -208,8 +271,9 @@ class Product
 
     public function getAllProducts()
     {
-        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`selling_price`, `products`.`image`, `products`.`description`, `products`.`status`, `products`.`country`, `users`.`name` AS `manager_name`
-        FROM `products` INNER JOIN `users` ON `products`.`manager_id` = `users`.`id` ORDER BY `products`.`id` DESC");
+        $stmt = $this->bd->prepare("SELECT p.id AS product_id, p.name, p.ar_name, p.image, p.description, p.ar_description 
+        FROM products p 
+        ORDER BY p.id DESC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -217,8 +281,10 @@ class Product
     
     // une fonction qui renvoi a un produit au hazar dans la base de donnée
     public function getRandomProduct(){
-        $stmt = $this->bd->prepare("SELECT `products`.`id` AS `product_id`, `products`.`name`, `products`.`selling_price`, `products`.`image`, `products`.`description`, `products`.`status`, `products`.`country`, `users`.`name` AS `manager_name`
-        FROM products INNER JOIN users ON products.manager_id = users.id ORDER BY RAND() LIMIT 1");
+        $stmt = $this->bd->prepare("SELECT p.id AS product_id, p.name, p.ar_name, p.image, p.description, p.ar_description
+        FROM products p 
+        ORDER BY RAND() 
+        LIMIT 1");
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -261,23 +327,22 @@ class Product
 
     public function updateProduct($productId, $data)
     {
-        $req = $this->bd->prepare("UPDATE products SET name = :name, purchase_price = :purchase_price, selling_price = :selling_price, shipping_price = :shipping_price, quantity = :quantity, image = :image, description = :description, carousel1 = :carousel1, carousel2 = :carousel2, carousel3 = :carousel3, carousel4 = :carousel4, carousel5 = :carousel5, country = :country, manager_id = :manager_id WHERE id = :id");
+        $req = $this->bd->prepare("UPDATE products SET name = :name, ar_name = :ar_name, purchase_price = :purchase_price, shipping_price = :shipping_price, quantity = :quantity, image = :image, description = :description, ar_description = :ar_description, carousel1 = :carousel1, carousel2 = :carousel2, carousel3 = :carousel3, carousel4 = :carousel4, carousel5 = :carousel5 WHERE id = :id");
         $req->execute([
             'id' => $productId,
             'name'   => $data['name'],
+            'ar_name' => $data['ar_name'] ?? '',
             'purchase_price'    => $data['purchase_price'],
-            'selling_price'     => $data['selling_price'],
             'shipping_price'    => $data['shipping_price'],
             'quantity'          => $data['quantity'],
             'image'     => $data['image'],
             'description' => $data['description'],
-            'carousel1' => $data['carousel1'],
-            'carousel2' => $data['carousel2'],
-            'carousel3' => $data['carousel3'],
-            'carousel4' => $data['carousel4'],
-            'carousel5' => $data['carousel5'],
-            'country' => $data['country'],
-            'manager_id' => $data['manager_id']
+            'ar_description' => $data['ar_description'] ?? '',
+            'carousel1' => $data['carousel1'] ?? '',
+            'carousel2' => $data['carousel2'] ?? '',
+            'carousel3' => $data['carousel3'] ?? '',
+            'carousel4' => $data['carousel4'] ?? '',
+            'carousel5' => $data['carousel5'] ?? ''
         ]);
     }
 

@@ -48,55 +48,69 @@ $products = $product->getAllProducts();
                     <tr>
                         <th>ID</th>
                         <th>Image</th>
-                        <th>Nom</th>
-                        <th>Prix</th>
-                        <th>Manager</th>
+                        <th>Nom (FR)</th>
+                        <th>Nom (AR)</th>
+                        <th>Prix d'achat</th>
+                        <th>Managers</th>
                         <th>Pays</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    foreach ($products as $product):
+                    foreach ($products as $prod):
+                        // Récupérer les managers et pays pour ce produit
+                        $managers = $product->getProductManagers($prod['product_id']);
+                        $countries = $product->getProductCountries($prod['product_id']);
                     ?>
-                        <tr class="<?php echo $product['status'] == 1 ? 'status-active' : 'status-inactive'; ?>">
-                            <td><?php echo $product['product_id']; ?></td>
+                        <tr>
+                            <td><?php echo $prod['product_id']; ?></td>
                             <td>
-                                <img src="../../uploads/main/<?php echo $product['image']; ?>"
-                                    alt="<?php echo $product['name']; ?>"
+                                <img src="../../uploads/main/<?php echo htmlspecialchars($prod['image']); ?>"
+                                    alt="<?php echo htmlspecialchars($prod['name']); ?>"
                                     class="product-image">
                             </td>
-                            <td><?php echo $product['name']; ?></td>
-                            <td><?php echo $product['selling_price']; ?> FCFA</td>
-                            <td><?php echo $product['manager_name']; ?></td>
-                            <td><?php echo $product['country']; ?></td>
+                            <td><?php echo htmlspecialchars($prod['name']); ?></td>
+                            <td><?php echo htmlspecialchars($prod['ar_name'] ?? ''); ?></td>
+                            <td><?php echo $prod['purchase_price']; ?> FCFA</td>
+                            <td>
+                                <?php if (!empty($managers)): ?>
+                                    <?php foreach ($managers as $mgr): ?>
+                                        <span class="badge bg-secondary"><?php echo htmlspecialchars($mgr['name']); ?></span>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <span class="text-muted">-</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if (!empty($countries)): ?>
+                                    <?php foreach ($countries as $ctry): ?>
+                                        <span class="badge bg-info"><?php echo htmlspecialchars($ctry['code']); ?> (<?php echo $ctry['selling_price']; ?> FCFA)</span>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <span class="text-muted">-</span>
+                                <?php endif; ?>
+                            </td>
                             <td style="position:relative;">
-                                <button type="button" class="action-btn context-menu-btn" data-id="<?php echo $product['product_id']; ?>">
+                                <button type="button" class="action-btn context-menu-btn" data-id="<?php echo $prod['product_id']; ?>">
                                     <i class='bx bx-dots-vertical-rounded'></i>
                                 </button>
-                                <div class="context-menu" id="contextMenu<?php echo $product['product_id']; ?>" style="display:none; position:absolute; right:0; top:40px; z-index:1000; min-width:180px; background:var(--paper); border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.12);">
+                                <div class="context-menu" id="contextMenu<?php echo $prod['product_id']; ?>" style="display:none; position:absolute; right:0; top:40px; z-index:1000; min-width:180px; background:var(--paper); border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.12);">
                                     <!-- for product sharing link copy using format dynamic-host-domaine-name/index.php?id=product_id -->
-                                    <a href="javascript:void(0);" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; text-decoration:none;" onclick="copyProductLink(<?php echo $product['product_id']; ?>)">
+                                    <a href="javascript:void(0);" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; text-decoration:none;" onclick="copyProductLink(<?php echo $prod['product_id']; ?>)">
                                         <i class='bx bx-link'></i> Share Product
                                     </a>
-                                    <a href="update.php?id=<?php echo $product['product_id']; ?>" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:var(--purple); text-decoration:none;">
+                                    <a href="update.php?id=<?php echo $prod['product_id']; ?>" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:var(--purple); text-decoration:none;">
                                         <i class='bx bx-edit'></i> Update Product
                                     </a>
-                                    <form action="save.php" method="post">
-                                        <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
-                                        <input type="hidden" name="new_status" value="<?php echo $product['status'] == 1 ? 0 : 1; ?>">
-                                        <input type="hidden" name="valider" value="upstatus">
-                                        <button type="submit" class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; background:none; border:none; width:100%; text-align:left; cursor:pointer;">
-                                            <i class='bx bx-power-off'></i> <?php echo $product['status'] == 1 ? 'Disable' : 'Enable'; ?> Product
-                                        </button>
-                                    </form>
-                                    <button class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:#dc3545; background:none; border:none; width:100%; text-align:left; cursor:pointer;" onclick="deleteProduct(<?php echo $product['product_id']; ?>)">
+                                    <button class="menu-item d-flex align-items-center gap-2" style="padding:10px 18px; color:#dc3545; background:none; border:none; width:100%; text-align:left; cursor:pointer;" onclick="deleteProduct(<?php echo $prod['product_id']; ?>)">
                                         <i class='bx bx-trash'></i> Delete Product
                                     </button>
                                 </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
+                </tbody>
                 </tbody>
             </table>
         </div>
