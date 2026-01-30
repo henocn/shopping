@@ -11,6 +11,7 @@ use src\Depense;
 
 $cnx = Connectbd::getConnection();
 
+$lang = isset($_REQUEST['lang']) && $_REQUEST['lang'] != '' ? $_REQUEST['lang'] : 'fr';
 
 if (isset($_POST['valider'])) {
     $connect = strtolower(htmlspecialchars($_POST['valider']));
@@ -67,11 +68,11 @@ if (isset($_POST['valider'])) {
                 if ($orderManager->CreateOrder($data)) {
                     $_SESSION['order_message'] = "Votre commande a été passée avec succès. Nous vous contacterons bientôt.";
                     // header("Location: ../../index.php?id=" . $productId);
-                    header("Location: ../../index2.php?id=" . $productId);
+                    header("Location: ../../index2.php?id=" . $productId . "&lang=" . $lang);
                 } else {
                     $_SESSION['order_message'] = "Une erreur est survenue lors de la passation de votre commande. Veuillez réessayer.";
                     // header("Location: ../../index.php?id=" . $productId);
-                    header("Location: ../../index2.php?id=" . $productId);
+                    header("Location: ../../index2.php?id=" . $productId . "&lang=" . $lang);
                 }
             }
             break;
