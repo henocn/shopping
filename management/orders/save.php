@@ -11,7 +11,6 @@ use src\Depense;
 
 $cnx = Connectbd::getConnection();
 
-$lang = isset($_REQUEST['lang']) && $_REQUEST['lang'] != '' ? $_REQUEST['lang'] : 'fr';
 
 if (isset($_POST['valider'])) {
     $connect = strtolower(htmlspecialchars($_POST['valider']));
@@ -62,6 +61,7 @@ if (isset($_POST['valider'])) {
                     'quantity'      => !empty($pack['quantity']) ? $pack['quantity'] : 1,
                     'manager_id'   => $managerId,
                 ];
+                $lang = isset($_POST['lang']) && $_POST['lang'] != '' ? $_POST['lang'] : 'fr';
 
 
 

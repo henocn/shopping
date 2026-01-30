@@ -206,6 +206,7 @@ $langSwitchUrl = '?id=' . $productId . '&lang=' . $otherLang;
                             placeholder="<?= $t['note'] ?>"></textarea>
 
                         <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                        <input type="hidden" name="lang" value="<?= $lang; ?>">
                         <input type="hidden" name="valider" value="commander">
                     </div>
                     <div class="modal-footer-custom">
