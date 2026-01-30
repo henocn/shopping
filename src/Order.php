@@ -155,8 +155,7 @@ class Order
            AND pc.country_id = o.client_country
         LEFT JOIN product_packs pp ON pp.id = o.pack_id
         LEFT JOIN product_managers pm 
-            ON pm.product_id = p.id 
-           AND pm.manager_id = :manager_id
+            ON pm.manager_id = :manager_id
         ORDER BY o.id DESC
     ";
 
