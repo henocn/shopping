@@ -20,7 +20,7 @@ class Order
         $stmt = $this->bd->prepare($query);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return (int)$result['total'];
+        return (int) $result['total'];
     }
 
     public function getOrdersByStatus($status)
@@ -29,7 +29,7 @@ class Order
         $stmt = $this->bd->prepare($query);
         $stmt->execute(['status' => $status]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return (int)$result['total'];
+        return (int) $result['total'];
     }
 
     public function CreateOrder($data)
@@ -42,18 +42,18 @@ class Order
     ");
 
         $req->execute([
-            'product_id'     => (int)($data['product_id'] ?? 0),
-            'pack_id'        => (int)($data['pack_id'] ?? 0),
-            'purchase_price' => (int)($data['purchase_price'] ?? 0),
-            'total_price'    => (int)($data['total_price'] ?? 0),
-            'quantity'       => (int)($data['quantity'] ?? 1),
-            'client_name'    => $data['client_name'] ?? '',
+            'product_id' => (int) ($data['product_id'] ?? 0),
+            'pack_id' => (int) ($data['pack_id'] ?? 0),
+            'purchase_price' => (int) ($data['purchase_price'] ?? 0),
+            'total_price' => (int) ($data['total_price'] ?? 0),
+            'quantity' => (int) ($data['quantity'] ?? 1),
+            'client_name' => $data['client_name'] ?? '',
             'client_country' => $data['client_country'],
-            'client_adress'  => $data['client_adress'] ?? '',
-            'client_phone'   => $data['client_phone'] ?? '',
-            'client_note'    => $data['client_note'] ?? null,
-            'newstat'         => 'new',
-            'manager_id'     => (int)($data['manager_id'] ?? 0),
+            'client_adress' => $data['client_adress'] ?? '',
+            'client_phone' => $data['client_phone'] ?? '',
+            'client_note' => $data['client_note'] ?? null,
+            'newstat' => 'new',
+            'manager_id' => (int) ($data['manager_id'] ?? 0),
         ]);
         return true;
     }
@@ -68,36 +68,40 @@ class Order
 
     public function getAllOrders()
     {
-        $sql = "SELECT
-                o.id            AS order_id,
-                o.product_id,
-                o.pack_id,
-                o.quantity,
-                o.purchase_price,
-                o.total_price,
-                o.client_name,
-                o.client_country,
-                o.client_phone,
-                o.client_adress,
-                o.client_note,
-                o.manager_note,
-                o.newstat,
-                o.created_at,
-                o.updated_at,
-                COALESCE(pc.selling_price, 0) AS unit_price,
-                COALESCE(p.name, 'Produit supprimé')      AS product_name,
-                COALESCE(pp.name, '')                     AS pack_name
+        $sql = "
+        SELECT
+            o.id            AS order_id,
+            o.product_id,
+            o.pack_id,
+            o.quantity,
+            o.purchase_price,
+            o.total_price,
+            o.client_name,
+            o.client_country,
+            o.client_phone,
+            o.client_adress,
+            o.client_note,
+            o.manager_note,
+            o.newstat,
+            o.created_at,
+            o.updated_at,
+            COALESCE(pc.selling_price, 0) AS unit_price,
+            COALESCE(p.name, 'Produit supprimé') AS product_name,
+            COALESCE(pp.name, '') AS pack_name
         FROM orders o
-                LEFT JOIN products      p  ON p.id  = o.product_id
-                LEFT JOIN product_countries pc ON pc.product_id = p.id
-                LEFT JOIN product_packs pp ON pp.id = o.pack_id
-            ORDER BY o.id DESC;
-        ";
+        LEFT JOIN products p ON p.id = o.product_id
+        LEFT JOIN product_countries pc 
+            ON pc.product_id = p.id 
+           AND pc.country_id = o.client_country
+        LEFT JOIN product_packs pp ON pp.id = o.pack_id
+        ORDER BY o.id DESC
+    ";
 
         $req = $this->bd->prepare($sql);
         $req->execute();
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
     public function updateOrder(array $data)
     {
@@ -111,49 +115,57 @@ class Order
 
         $req = $this->bd->prepare($sql);
         $req->execute([
-            'quantity'     => $data['quantity'],
-            'total_price'  => $data['total_price'],
-            'newstat'      => $data['newstat'],
+            'quantity' => $data['quantity'],
+            'total_price' => $data['total_price'],
+            'newstat' => $data['newstat'],
             'manager_note' => $data['manager_note'],
-            'updated_at'   => $data['updated_at'],
-            'id'           => $data['id'],
+            'updated_at' => $data['updated_at'],
+            'id' => $data['id'],
         ]);
         return true;
     }
 
     public function getOrdersByUserId($userId)
     {
-        $sql = " SELECT
-    o.id AS order_id,
-    o.product_id,
-    o.pack_id,
-    o.quantity,
-    o.purchase_price,
-    o.total_price,
-    o.client_name,
-    o.client_country,
-    o.client_phone,
-    o.client_adress,
-    o.client_note,
-    o.manager_note,
-    o.manager_id,
-    o.newstat,
-    o.created_at,
-    o.updated_at,
-    p.selling_price AS unit_price,
-    COALESCE(p.name, 'Produit supprimé') AS product_name,
-    COALESCE(pp.name, '')      AS pack_name
-FROM orders o
-LEFT JOIN products  p  ON p.id  = o.product_id
-LEFT JOIN product_packs pp ON pp.id = o.pack_id
-WHERE o.manager_id = :manager_id
-ORDER BY o.id DESC;
+        $sql = "
+        SELECT
+            o.id AS order_id,
+            o.product_id,
+            o.pack_id,
+            o.quantity,
+            o.purchase_price,
+            o.total_price,
+            o.client_name,
+            o.client_country,
+            o.client_phone,
+            o.client_adress,
+            o.client_note,
+            o.manager_note,
+            o.manager_id,
+            o.newstat,
+            o.created_at,
+            o.updated_at,
+            COALESCE(pc.selling_price, 0) AS unit_price,
+            COALESCE(p.name, 'Produit supprimé') AS product_name,
+            COALESCE(pp.name, '') AS pack_name
+        FROM orders o
+        LEFT JOIN products p ON p.id = o.product_id
+        LEFT JOIN product_countries pc 
+            ON pc.product_id = p.id 
+           AND pc.country_id = o.client_country
+        LEFT JOIN product_packs pp ON pp.id = o.pack_id
+        LEFT JOIN product_managers pm 
+            ON pm.product_id = p.id 
+           AND pm.manager_id = :manager_id
+        ORDER BY o.id DESC
     ";
 
         $req = $this->bd->prepare($sql);
         $req->execute(['manager_id' => $userId]);
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
 
     public function deleteOrder($id)
     {
