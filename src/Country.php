@@ -19,7 +19,7 @@ class Country
      */
     public function getAll()
     {
-        $sql = "SELECT * FROM country ORDER BY name ASC";
+        $sql = "SELECT * FROM countries ORDER BY name ASC";
         $req = $this->bd->prepare($sql);
         $req->execute();
         return $req->fetchAll(PDO::FETCH_ASSOC);

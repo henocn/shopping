@@ -4,11 +4,13 @@ require 'vendor/autoload.php';
 
 use src\Connectbd;
 use src\Product;
+use src\Country;
 
 $cnx = Connectbd::getConnection();
 $productManager = new Product($cnx);
+$countryManager = new Country($cnx);
 
-// Déterminer la langue (FR ou AR) via query param
+
 $lang = isset($_GET['lang']) && $_GET['lang'] === 'ar' ? 'ar' : 'fr';
 
 if (!isset($_GET['id'])) {
@@ -24,6 +26,7 @@ if (isset($_SESSION['order_message'])) {
 }
 
 $product = $productManager->getProducts($productId);
+$countries = $countryManager->getAll();
 
 if (!$product) {
     header('Location: error.php?code=404');
@@ -121,12 +124,23 @@ $langSwitchUrl = '?id=' . $productId . '&lang=' . $otherLang;
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;500;700&display=swap">
     <link rel="stylesheet" href="assets/css/index2.css">
     <?php if ($lang === 'ar'): ?>
-    <style>
-        body { direction: rtl; }
-        .yc-navbar { flex-direction: row-reverse; }
-        .corner { order: -1; }
-        .product-layout { flex-direction: row-reverse; }
-    </style>
+        <style>
+            body {
+                direction: rtl;
+            }
+
+            .yc-navbar {
+                flex-direction: row-reverse;
+            }
+
+            .corner {
+                order: -1;
+            }
+
+            .product-layout {
+                flex-direction: row-reverse;
+            }
+        </style>
     <?php endif; ?>
 </head>
 
@@ -173,16 +187,18 @@ $langSwitchUrl = '?id=' . $productId . '&lang=' . $otherLang;
                 <h2 class="product-price"><?= ($displayPrice) ?> CFA</h2>
                 <form class="express-checkout-form" method="POST" action="management/orders/save.php">
                     <div class="express-checkout-fields">
-                        <input type="text" name="client_name" class="form-control-custom" placeholder="<?= $t['fullname'] ?>"
-                            required>
+                        <input type="text" name="client_name" class="form-control-custom"
+                            placeholder="<?= $t['fullname'] ?>" required>
                         <div class="phone-input-wrapper">
                             <select name="client_country" class="form-control-country" required>
-                                <option value="TD" data-length="8">🇹🇩 +235</option>
-                                <option value="ML" data-length="8">🇲🇱 +223</option>
-                                <option value="GA" data-length="8">🇬🇦 +241</option>
+                                <?php foreach ($countries as $ctry): ?>
+                                    <option value="<?= htmlspecialchars($ctry['id']); ?>">
+                                        <?= htmlspecialchars($ctry['phone_code']); ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
-                            <input type="tel" name="client_phone" class="form-control-custom" placeholder="<?= $t['number'] ?>"
-                                required>
+                            <input type="tel" name="client_phone" class="form-control-custom"
+                                placeholder="<?= $t['number'] ?>" required>
                         </div>
                         <input type="text" name="client_adress" class="form-control-custom"
                             placeholder="<?= $t['address'] ?>" required>
