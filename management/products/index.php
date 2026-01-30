@@ -48,6 +48,7 @@ $products = $product->getAllProducts();
                     <tr>
                         <th>ID</th>
                         <th>Nom</th>
+                        <th>Image</th>
                         <th>Prix par pays</th>
                         <th>Actions</th>
                     </tr>
@@ -61,6 +62,11 @@ $products = $product->getAllProducts();
                     ?>
                         <tr>
                             <td><?php echo $prod['product_id']; ?></td>
+                            <td>
+                                <img src="../../uploads/main/<?php echo $prod['image']; ?>"
+                                    alt="<?php echo $prod['name']; ?>"
+                                    class="product-image">
+                            </td>
                             <td>
                                 <strong><?php echo htmlspecialchars($prod['name']); ?></strong>
                                 <?php if (!empty($prod['ar_name'])): ?>
