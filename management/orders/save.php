@@ -32,6 +32,7 @@ if (isset($_POST['valider'])) {
 
                 $packId = !empty($_POST['pack_id']) ? htmlspecialchars($_POST['pack_id']) : null;
                 $productId = htmlspecialchars($_POST['product_id']);
+                $lang = isset($_POST['lang']) && $_POST['lang'] != '' ? $_POST['lang'] : 'fr';
 
                 if($packId != null) {
                     $pack = $packManager->getPackById($packId);
@@ -39,14 +40,32 @@ if (isset($_POST['valider'])) {
 
                 //$pack = $packManager->getPackById($packId);
                 $product = $productManager->getProducts($productId);
-                
-                // Récupérer le prix de vente depuis la table product_countries
+
+                // Récupérer le prix de vente depuis la table product_countries pour le pays choisi
                 $productCountries = $productManager->getProductCountries($productId);
-                $sellingPrice = !empty($productCountries) ? $productCountries[0]['selling_price'] : 0;
-                
-                // Récupérer le premier manager associé au produit (s'il existe)
+                $sellingPrice = 0;
+                $clientCountry = htmlspecialchars($_POST['client_country']);
+                foreach ($productCountries as $countryPrice) {
+                    if ($countryPrice['id'] == $clientCountry) {
+                        $sellingPrice = $countryPrice['selling_price'];
+                        break;
+                    }
+                }
+                if ($sellingPrice == 0) {
+                    $_SESSION['order_message'] = "Une erreur est survenue lors de la passation de votre commande. Veuillez réessayer.";
+                    header("Location: ../../index2.php?id=" . $productId . "&lang=" . $lang);
+                    exit;
+                }
+
+                // Récupérer le manager associé au produit dans le pays du client
                 $productManagers = $productManager->getProductManagers($productId);
-                $managerId = !empty($productManagers) ? $productManagers[0]['id'] : null;
+                $managerId = null;
+                foreach ($productManagers as $manager) {
+                    if ($manager['country'] == $clientCountry) {
+                        $managerId = $manager['id'];
+                        break;
+                    }
+                }
 
                 $data = [
                     'product_id'    => $productId,
@@ -61,7 +80,6 @@ if (isset($_POST['valider'])) {
                     'quantity'      => !empty($pack['quantity']) ? $pack['quantity'] : 1,
                     'manager_id'   => $managerId,
                 ];
-                $lang = isset($_POST['lang']) && $_POST['lang'] != '' ? $_POST['lang'] : 'fr';
 
 
 

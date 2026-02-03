@@ -26,7 +26,7 @@ if (isset($_SESSION['order_message'])) {
 }
 
 $product = $productManager->getProducts($productId);
-$countries = $countryManager->getAll();
+$productCountries = $productManager->getProductCountries($productId);
 
 if (!$product) {
     header('Location: error.php?code=404');
@@ -191,7 +191,7 @@ $langSwitchUrl = '?id=' . $productId . '&lang=' . $otherLang;
                             placeholder="<?= $t['fullname'] ?>" required>
                         <div class="phone-input-wrapper">
                             <select name="client_country" class="form-control-country" required>
-                                <?php foreach ($countries as $ctry): ?>
+                                <?php foreach ($productCountries as $ctry): ?>
                                     <option value="<?= htmlspecialchars($ctry['id']); ?>">
                                         <?= htmlspecialchars($ctry['phone_code']); ?>
                                     </option>

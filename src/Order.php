@@ -36,9 +36,9 @@ class Order
     {
         $req = $this->bd->prepare("
         INSERT INTO orders 
-        (product_id, pack_id, purchase_price, total_price, quantity, client_name, client_country, client_adress, client_phone, client_note, newstat, manager_id) 
+        (product_id, pack_id, purchase_price, total_price, unit_price, quantity, client_name, client_country, client_adress, client_phone, client_note, newstat, manager_id) 
         VALUES 
-        (:product_id, :pack_id, :purchase_price, :total_price, :quantity, :client_name, :client_country, :client_adress, :client_phone, :client_note, :newstat, :manager_id)
+        (:product_id, :pack_id, :purchase_price, :total_price, :unit_price, :quantity, :client_name, :client_country, :client_adress, :client_phone, :client_note, :newstat, :manager_id)
     ");
 
         $req->execute([
@@ -46,6 +46,7 @@ class Order
             'pack_id' => (int) ($data['pack_id'] ?? 0),
             'purchase_price' => (int) ($data['purchase_price'] ?? 0),
             'total_price' => (int) ($data['total_price'] ?? 0),
+            'unit_price' => (int) ($data['total_price'] ?? 0),
             'quantity' => (int) ($data['quantity'] ?? 1),
             'client_name' => $data['client_name'] ?? '',
             'client_country' => $data['client_country'],
@@ -150,12 +151,11 @@ class Order
             COALESCE(pp.name, '') AS pack_name
         FROM orders o
         LEFT JOIN products p ON p.id = o.product_id
-        LEFT JOIN product_countries pc 
-            ON pc.product_id = p.id 
+        LEFT JOIN product_countries pc
+            ON pc.product_id = p.id
            AND pc.country_id = o.client_country
         LEFT JOIN product_packs pp ON pp.id = o.pack_id
-        LEFT JOIN product_managers pm 
-            ON pm.manager_id = :manager_id
+        WHERE o.manager_id = :manager_id
         ORDER BY o.id DESC
     ";
 

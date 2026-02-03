@@ -46,6 +46,7 @@ if (isset($_POST['validate'])) {
                 $result = $manager->verify($data);
 
                 if ($result["success"]) {
+                    $_SESSION['user_name'] = $result['name'];
                     $_SESSION['user_id'] = $result['id'];
                     $_SESSION['email'] = $data['email'];
                     $_SESSION['role'] = $result['role'];

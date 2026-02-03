@@ -109,6 +109,7 @@ class User
                     "role" => $user['role'],
                     "email" => $user['email'],
                     "country" => $user['country'],
+                    'name' => $user['name'],
                     "is_active" => $user['is_active']
                 ];
             } else {

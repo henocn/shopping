@@ -45,6 +45,7 @@
         <!-- Actions -->
         <div class="d-flex align-items-center">
             <a href="/management/users/change-pass.php" class="btn btn-login">Change Password</a>
+            <span href="/management/users/profile.php" class="btn btn-login"><?php echo $_SESSION['user_name'] ?? 'Profile'; ?></span>
             <a href="/management/users/logout.php" class="btn btn-signup">Logout</a>
         </div>
     </div>
