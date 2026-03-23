@@ -3,6 +3,24 @@
       let reloadTimeoutId;
       let inflightRequests = 0;
 
+      const isEditingFieldFocused = () => {
+            const activeElement = document.activeElement;
+            if (!activeElement) return false;
+
+            const tag = activeElement.tagName;
+            return (
+                  tag === 'INPUT' ||
+                  tag === 'TEXTAREA' ||
+                  tag === 'SELECT' ||
+                  activeElement.isContentEditable
+            );
+      };
+
+      const canReloadNow = () => {
+            const hasOpenModal = !!document.querySelector('.modal.show');
+            return inflightRequests === 0 && !document.hidden && !hasOpenModal && !isEditingFieldFocused();
+      };
+
       const safeDecrease = () => {
             inflightRequests = Math.max(0, inflightRequests - 1);
       };
@@ -10,7 +28,7 @@
       const scheduleReload = () => {
             clearTimeout(reloadTimeoutId);
             reloadTimeoutId = setTimeout(() => {
-                  if (inflightRequests === 0 && !document.hidden) {
+                  if (canReloadNow()) {
                         window.location.reload();
                   } else {
                         scheduleReload();
@@ -18,13 +36,10 @@
             }, RELOAD_DELAY);
       };
 
-      const markActivity = () => {
-            scheduleReload();
-      };
-
-      const activityEvents = ['click', 'keydown', 'mousemove', 'scroll', 'touchstart', 'touchmove', 'focus', 'visibilitychange'];
-      activityEvents.forEach(eventName => {
-            window.addEventListener(eventName, markActivity, { passive: true });
+      document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                  scheduleReload();
+            }
       });
 
       if (typeof window.fetch === 'function') {
@@ -73,6 +88,10 @@
             WrappedXHR.prototype = OriginalXHR.prototype;
             window.XMLHttpRequest = WrappedXHR;
       }
+
+      window.addEventListener('beforeunload', () => {
+            clearTimeout(reloadTimeoutId);
+      });
 
       scheduleReload();
 })();

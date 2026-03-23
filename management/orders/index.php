@@ -124,7 +124,6 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
                                                       </div>
                                                       <div class="col-md-5">
                                                             <select class="form-select form-select-sm" id="statusFilter">
-                                                                  <option>--Filtrer--</option>
                                                                   <option value="all">Tous</option>
                                                                   <option value="new">Nouvelles</option>
                                                                   <option value="remind">Rappeler</option>
@@ -758,12 +757,6 @@ if (isset($_SESSION['role']) && isset($_SESSION['user_id'])) {
 
                   modalElement.dataset.handlerAttached = '1';
             }
-      </script>
-
-      <script>
-            setInterval(function() {
-                  location.reload();
-            }, 1000 * 60);
       </script>
 
 </body>
