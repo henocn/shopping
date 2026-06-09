@@ -3,7 +3,7 @@ class TrackingManager {
         this.config = {
             facebook: {
                 enabled: true,
-                pixels: ['1087210050149446','1373481401089526'],
+                pixels: ['1536994954069676','1373481401089526'],
                 timeout: 5000
             },
             googleAnalytics: {
@@ -18,6 +18,7 @@ class TrackingManager {
             ...config
         };
         this.isReady = false;
+        this.pageViewTracked = false;
         this.eventQueue = [];
         this.scriptsLoaded = { facebook: false, googleAnalytics: false, tiktok: false };
         this.init();
@@ -30,9 +31,11 @@ class TrackingManager {
             if (this.config.tiktok.enabled) await this.initTikTok();
             this.isReady = true;
             this.processQueue();
+            this.ensurePageView();
         } catch (error) {
             this.isReady = true;
             this.processQueue();
+            this.ensurePageView();
         }
     }
 
@@ -66,10 +69,17 @@ class TrackingManager {
             });
 
             fbq('track', 'PageView');
+            this.pageViewTracked = true;
             this.scriptsLoaded.facebook = true;
         } catch (error) {
             // Pas de fallback immédiat ici; les événements utiliseront l'image si fbq indisponible
         }
+    }
+
+    ensurePageView() {
+        if (this.pageViewTracked || !this.config.facebook.enabled) return;
+        this.pageViewTracked = true;
+        this.track('PageView', {}, ['facebook']);
     }
 
     loadFacebookScript() {
@@ -121,7 +131,7 @@ class TrackingManager {
         if (!this.config.facebook.enabled) return;
         try {
             if (typeof fbq === 'function' && fbq.callMethod) {
-                const standardEvents = ['Purchase', 'Lead', 'InitiateCheckout', 'ViewContent', 'CompleteRegistration'];
+                const standardEvents = ['PageView', 'Purchase', 'Lead', 'InitiateCheckout', 'ViewContent', 'CompleteRegistration'];
                 if (standardEvents.includes(eventName)) {
                     fbq('track', eventName, eventData);
                 } else {

@@ -4,10 +4,14 @@ require 'vendor/autoload.php';
 
 use src\Connectbd;
 use src\Product;
+use src\Country;
 
 $cnx = Connectbd::getConnection();
 $productManager = new Product($cnx);
+$countryManager = new Country($cnx);
 
+
+$lang = isset($_GET['lang']) && $_GET['lang'] === 'ar' ? 'ar' : 'fr';
 
 if (!isset($_GET['id'])) {
     $product = $productManager->getRandomProduct();
@@ -21,10 +25,8 @@ if (isset($_SESSION['order_message'])) {
     unset($_SESSION['order_message']);
 }
 
-
 $product = $productManager->getProducts($productId);
-
-
+$productCountries = $productManager->getProductCountries($productId);
 
 if (!$product) {
     header('Location: error.php?code=404');
@@ -35,336 +37,476 @@ $characteristics = $productManager->getProductCharacteristics($productId);
 $videos = $productManager->getProductVideos($productId);
 $packs = $productManager->getProductPacks($productId);
 
+$basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+if ($basePath === '/') {
+    $basePath = '';
+}
+
+
+function countryCodeToFlagEntity($code)
+{
+    $code = strtoupper(trim($code));
+    if (!preg_match('/^[A-Z]{2}$/', $code)) {
+        return '';
+    }
+    $first = 127397 + ord($code[0]);
+    $second = 127397 + ord($code[1]);
+    return '&#' . $first . ';&#' . $second . ';';
+}
+
 // Récupérer le prix du pays (à partir de la première association)
 $productCountries = $productManager->getProductCountries($productId);
 $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'] : 0;
+
+// Sélectionner le titre et la description selon la langue
+$displayTitle = $lang === 'ar' && !empty($product['ar_name']) ? $product['ar_name'] : $product['name'];
+$displayDescription = $lang === 'ar' && !empty($product['ar_description']) ? $product['ar_description'] : $product['description'];
+
+// Textes statiques selon la langue
+$texts = [
+    'fr' => [
+        'commander' => 'Commander',
+        'order_button' => 'Valider la commande',
+        'order_button_text' => 'Valider la commande',
+        'fullname' => 'Nom complet',
+        'number' => 'Numéro',
+        'address' => 'Ville, Quartier',
+        'note' => 'Note éventuelle',
+        'about' => 'À propos',
+        'about_us' => 'À propos de nous',
+        'payment' => 'Modes de paiement',
+        'shipping' => 'Livraison',
+        'online_store' => 'Nous sommes une boutique en ligne',
+        'buy_services' => 'Nous proposons des services d\'achat',
+        'privacy' => 'Politique de confidentialité',
+        'copyright' => 'Tous les droits réservés © luxemarket Market 2025',
+        'lang_switch' => 'العربية',
+        'phone_label' => 'Téléphone',
+        'address_label' => 'Adresse'
+    ],
+    'ar' => [
+        'commander' => 'اطلب الآن',
+        'order_button' => 'تأكيد الطلب',
+        'order_button_text' => 'تأكيد الطلب',
+        'fullname' => 'الاسم الكامل',
+        'number' => 'الرقم',
+        'address' => 'المدينة، الحي',
+        'note' => 'ملاحظة اختيارية',
+        'about' => 'حول',
+        'about_us' => 'حول متجرنا',
+        'payment' => 'طرق الدفع',
+        'shipping' => 'التوصيل',
+        'online_store' => 'نحن متجر إلكتروني',
+        'buy_services' => 'نقدم خدمات الشراء',
+        'privacy' => 'سياسة الخصوصية',
+        'copyright' => 'جميع الحقوق محفوظة © luxemarket Market 2025',
+        'lang_switch' => 'Français',
+        'phone_label' => 'هاتف',
+        'address_label' => 'عنوان'
+    ]
+];
+
+$t = $texts[$lang];
+
+// Déterminer le lien de changement de langue
+$otherLang = $lang === 'ar' ? 'fr' : 'ar';
+$langSwitchUrl = '?id=' . $productId . '&lang=' . $otherLang;
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= $lang ?>">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($product['name']); ?></title>
-
-    <meta property="og:title" content="<?= htmlspecialchars($product['name']); ?>" />
-    <meta property="og:description" content="<?= htmlspecialchars(substr(strip_tags($product['description']), 0, 150)); ?>..." />
-    <meta property="og:image" content="https://luxemarket.click/uploads/main/<?= $product['image']; ?>" />
-    <meta property="og:url" content="https://luxemarket.click/product.php?id=<?= $product['id']; ?>" />
+    <title><?= htmlspecialchars($displayTitle); ?></title>
+    <meta property="og:title" content="<?= htmlspecialchars($displayTitle); ?>" />
+    <meta property="og:description"
+        content="<?= htmlspecialchars(substr(strip_tags($displayDescription), 0, 150)); ?>..." />
+    <meta property="og:image" content="https://luxemarket.cloud/uploads/main/<?= $product['image']; ?>" />
+    <meta property="og:url" content="https://luxemarket.cloud/index1.php?id=<?= $product['id'] ?>&lang=<?= $lang ?>" />
     <meta property="og:type" content="product" />
-    <meta property="og:site_name" content="LuxeMarket" />
-    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content="luxemarketMarket" />
+    <meta property="og:locale" content="<?= $lang === 'ar' ? 'ar_AR' : 'fr_FR' ?>" />
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="<?= htmlspecialchars($product['name']); ?>" />
-    <meta name="twitter:description" content="<?= htmlspecialchars(substr(strip_tags($product['description']), 0, 150)); ?>..." />
-    <meta name="twitter:image" content="https://luxemarket.click/uploads/main/<?= $product['image']; ?>" />
-    <meta name="twitter:site" content="@LuxeMarket" />
+    <meta name="twitter:title" content="<?= htmlspecialchars($displayTitle); ?>" />
+    <meta name="twitter:description"
+        content="<?= htmlspecialchars(substr(strip_tags($displayDescription), 0, 150)); ?>..." />
+    <meta name="twitter:image" content="https://luxemarket.cloud/uploads/main/<?= $product['image']; ?>" />
+    <meta name="twitter:site" content="@luxemarketMarket" />
 
-    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="./assets/css/product.css" rel="stylesheet">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="<?= $basePath ?>/assets/css/index2.css">
+    <?php if ($lang === 'ar'): ?>
+        <style>
+            body {
+                direction: rtl;
+            }
+
+            .yc-navbar {
+                flex-direction: row-reverse;
+            }
+
+            .corner {
+                order: -1;
+            }
+
+            .product-layout {
+                flex-direction: row-reverse;
+            }
+        </style>
+    <?php endif; ?>
 </head>
 
 <body>
-    <!-- HEADER -->
-    <nav class="navbar">
-        <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand" href="#">
-                <div class="logo-container">
-                    <span class="logo-text">LUXE</span>
-                    <span class="logo-text-accent">MARKET</span>
-                </div>
-            </a>
-        </div>
-    </nav>
 
-    <!-- HERO -->
-    <header class="product-hero">
-        <img src="uploads/main/<?= $product['image']; ?>"
-            alt="<?= htmlspecialchars($product['name']); ?>"
-            class="hero-image" id="mainImage">
-        <div class="hero-overlay">
-            <h1><?= htmlspecialchars($product['name']); ?></h1>
-            <div class="hero-price"><?= number_format($displayPrice, 0, '', ' ') ?> FCFA</div>
-            <div class="hero-cta">
-                <button class="btn-hero btn-hero-primary" onclick="openOrderForm()">
-                    <i class='bx bx-cart'></i>
-                    Commander maintenant
-                </button>
-                <button class="btn-hero btn-hero-secondary" onclick="document.querySelector('.carousel-section').scrollIntoView({behavior: 'smooth'})">
-                    <i class='bx bx-images'></i>
-                    Voir les photos
+    <header class="yc-header">
+        <nav class="yc-navbar container">
+            <div class="logo">
+                <a href="/" aria-label="home">
+                    <img src="<?= $basePath ?>/assets/images/idx121.png" alt="TUBKAL MARKET">
+                </a>
+            </div>
+            <div class="corner">
+                <a href="<?= $langSwitchUrl ?>" style="margin-right: 10px; text-decoration: none; color: inherit;">
+                    <?= $t['lang_switch'] ?>
+                </a>
+                <button class="commander-btn" onclick="location.href='#product_details'">
+                    <?= $t['commander'] ?>
                 </button>
             </div>
-        </div>
+        </nav>
     </header>
 
-    <!-- SECTION LUXEMARKET -->
-    <section class="luxemarket-intro">
-        <div class="container">
-            <div class="intro-content">
-                <h2 class="intro-title">LUXEMARKET</h2>
-                <button class="btn-intro" onclick="openOrderForm()">
-                    <i class='bx bx-shopping-bag'></i>
-                    Commander maintenant
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- CAROUSEL -->
-    <section class="carousel-section">
-        <div class="carousel-container">
-            <div class="swiper mainSwiper">
-                <div class="swiper-wrapper">
-                    <?php if (!empty($product['image'])): ?>
-                        <div class="swiper-slide">
-                            <img src="uploads/main/<?= $product['image']; ?>" alt="<?= htmlspecialchars($product['name']); ?>">
-                        </div>
-                    <?php endif; ?>
-                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                        <?php if (!empty($product['carousel' . $i])): ?>
-                            <div class="swiper-slide">
-                                <img src="uploads/carousel/<?= $product['carousel' . $i]; ?>" alt="Vue <?= $i; ?>">
-                            </div>
-                        <?php endif; ?>
-                    <?php endfor; ?>
+    <main class="main-content">
+        <section class="container product-layout">
+            <!-- Images -->
+            <div class="product-images">
+                <div class="main-image-wrapper">
+                    <img id="main-image" src="uploads/main/<?= htmlspecialchars($product['image']); ?>">
                 </div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
-
-            <div class="swiper thumbSwiper">
-                <div class="swiper-wrapper">
-                    <?php if (!empty($product['image'])): ?>
-                        <div class="swiper-slide">
-                            <img src="uploads/main/<?= $product['image']; ?>" alt="<?= htmlspecialchars($product['name']); ?>">
-                        </div>
-                    <?php endif; ?>
+                <div class="carousel-grid">
                     <?php for ($i = 1; $i <= 5; $i++): ?>
                         <?php if (!empty($product['carousel' . $i])): ?>
-                            <div class="swiper-slide">
-                                <img src="uploads/carousel/<?= $product['carousel' . $i]; ?>" alt="Vue <?= $i; ?>">
+                            <div class="carousel-item">
+                                <img src="uploads/carousel/<?= htmlspecialchars($product['carousel' . $i]); ?>"
+                                    onclick="document.getElementById('main-image').src=this.src">
                             </div>
                         <?php endif; ?>
                     <?php endfor; ?>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- INFOS PRODUIT -->
-    <section class="product-info">
-        <div class="product-description">
-            <?= $product['description']; ?>
-        </div>
-
-    </section>
-
-    <!-- CARACTÉRISTIQUES -->
-    <?php if (!empty($characteristics)): ?>
-        <section class="product-features">
-            <h2>Caractéristiques</h2>
-            <div class="features-grid">
-                <?php foreach ($characteristics as $c): ?>
-                    <div class="feature-card">
-                        <?php if (!empty($c['image'])): ?>
-                            <img src="uploads/characteristics/<?= $c['image']; ?>" alt="<?= htmlspecialchars($c['title']); ?>">
-                        <?php endif; ?>
-                        <h3><?= htmlspecialchars($c['title']); ?></h3>
-                        <p><?= htmlspecialchars($c['description']); ?></p>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </section>
-    <?php endif; ?>
-
-    <!-- PACKS -->
-    <?php if (!empty($packs)): ?>
-        <section class="product-packs">
-            <div class="container">
-                <h2 class="section-title">Packs disponibles</h2>
-                <p class="section-subtitle">Choisissez le pack qui correspond le mieux à vos besoins</p>
-
-                <div class="packs-grid">
-                    <?php foreach ($packs as $pack): ?>
-                        <div class="pack-card" data-pack-id="<?= $pack['id']; ?>" onclick="selectPack(<?= $pack['id']; ?>, <?= $pack['price']; ?>, <?= $pack['quantity']; ?>)">
-                            <!-- Image du pack -->
-                            <?php if (!empty($pack['image'])): ?>
-                                <div class="pack-image">
-                                    <img src="uploads/packs/<?= $pack['image']; ?>" alt="<?= htmlspecialchars($pack['name']); ?>" loading="lazy">
-                                </div>
-                            <?php endif; ?>
-
-                            <div class="pack-content">
-                                <div class="pack-header">
-                                    <h3 class="pack-title"><?= htmlspecialchars($pack['name']); ?></h3>
-                                    <div class="pack-quantity">
-                                        <i class='bx bx-package'></i>
-                                        <?= $pack['quantity']; ?> unités
-                                    </div>
-                                </div>
-
-                                <div class="pack-pricing">
-                                    <div class="price-comparison">
-                                        <div class="price-reduction">
-                                            <span class="price-value highlight"><?= number_format($pack['price'], 0, ' ', ' '); ?> FCFA</span>
-                                        </div>
-                                        <div class="price-normal">
-                                            <span class="price-value"><?= number_format($displayPrice * $pack['quantity'], 0, ' ', ' '); ?> FCFA</span>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                            </div>
-
+            <!-- Details + Form -->
+            <div class="product-details" id="product_details">
+                <h1 class="product-name"><?= htmlspecialchars($displayTitle); ?></h1>
+                <h2 class="product-price"><?= ($displayPrice) ?> CFA</h2>
+                <form class="express-checkout-form" method="POST" action="management/orders/save.php">
+                    <div class="express-checkout-fields">
+                        <input type="text" name="client_name" class="form-control-custom"
+                            placeholder="<?= $t['fullname'] ?>" required>
+                        <div class="phone-input-wrapper">
+                            <select name="client_country" class="form-control-country" required>
+                                <?php foreach ($productCountries as $ctry): ?>
+                                    <?php $flag = countryCodeToFlagEntity($ctry['code'] ?? ''); ?>
+                                    <option value="<?= htmlspecialchars($ctry['id']); ?>">
+                                        <?= $flag ? $flag . ' ' : '' ?><?= htmlspecialchars($ctry['phone_code']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <input type="tel" name="client_phone" class="form-control-custom"
+                                placeholder="<?= $t['number'] ?>" required>
                         </div>
-                    <?php endforeach; ?>
+                        <input type="text" name="client_adress" class="form-control-custom"
+                            placeholder="<?= $t['address'] ?>" required>
+                        <textarea name="client_note" class="form-control-custom" rows="2"
+                            placeholder="<?= $t['note'] ?>"></textarea>
+
+                        <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                        <input type="hidden" name="lang" value="<?= $lang; ?>">
+                        <input type="hidden" name="valider" value="commander">
+                    </div>
+                    <div class="modal-footer-custom">
+                        <button type="submit" class="btn-submit-order">
+                            <i class='bx bx-check-circle'></i>
+                            <span><?= $t['order_button_text'] ?></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Description -->
+            <div class="product-description">
+                <?= $displayDescription; ?>
+            </div>
+
+            <div class="toast-container">
+                <div id="liveToast" class="toast align-items-center text-white border-0" role="alert"
+                    aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                    <div class="d-flex">
+                        <div id="toastMessage" class="toast-body">
+                            <?= isset($order_message) ? htmlspecialchars($order_message) : ''; ?>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                            aria-label="Close"></button>
+                    </div>
                 </div>
             </div>
-        </section>
-    <?php endif; ?>
 
-    <!-- VIDÉOS -->
-    <?php if (!empty($videos)): ?>
-        <section class="product-videos">
-            <h2>Découvrez en vidéo</h2>
-            <div class="videos-grid">
-                <?php foreach ($videos as $v): ?>
-                    <div class="video-card">
-                        <video controls autoplay preload="metadata">
-                            <source src="uploads/videos/<?= $v['video_url']; ?>" type="video/mp4">
-                            Votre navigateur ne supporte pas la lecture vidéo.
-                        </video>
-                        <?php if (!empty($v['texte'])): ?>
-                            <h3><?= htmlspecialchars($v['texte']); ?></h3>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="columns container">
+            <div class="column logo">
+                <img src="<?= $basePath ?>/assets/images/logo.jpg" alt="luxemarket MARKET" width="110" height="70">
             </div>
-        </section>
-    <?php endif; ?>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <p>© <?= date('Y'); ?> - Votre boutique. Tous droits réservés.</p>
+            <div class="column">
+                <h1><?= $t['about'] ?></h1>
+                <a href="#"><?= $t['about_us'] ?></a>
+                <a href="#"><?= $t['payment'] ?></a>
+                <a href="#"><?= $t['shipping'] ?></a>
+            </div>
+            <div class="column">
+                <h1><?= $t['about'] ?></h1>
+                <h5><?= $t['online_store'] ?></h5>
+                <h5><?= $t['buy_services'] ?></h5>
+                <h5><?= $t['privacy'] ?></h5>
+            </div>
+        </div>
+        <div class="copyright-wrapper">
+            <p><strong><?= $t['copyright'] ?></strong></p>
+        </div>
     </footer>
 
-    <!-- BOUTON FIXE COMMANDER -->
-    <button class="fixed-order-btn" onclick="openOrderForm()">
-        <i class='bx bx-cart'></i> Commander
-    </button>
-
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
-        <div id="liveToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div id="toastMessage" class="toast-body">
-                    <?= isset($order_message) ? htmlspecialchars($order_message) : ''; ?>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- MODAL COMMANDE -->
-    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content custom-modal">
-                <!-- Body -->
-                <div class="modal-body custom-modal-body">
-                    <form id="orderForm" action="management/orders/save.php" method="POST">
-                        <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
-                        <input type="hidden" name="pack_id" value="" id="selectedPackId">
-
-                        <!-- Sélection de pack -->
-                        <?php if (!empty($packs)): ?>
-                            <div class="form-group">
-                                <label class="form-label">Choisir un pack</label>
-                                <select class="form-control-custom" name="pack_selection" id="packSelection" onchange="updatePackSelection()">
-                                    <option value="">Sélectionner un pack (optionnel)</option>
-                                    <?php foreach ($packs as $pack): ?>
-                                        <option value="<?= $pack['id']; ?>"
-                                            data-price="<?= $pack['price']; ?>"
-                                            data-quantity="<?= $pack['quantity']; ?>"
-                                            data-name="<?= htmlspecialchars($pack['name']); ?>">
-                                            <?= htmlspecialchars($pack['name']); ?> - <?= $pack['quantity']; ?> unités - <?= number_format($pack['price'], 0, ' ', ' '); ?> FCFA
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        <?php endif; ?>
-
-                        <!-- Pack sélectionné -->
-                        <div class="selected-pack-info" id="selectedPackInfo" style="display: none;">
-                            <div class="pack-summary">
-                                <h4><i class='bx bx-package'></i> Pack sélectionné</h4>
-                                <div class="pack-details">
-                                    <span id="packTitle"></span>
-                                    <span id="packQuantity"></span>
-                                    <span id="packPrice"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Nom complet</label>
-                            <input type="text" class="form-control-custom" name="client_name" placeholder="Votre nom complet" required>
-                        </div>
-
-                        <!-- Téléphone avec pays -->
-                        <div class="form-group">
-                            <label class="form-label">Téléphone</label>
-                            <div style="display: flex; gap: 5px;">
-                                <select class="form-control-custom" name="client_country" style="width: 30%;" required>
-                                    <option value="TD" data-length="8">🇹🇩 +235</option>
-                                    <option value="GN" data-length="9">🇬🇳 +224</option>
-                                </select>
-                                <input type="tel" name="client_phone" class="form-control-custom" placeholder="Numéro sans indicatif" required style="width: 70%;">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Adresse de livraison</label>
-                            <input type="text" class="form-control-custom" name="client_adress" placeholder="Ville, Quartier" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Note evantuelles</label>
-                            <textarea class="form-control-custom" name="client_note" rows="2" placeholder="Note évantuelle"></textarea>
-                        </div>
-                        <input type="hidden" name="valider" value="commander">
-
-                        <div class="modal-footer-custom">
-                            <button type="submit" class="btn-submit-order">
-                                <i class='bx bx-check-circle'></i>
-                                <span>Valider la commande</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- JS -->
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script src="<?= $basePath ?>/assets/js/tracking-manager.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="<?= $basePath ?>/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= $basePath ?>/assets/js/index2.js"></script>
 
-    <script src="assets/js/tracking-manager.js" defer></script>
-    <script src="assets/js/product.js"></script>
-    <!-- <script src="assets/js/theme.js"></script> -->
-    <script src="assets/js/pack.js"></script>
     <script>
+        (function() {
+            function safeParseInt(value) {
+                const parsed = parseInt(value, 10);
+                return Number.isNaN(parsed) ? 0 : parsed;
+            }
+
+            function getCookie(name) {
+                const cookies = document.cookie ? document.cookie.split('; ') : [];
+                for (let i = 0; i < cookies.length; i += 1) {
+                    const parts = cookies[i].split('=');
+                    const key = decodeURIComponent(parts.shift());
+                    if (key === name) {
+                        return decodeURIComponent(parts.join('='));
+                    }
+                }
+                return '';
+            }
+
+            function setCookie(name, value, maxAgeSeconds) {
+                let maxAge = '';
+                if (maxAgeSeconds) {
+                    maxAge = '; max-age=' + Math.max(0, Math.floor(maxAgeSeconds));
+                }
+                document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(value) + maxAge + '; path=/';
+            }
+
+            function readOrderState(key) {
+                let stored = null;
+                try {
+                    stored = localStorage.getItem(key);
+                } catch (error) {
+                    stored = null;
+                }
+
+                if (!stored) {
+                    return { count: 0, expiresAt: null };
+                }
+
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (parsed && typeof parsed === 'object') {
+                        return {
+                            count: safeParseInt(parsed.count),
+                            expiresAt: typeof parsed.expiresAt === 'number' ? parsed.expiresAt : null,
+                            isLegacy: typeof parsed.expiresAt !== 'number'
+                        };
+                    }
+                    return { count: safeParseInt(parsed), expiresAt: null, isLegacy: true };
+                } catch (error) {
+                    return { count: safeParseInt(stored), expiresAt: null, isLegacy: true };
+                }
+            }
+
+            function getOrderCount(id, windowMs) {
+                const key = 'order_limit_' + id;
+                const state = readOrderState(key);
+                if (state.expiresAt && Date.now() > state.expiresAt) {
+                    try {
+                        localStorage.removeItem(key);
+                    } catch (error) {}
+                }
+                if (!state.expiresAt && state.count > 0 && state.isLegacy) {
+                    const seededExpiresAt = Date.now() + windowMs;
+                    try {
+                        localStorage.setItem(key, JSON.stringify({
+                            count: state.count,
+                            expiresAt: seededExpiresAt
+                        }));
+                    } catch (error) {}
+                    return Math.max(state.count, safeParseInt(getCookie(key)));
+                }
+
+                const localCount = state.expiresAt && Date.now() > state.expiresAt ? 0 : state.count;
+                const cookieCount = safeParseInt(getCookie(key));
+                return Math.max(localCount, cookieCount);
+            }
+
+            function setOrderCount(id, count, windowMs) {
+                const key = 'order_limit_' + id;
+                const expiresAt = Date.now() + windowMs;
+                try {
+                    localStorage.setItem(key, JSON.stringify({
+                        count: count,
+                        expiresAt: expiresAt
+                    }));
+                } catch (error) {}
+                setCookie(key, String(count), windowMs / 1000);
+            }
+
+            function getBlockedProducts(windowMs) {
+                try {
+                    const stored = localStorage.getItem('order_limit_blocked_products');
+                    if (!stored) return [];
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed)) {
+                        return parsed;
+                    }
+                    if (!parsed || typeof parsed !== 'object') return [];
+                    if (parsed.expiresAt && Date.now() > parsed.expiresAt) {
+                        localStorage.removeItem('order_limit_blocked_products');
+                        return [];
+                    }
+                    return Array.isArray(parsed.ids) ? parsed.ids : [];
+                } catch (error) {
+                    return [];
+                }
+            }
+
+            function setBlockedProducts(list, windowMs) {
+                try {
+                    localStorage.setItem('order_limit_blocked_products', JSON.stringify({
+                        ids: list,
+                        expiresAt: Date.now() + windowMs
+                    }));
+                } catch (error) {}
+            }
+
+            function markBlockedProduct(id, windowMs) {
+                const blocked = getBlockedProducts(windowMs);
+                const normalizedId = String(id);
+                if (blocked.indexOf(normalizedId) === -1) {
+                    blocked.push(normalizedId);
+                    setBlockedProducts(blocked, windowMs);
+                }
+            }
+
+            function isProductBlocked(id, windowMs) {
+                const blocked = getBlockedProducts(windowMs);
+                return blocked.indexOf(String(id)) !== -1;
+            }
+
+            function applyLimitState(id, limit, windowMs) {
+                const count = getOrderCount(id, windowMs);
+                if (count >= limit) {
+                    markBlockedProduct(id, windowMs);
+                }
+
+                if (isProductBlocked(id, windowMs)) {
+                    document.querySelectorAll('.commander-btn, .btn-submit-order').forEach(function(btn) {
+                        btn.disabled = true;
+                        btn.setAttribute('aria-disabled', 'true');
+                        btn.style.display = 'none';
+                    });
+                }
+            }
+
+            window.createOrderLimit = function(productId, options) {
+                const limit = options && options.limit ? options.limit : 2;
+                const doubleClickGuardMs = options && options.doubleClickGuardMs ? options.doubleClickGuardMs : 2500;
+                const windowMs = options && options.windowMs ? options.windowMs : 48 * 60 * 60 * 1000;
+                let lastSubmitAt = 0;
+
+                function canSubmit() {
+                    const now = Date.now();
+                    if (now - lastSubmitAt < doubleClickGuardMs) {
+                        return false;
+                    }
+                    lastSubmitAt = now;
+
+                    if (getOrderCount(productId, windowMs) >= limit || isProductBlocked(productId, windowMs)) {
+                        applyLimitState(productId, limit, windowMs);
+                        return false;
+                    }
+                    return true;
+                }
+
+                function registerSubmit() {
+                    const nextCount = getOrderCount(productId, windowMs) + 1;
+                    setOrderCount(productId, nextCount, windowMs);
+                    if (nextCount >= limit) {
+                        markBlockedProduct(productId, windowMs);
+                    }
+                    applyLimitState(productId, limit, windowMs);
+                }
+
+                return {
+                    applyLimitState: function() {
+                        applyLimitState(productId, limit, windowMs);
+                    },
+                    canSubmit: canSubmit,
+                    registerSubmit: registerSubmit
+                };
+            };
+        })();
+    </script>
+
+    <script>
+        function trackWhenReady(eventName, eventData, attempts) {
+            var defaultAttemptsByEvent = {
+                Purchase: 40,
+                InitiateCheckout: 30,
+                QualifiedVisit: 20,
+                FormAbandoned: 20,
+                FormStarted: 20,
+                FormCompleted: 20,
+                FormProgress25: 15,
+                FormProgress50: 15,
+                FormProgress75: 15,
+                FormInactive: 15,
+                FormFieldFocus: 10
+            };
+            var fallbackAttempts = 20;
+            var remaining = typeof attempts === 'number'
+                ? attempts
+                : (defaultAttemptsByEvent[eventName] || fallbackAttempts);
+            if (typeof trackEvent === 'function' && (!window.trackingManager || window.trackingManager.isReady)) {
+                trackEvent(eventName, eventData);
+                return;
+            }
+            if (remaining <= 0) return;
+            setTimeout(function() {
+                trackWhenReady(eventName, eventData, remaining - 1);
+            }, 200);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
-                trackEvent('QualifiedVisit', {
+                trackWhenReady('QualifiedVisit', {
                     content_ids: ['<?= $product['id']; ?>'],
                     content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
                     value: <?= $displayPrice; ?>,
@@ -372,12 +514,35 @@ $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'
                 });
             }, 5000);
 
-            const orderForm = document.getElementById('orderForm');
+            const productId = '<?= $product['id']; ?>';
+            const orderLimitApi = window.createOrderLimit(productId, {
+                limit: 2,
+                doubleClickGuardMs: 2500,
+                windowMs: 48 * 60 * 60 * 1000
+            });
+            orderLimitApi.applyLimitState();
+
+            const orderForm = document.querySelector('.express-checkout-form');
             const orderModal = document.getElementById('orderModal');
             let formStarted = false;
             let formSubmitted = false;
             let formStartTime = null;
             let abandonTimer = null;
+            let formAbandonedSent = false;
+
+            const sendFormAbandoned = function(abandonmentPoint) {
+                if (!formStarted || formSubmitted || formAbandonedSent) return;
+                formAbandonedSent = true;
+                const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
+                trackWhenReady('FormAbandoned', {
+                    content_ids: ['<?= $product['id']; ?>'],
+                    content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                    value: <?= $displayPrice; ?>,
+                    currency: 'XOF',
+                    time_spent: timeSpent,
+                    abandonment_point: abandonmentPoint
+                });
+            };
 
             if (orderForm) {
                 const formFields = orderForm.querySelectorAll('input[type="text"], input[type="tel"], textarea, select');
@@ -390,7 +555,7 @@ $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'
                             formStarted = true;
                             formStartTime = Date.now();
 
-                            trackEvent('FormStarted', {
+                            trackWhenReady('FormStarted', {
                                 content_ids: ['<?= $product['id']; ?>'],
                                 content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
                                 value: <?= $displayPrice; ?>,
@@ -399,10 +564,10 @@ $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'
 
                             abandonTimer = setTimeout(function() {
                                 if (formStarted && !formSubmitted) {
-                                    trackEvent('FormInactive', {
+                                    trackWhenReady('FormInactive', {
                                         content_ids: ['<?= $product['id']; ?>'],
                                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['selling_price']; ?>,
+                                        value: <?= $displayPrice; ?>,
                                         currency: 'XOF',
                                         time_spent: Math.round((Date.now() - formStartTime) / 1000)
                                     });
@@ -418,7 +583,7 @@ $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'
                                 const progressPercent = Math.round((fieldsCompleted / totalFields) * 100);
 
                                 if (progressPercent === 25) {
-                                    trackEvent('FormProgress25', {
+                                    trackWhenReady('FormProgress25', {
                                         content_ids: ['<?= $product['id']; ?>'],
                                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
                                         value: <?= $displayPrice; ?>,
@@ -426,7 +591,7 @@ $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'
                                         progress: 25
                                     });
                                 } else if (progressPercent === 50) {
-                                    trackEvent('FormProgress50', {
+                                    trackWhenReady('FormProgress50', {
                                         content_ids: ['<?= $product['id']; ?>'],
                                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
                                         value: <?= $displayPrice; ?>,
@@ -434,7 +599,7 @@ $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'
                                         progress: 50
                                     });
                                 } else if (progressPercent === 75) {
-                                    trackEvent('FormProgress75', {
+                                    trackWhenReady('FormProgress75', {
                                         content_ids: ['<?= $product['id']; ?>'],
                                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
                                         value: <?= $displayPrice; ?>,
@@ -442,7 +607,7 @@ $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'
                                         progress: 75
                                     });
                                 } else if (progressPercent === 100) {
-                                    trackEvent('FormCompleted', {
+                                    trackWhenReady('FormCompleted', {
                                         content_ids: ['<?= $product['id']; ?>'],
                                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
                                         value: <?= $displayPrice; ?>,
@@ -457,10 +622,10 @@ $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'
                             clearTimeout(abandonTimer);
                             abandonTimer = setTimeout(function() {
                                 if (formStarted && !formSubmitted) {
-                                    trackEvent('FormInactive', {
+                                    trackWhenReady('FormInactive', {
                                         content_ids: ['<?= $product['id']; ?>'],
                                         content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                        value: <?= $product['selling_price']; ?>,
+                                        value: <?= $displayPrice; ?>,
                                         currency: 'XOF',
                                         time_spent: Math.round((Date.now() - formStartTime) / 1000)
                                     });
@@ -470,7 +635,7 @@ $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'
                     });
 
                     field.addEventListener('focus', function() {
-                        trackEvent('FormFieldFocus', {
+                        trackWhenReady('FormFieldFocus', {
                             content_ids: ['<?= $product['id']; ?>'],
                             content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
                             value: <?= $displayPrice; ?>,
@@ -484,38 +649,30 @@ $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'
                 // Détecter la fermeture du modal = formulaire abandonné
                 if (orderModal) {
                     orderModal.addEventListener('hidden.bs.modal', function() {
-                        if (formStarted && !formSubmitted) {
-                            const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
-
-                            trackEvent('FormAbandoned', {
-                                content_ids: ['<?= $product['id']; ?>'],
-                                content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                                value: <?= $displayPrice; ?>,
-                                currency: 'XOF',
-                                time_spent: timeSpent,
-                                abandonment_point: 'modal_close'
-                            });
-                        }
+                        sendFormAbandoned('modal_close');
                     });
                 }
 
                 window.addEventListener('beforeunload', function() {
-                    if (formStarted && !formSubmitted) {
-                        const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
+                    sendFormAbandoned('page_leave');
+                });
 
-                        trackEvent('FormAbandoned', {
-                            content_ids: ['<?= $product['id']; ?>'],
-                            content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
-                            value: <?= $displayPrice; ?>,
-                            currency: 'XOF',
-                            time_spent: timeSpent,
-                            abandonment_point: 'page_leave'
-                        });
+                document.addEventListener('visibilitychange', function() {
+                    if (document.visibilityState === 'hidden') {
+                        sendFormAbandoned('page_hide');
                     }
                 });
 
                 orderForm.addEventListener('submit', function(e) {
+                    if (!orderLimitApi.canSubmit()) {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    orderLimitApi.registerSubmit();
+
                     formSubmitted = true;
+                    e.preventDefault();
 
                     // Déterminer si un pack est sélectionné et calculer dynamiquement la valeur
                     var packIdInput = document.getElementById('selectedPackId');
@@ -560,14 +717,42 @@ $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'
                     }
 
                     // Envoyer uniquement l'événement Purchase (conseillé par Facebook)
-                    trackEvent('Purchase', purchasePayload);
+                    trackWhenReady('Purchase', purchasePayload);
+
+                    var submitUrl = orderForm.getAttribute('action') || window.location.href;
+                    var formData = new FormData(orderForm);
+
+                    var sendRequest = function() {
+                        fetch(submitUrl, {
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'same-origin',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                            .then(function(response) {
+                                if (response.redirected) {
+                                    window.location.href = response.url;
+                                    return;
+                                }
+                                return response.text().then(function() {
+                                    window.location.href = response.url || window.location.href;
+                                });
+                            })
+                            .catch(function() {
+                                orderForm.submit();
+                            });
+                    };
+
+                    setTimeout(sendRequest, 300);
                 });
             }
         });
 
         function openOrderForm() {
             // InitiateCheckout au clic sur bouton Commander (specs Facebook)
-            trackEvent('InitiateCheckout', {
+            trackWhenReady('InitiateCheckout', {
                 content_ids: ['<?= $product['id']; ?>'],
                 contents: [{
                     'id': '<?= $product['id']; ?>',
@@ -579,11 +764,14 @@ $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'
                 value: <?= $displayPrice; ?>
             });
 
-            var modal = new bootstrap.Modal(document.getElementById('orderModal'));
-            modal.show();
+            var modalElement = document.getElementById('orderModal');
+            if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                var modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            }
         }
     </script>
-
+    
 </body>
 
 </html>

@@ -31,6 +31,11 @@ if (!$product) {
 $characteristics = $productManager->getProductCharacteristics($productId);
 $videos = $productManager->getProductVideos($productId);
 $packs = $productManager->getProductPacks($productId);
+
+$basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+if ($basePath === '/') {
+    $basePath = '';
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -59,7 +64,7 @@ $packs = $productManager->getProductPacks($productId);
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;500;700&display=swap">
-    <link rel="stylesheet" href="assets/css/index1.css">
+    <link rel="stylesheet" href="<?= $basePath ?>/assets/css/index1.css">
 </head>
 
 <body>
@@ -68,7 +73,7 @@ $packs = $productManager->getProductPacks($productId);
         <nav class="yc-navbar container">
             <div class="logo">
                 <a href="/" aria-label="home">
-                    <img src="assets/images/idx121.png" alt="TUBKAL MARKET">
+                    <img src="<?= $basePath ?>/assets/images/idx121.png" alt="TUBKAL MARKET">
                 </a>
             </div>
             <div class="corner">
@@ -154,7 +159,7 @@ $packs = $productManager->getProductPacks($productId);
     <footer>
         <div class="columns container">
             <div class="column logo">
-                <img src="assets/images/logo.jpg" alt="LUXEMARKET" width="110" height="70">
+                <img src="<?= $basePath ?>/assets/images/logo.jpg" alt="LUXEMARKET" width="110" height="70">
             </div>
             <div class="column">
                 <h1>À propos</h1>
@@ -174,10 +179,10 @@ $packs = $productManager->getProductPacks($productId);
         </div>
     </footer>
 
-    <script src="assets/js/tracking-manager.js" defer></script>
+    <script src="<?= $basePath ?>/assets/js/tracking-manager.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/index2.js"></script>
+    <script src="<?= $basePath ?>/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= $basePath ?>/assets/js/index2.js"></script>
 
     <script>
         // Quantity controls

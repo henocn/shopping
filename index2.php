@@ -37,6 +37,22 @@ $characteristics = $productManager->getProductCharacteristics($productId);
 $videos = $productManager->getProductVideos($productId);
 $packs = $productManager->getProductPacks($productId);
 
+$basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+if ($basePath === '/') {
+    $basePath = '';
+}
+
+function countryCodeToFlagEntity($code)
+{
+    $code = strtoupper(trim($code));
+    if (!preg_match('/^[A-Z]{2}$/', $code)) {
+        return '';
+    }
+    $first = 127397 + ord($code[0]);
+    $second = 127397 + ord($code[1]);
+    return '&#' . $first . ';&#' . $second . ';';
+}
+
 // Récupérer le prix du pays (à partir de la première association)
 $productCountries = $productManager->getProductCountries($productId);
 $displayPrice = !empty($productCountries) ? $productCountries[0]['selling_price'] : 0;
@@ -122,7 +138,7 @@ $langSwitchUrl = '?id=' . $productId . '&lang=' . $otherLang;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;500;700&display=swap">
-    <link rel="stylesheet" href="assets/css/index2.css">
+    <link rel="stylesheet" href="<?= $basePath ?>/assets/css/index2.css">
     <?php if ($lang === 'ar'): ?>
         <style>
             body {
@@ -150,7 +166,7 @@ $langSwitchUrl = '?id=' . $productId . '&lang=' . $otherLang;
         <nav class="yc-navbar container">
             <div class="logo">
                 <a href="/" aria-label="home">
-                    <img src="assets/images/logo.jpg" alt="TUBKAL MARKET">
+                    <img src="<?= $basePath ?>/assets/images/logo.jpg" alt="TUBKAL MARKET">
                 </a>
             </div>
             <div class="corner">
@@ -192,8 +208,9 @@ $langSwitchUrl = '?id=' . $productId . '&lang=' . $otherLang;
                         <div class="phone-input-wrapper">
                             <select name="client_country" class="form-control-country" required>
                                 <?php foreach ($productCountries as $ctry): ?>
+                                    <?php $flag = countryCodeToFlagEntity($ctry['code'] ?? ''); ?>
                                     <option value="<?= htmlspecialchars($ctry['id']); ?>">
-                                        <?= htmlspecialchars($ctry['phone_code']); ?>
+                                        <?= $flag ? $flag . ' ' : '' ?><?= htmlspecialchars($ctry['phone_code']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -243,7 +260,7 @@ $langSwitchUrl = '?id=' . $productId . '&lang=' . $otherLang;
     <footer>
         <div class="columns container">
             <div class="column logo">
-                <img src="assets/images/logo.jpg" alt="MAXORA MARKET" width="110" height="70">
+                <img src="<?= $basePath ?>/assets/images/logo.jpg" alt="MAXORA MARKET" width="110" height="70">
             </div>
             <div class="column">
                 <h1><?= $t['about'] ?></h1>
@@ -262,11 +279,233 @@ $langSwitchUrl = '?id=' . $productId . '&lang=' . $otherLang;
             <p><strong><?= $t['copyright'] ?></strong></p>
         </div>
     </footer>
-
+     
+    <script src="<?= $basePath ?>/assets/js/tracking-manager.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/index2.js"></script>
+    <script src="<?= $basePath ?>/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= $basePath ?>/assets/js/index2.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                trackEvent('QualifiedVisit', {
+                    content_ids: ['<?= $product['id']; ?>'],
+                    content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                    value: <?= $displayPrice; ?>,
+                    currency: 'XOF'
+                });
+            }, 5000);
 
+            const orderForm = document.getElementById('orderForm');
+            const orderModal = document.getElementById('orderModal');
+            let formStarted = false;
+            let formSubmitted = false;
+            let formStartTime = null;
+            let abandonTimer = null;
+
+            if (orderForm) {
+                const formFields = orderForm.querySelectorAll('input[type="text"], input[type="tel"], textarea, select');
+                let fieldsCompleted = 0;
+                const totalFields = formFields.length;
+
+                formFields.forEach((field, index) => {
+                    field.addEventListener('input', function() {
+                        if (!formStarted && this.value.length > 2) {
+                            formStarted = true;
+                            formStartTime = Date.now();
+
+                            trackEvent('FormStarted', {
+                                content_ids: ['<?= $product['id']; ?>'],
+                                content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                value: <?= $displayPrice; ?>,
+                                currency: 'XOF'
+                            });
+
+                            abandonTimer = setTimeout(function() {
+                                if (formStarted && !formSubmitted) {
+                                    trackEvent('FormInactive', {
+                                        content_ids: ['<?= $product['id']; ?>'],
+                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                        value: <?= $displayPrice; ?>,
+                                        currency: 'XOF',
+                                        time_spent: Math.round((Date.now() - formStartTime) / 1000)
+                                    });
+                                }
+                            }, 300000);
+                        }
+
+                        if (this.value.length > 2) {
+                            const currentFieldsCompleted = Array.from(formFields).filter(f => f.value.length > 2).length;
+
+                            if (currentFieldsCompleted > fieldsCompleted) {
+                                fieldsCompleted = currentFieldsCompleted;
+                                const progressPercent = Math.round((fieldsCompleted / totalFields) * 100);
+
+                                if (progressPercent === 25) {
+                                    trackEvent('FormProgress25', {
+                                        content_ids: ['<?= $product['id']; ?>'],
+                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                        value: <?= $displayPrice; ?>,
+                                        currency: 'XOF',
+                                        progress: 25
+                                    });
+                                } else if (progressPercent === 50) {
+                                    trackEvent('FormProgress50', {
+                                        content_ids: ['<?= $product['id']; ?>'],
+                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                        value: <?= $displayPrice; ?>,
+                                        currency: 'XOF',
+                                        progress: 50
+                                    });
+                                } else if (progressPercent === 75) {
+                                    trackEvent('FormProgress75', {
+                                        content_ids: ['<?= $product['id']; ?>'],
+                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                        value: <?= $displayPrice; ?>,
+                                        currency: 'XOF',
+                                        progress: 75
+                                    });
+                                } else if (progressPercent === 100) {
+                                    trackEvent('FormCompleted', {
+                                        content_ids: ['<?= $product['id']; ?>'],
+                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                        value: <?= $displayPrice; ?>,
+                                        currency: 'XOF',
+                                        progress: 100
+                                    });
+                                }
+                            }
+                        }
+
+                        if (abandonTimer) {
+                            clearTimeout(abandonTimer);
+                            abandonTimer = setTimeout(function() {
+                                if (formStarted && !formSubmitted) {
+                                    trackEvent('FormInactive', {
+                                        content_ids: ['<?= $product['id']; ?>'],
+                                        content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                        value: <?= $displayPrice; ?>,
+                                        currency: 'XOF',
+                                        time_spent: Math.round((Date.now() - formStartTime) / 1000)
+                                    });
+                                }
+                            }, 300000);
+                        }
+                    });
+
+                    field.addEventListener('focus', function() {
+                        trackEvent('FormFieldFocus', {
+                            content_ids: ['<?= $product['id']; ?>'],
+                            content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                            value: <?= $displayPrice; ?>,
+                            currency: 'XOF',
+                            field_name: this.name || this.id || 'unknown',
+                            field_index: index
+                        });
+                    });
+                });
+
+                // Détecter la fermeture du modal = formulaire abandonné
+                if (orderModal) {
+                    orderModal.addEventListener('hidden.bs.modal', function() {
+                        if (formStarted && !formSubmitted) {
+                            const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
+
+                            trackEvent('FormAbandoned', {
+                                content_ids: ['<?= $product['id']; ?>'],
+                                content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                                value: <?= $displayPrice; ?>,
+                                currency: 'XOF',
+                                time_spent: timeSpent,
+                                abandonment_point: 'modal_close'
+                            });
+                        }
+                    });
+                }
+
+                window.addEventListener('beforeunload', function() {
+                    if (formStarted && !formSubmitted) {
+                        const timeSpent = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
+
+                        trackEvent('FormAbandoned', {
+                            content_ids: ['<?= $product['id']; ?>'],
+                            content_name: '<?= htmlspecialchars($product['name'], ENT_QUOTES); ?>',
+                            value: <?= $displayPrice; ?>,
+                            currency: 'XOF',
+                            time_spent: timeSpent,
+                            abandonment_point: 'page_leave'
+                        });
+                    }
+                });
+
+                orderForm.addEventListener('submit', function(e) {
+                    formSubmitted = true;
+
+                    // Déterminer si un pack est sélectionné et calculer dynamiquement la valeur
+                    var packIdInput = document.getElementById('selectedPackId');
+                    var packSelect = document.getElementById('packSelection');
+                    var selectedPackId = packIdInput ? (packIdInput.value || '') : '';
+                    var purchasePayload = {
+                        currency: 'XOF'
+                    };
+
+                    if (selectedPackId && packSelect) {
+                        // Retrouver l'option correspondant au pack sélectionné
+                        var option = Array.from(packSelect.options).find(function(opt) {
+                            return opt.value === selectedPackId;
+                        });
+                        if (option) {
+                            var packPrice = parseInt(option.dataset.price, 10) || 0;
+                            var packQty = parseInt(option.dataset.quantity, 10) || 1;
+
+                            purchasePayload.content_ids = [selectedPackId];
+                            purchasePayload.content_type = 'product';
+                            purchasePayload.contents = [{
+                                id: selectedPackId,
+                                quantity: packQty,
+                                item_price: packPrice
+                            }];
+                            purchasePayload.num_items = packQty; // total d'unités dans le pack
+                            purchasePayload.value = packPrice;
+                        }
+                    }
+
+                    if (!purchasePayload.content_ids) {
+                        // Pas de pack: utiliser le produit simple
+                        purchasePayload.content_ids = ['<?= $product['id']; ?>'];
+                        purchasePayload.content_type = 'product';
+                        purchasePayload.contents = [{
+                            id: '<?= $product['id']; ?>',
+                            quantity: 1,
+                            item_price: <?= $displayPrice; ?>
+                        }];
+                        purchasePayload.num_items = 1;
+                        purchasePayload.value = <?= $displayPrice; ?>;
+                    }
+
+                    // Envoyer uniquement l'événement Purchase (conseillé par Facebook)
+                    trackEvent('Purchase', purchasePayload);
+                });
+            }
+        });
+
+        function openOrderForm() {
+            // InitiateCheckout au clic sur bouton Commander (specs Facebook)
+            trackEvent('InitiateCheckout', {
+                content_ids: ['<?= $product['id']; ?>'],
+                contents: [{
+                    'id': '<?= $product['id']; ?>',
+                    'quantity': 1,
+                    'item_price': <?= $displayPrice; ?>
+                }],
+                currency: 'XOF',
+                num_items: 1,
+                value: <?= $displayPrice; ?>
+            });
+
+            var modal = new bootstrap.Modal(document.getElementById('orderModal'));
+            modal.show();
+        }
+    </script>                                
 </body>
 
 </html>
